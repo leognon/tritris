@@ -1,5 +1,5 @@
 class Grid {
-    constructor(width, height, piecesJSON) {
+    constructor(width, height) {
         this.w = width;
         this.h = height;
         this.grid = [];
@@ -9,15 +9,9 @@ class Grid {
                 this.grid[i].push(new GridCell());
             }
         }
-        
-
-        this.grid[15][4].tris[0][0] = new Triangle(color(255, 0, 0));
-        this.grid[10][2].tris[0][0] = new Triangle(color(255, 0, 0));
-        this.grid[19][0].tris[0][0] = new Triangle(color(255, 0, 0));
-        this.grid[19][0].tris[0][1] = new Triangle(color(0, 255, 0));
     }
 
-    show(x, y, w, h) {
+    show(x, y, w, h, colors) {
         const cellW = w / this.w;
         const cellH = h / this.h;
 
@@ -30,7 +24,8 @@ class Grid {
                     x + j * cellW,
                     y + i * cellH,
                     cellW,
-                    cellH
+                    cellH,
+                    colors
                 );
             }
         }
@@ -48,18 +43,32 @@ class Grid {
 }
 
 class GridCell {
-    constructor() {
-        this.tris = [
-            [null, null],
-            [null, null],
-        ];
+    constructor(triangles, clr) {
+        if (triangles == undefined) {
+            this.tris = [
+                [null, null],
+                [null, null],
+            ];
+        } else {
+            this.tris = [];
+            for (let row = 0; row < 2; row++) {
+                this.tris.push([]);
+                for (let col = 0; col < 2; col++) {
+                    if (triangles[row][col] == 1) {
+                        this.tris[row][col] = new Triangle(clr);
+                    } else {
+                        this.tris[row][col] = null;
+                    }
+                }
+            }
+        }
     }
 
-    show(x, y, w, h) {
+    show(x, y, w, h, colors) {
         for (let row = 0; row < this.tris.length; row++) {
             for (let col = 0; col < this.tris[0].length; col++) {
                 if (this.tris[row][col])
-                    this.tris[row][col].show(x, y, w, h, row, col);
+                    this.tris[row][col].show(x, y, w, h, row, col, colors);
             }
         }
     }
@@ -70,14 +79,14 @@ class Triangle {
         this.clr = clr;
     }
 
-    show(x, y, w, h, row, col) {
-        fill(this.clr);
+    show(x, y, w, h, row, col, colors) {
+        fill(colors[this.clr - 1]);
         if (row == 0 && col == 0) {
-            triangle(x, y, x, y + h, x + w, y + h);
+            triangle(x, y, x + w, y, x, y + h);
         } else if (row == 0 && col == 1) {
             triangle(x, y, x + w, y, x + w, y + h);
         } else if (row == 1 && col == 0) {
-            triangle(x, y, x + w, y, x, y + h);
+            triangle(x, y, x, y + h, x + w, y + h);
         } else if (row == 1 && col == 1) {
             triangle(x, y + h, x + w, y, x + w, y + h);
         }

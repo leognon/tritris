@@ -1,4 +1,4 @@
-let grid;
+let game;
 let piecesJSON;
 
 function preload() {
@@ -6,12 +6,12 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  grid = new Grid(10, 20, piecesJSON);
-  frameRate(30);
+    createCanvas(windowWidth, windowHeight);
+    game = new Game(piecesJSON);
+    frameRate(30);
 }
 
 function draw() {
-  background(150);
-  grid.show(20, 20, 350, 700);
+    background(150);
+    game.show(20, 20, 350, 700);
 }
