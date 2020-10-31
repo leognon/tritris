@@ -13,5 +13,6 @@ function setup() {
 
 function draw() {
     background(150);
+    game.update();
     game.show(20, 20, 350, 700);
 }
