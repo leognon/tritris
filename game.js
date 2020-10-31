@@ -14,7 +14,7 @@ class Game {
         this.piecesJSON = piecesJSON.pieces;
 
         this.currentPiece = new Piece(this.piecesJSON[0]);
-        this.pieceSpeed = 150;
+        this.pieceSpeed = 200;
         this.lastMoveDown = Date.now();
     }
 
@@ -24,7 +24,8 @@ class Game {
             let validMove = this.isValid(this.currentPiece);
             if (!validMove) {
                 this.currentPiece.move(0, -1); //Move the piece up, place on board
-                //TODO Add to board, create new currentPiece
+                this.grid.addPiece(this.currentPiece);
+                this.currentPiece = new Piece(this.piecesJSON[0]);
             }
             this.lastMoveDown = Date.now();
         }
