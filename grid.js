@@ -14,11 +14,26 @@ class Grid {
     addPiece(piece) {
         for (let row = 0; row < piece.grid.length; row++) {
             for (let col = 0; col < piece.grid[0].length; col++) {
-                this.grid[row + piece.pos.y][col + piece.pos.x].addCell(
-                    piece.grid[row][col]
-                );
+                let gridRow = row + piece.pos.y;
+                let gridCol = col + piece.pos.x;
+                this.grid[gridRow][gridCol].addCell(piece.grid[row][col]);
             }
         }
+    }
+
+    isValid(piece) {
+        for (let row = 0; row < piece.grid.length; row++) {
+            for (let col = 0; col < piece.grid[0].length; col++) {
+                let gridRow = row + piece.pos.y;
+                let gridCol = col + piece.pos.x;
+                if (
+                    this.grid[gridRow][gridCol].collides(piece.grid[row][col])
+                ) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     show(x, y, w, h, colors) {
@@ -79,6 +94,21 @@ class GridCell {
                     this.tris[row][col] = cell.tris[row][col];
             }
         }
+    }
+
+    collides(other) {
+        for (let row = 0; row < this.tris.length; row++) {
+            for (let col = 0; col < this.tris[0].length; col++) {
+                if (!this.tris[row][col]) continue;
+                if (
+                    other.tris[row][col] ||
+                    other.tris[(row + 1) % 2][col] ||
+                    other.tris[row][(col + 1) % 2]
+                )
+                    return true; //There is a collision
+            }
+        }
+        return false;
     }
 
     show(x, y, w, h, colors) {
