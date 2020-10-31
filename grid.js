@@ -16,8 +16,6 @@ class Grid {
         const cellH = h / this.h;
 
         //Draws the triangles in the grid
-        stroke(0);
-        strokeWeight(1);
         for (let i = 0; i < this.h; i++) {
             for (let j = 0; j < this.w; j++) {
                 this.grid[i][j].show(
@@ -30,7 +28,7 @@ class Grid {
             }
         }
 
-        //Draws the gird outline
+        //Draws the grid outline
         stroke(0);
         strokeWeight(3);
         //Vertical lines
@@ -80,6 +78,8 @@ class Triangle {
     }
 
     show(x, y, w, h, row, col, colors) {
+        stroke(0);
+        strokeWeight(2);
         fill(colors[this.clr - 1]);
         if (row == 0 && col == 0) {
             triangle(x, y, x + w, y, x, y + h);
