@@ -20,9 +20,9 @@ class Piece {
     outOfBounds(w, h) {
         return (
             this.pos.x < 0 ||
-            this.pos.x + this.grid.length >= w ||
+            this.pos.x + this.grid[0].length > w ||
             this.pos.y < 0 ||
-            this.pos.y + this.grid[0].length >= h
+            this.pos.y + this.grid.length > h
         );
     }
 

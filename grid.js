@@ -11,6 +11,16 @@ class Grid {
         }
     }
 
+    addPiece(piece) {
+        for (let row = 0; row < piece.grid.length; row++) {
+            for (let col = 0; col < piece.grid[0].length; col++) {
+                this.grid[row + piece.pos.y][col + piece.pos.x].addCell(
+                    piece.grid[row][col]
+                );
+            }
+        }
+    }
+
     show(x, y, w, h, colors) {
         const cellW = w / this.w;
         const cellH = h / this.h;
@@ -58,6 +68,15 @@ class GridCell {
                         this.tris[row][col] = null;
                     }
                 }
+            }
+        }
+    }
+
+    addCell(cell) {
+        for (let row = 0; row < this.tris.length; row++) {
+            for (let col = 0; col < this.tris[0].length; col++) {
+                if (cell.tris[row][col])
+                    this.tris[row][col] = cell.tris[row][col];
             }
         }
     }
