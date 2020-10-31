@@ -9,12 +9,26 @@ class Piece {
                 this.grid[row].push(new GridCell(pieces[row][col], clr));
             }
         }
-        this.pos = createVector(Math.ceil((10 - this.grid.length)/2), 0);
+        this.pos = createVector(Math.ceil((10 - this.grid.length) / 2), 0);
+    }
+
+    move(x, y) {
+        this.pos.x += x;
+        this.pos.y += y;
+    }
+
+    outOfBounds(w, h) {
+        return (
+            this.pos.x < 0 ||
+            this.pos.x + this.grid.length >= w ||
+            this.pos.y < 0 ||
+            this.pos.y + this.grid[0].length >= h
+        );
     }
 
     show(originX, originY, cellW, cellH, colors) {
-        originX += this.pos.x*cellW;
-        originY += this.pos.y*cellH;
+        originX += this.pos.x * cellW;
+        originY += this.pos.y * cellH;
         for (let row = 0; row < this.grid.length; row++) {
             for (let col = 0; col < this.grid[0].length; col++) {
                 this.grid[row][col].show(
