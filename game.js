@@ -25,7 +25,7 @@ class Game {
             if (!validMove) {
                 this.currentPiece.move(0, -1); //Move the piece up, place on board
                 this.grid.addPiece(this.currentPiece);
-                this.currentPiece = new Piece(this.piecesJSON[0]);
+                this.currentPiece = new Piece(this.piecesJSON[floor(random(this.piecesJSON.length))]);
             }
             this.lastMoveDown = Date.now();
         }
@@ -33,8 +33,7 @@ class Game {
 
     isValid(piece) {
         if (piece.outOfBounds(this.w, this.h)) return false;
-        return true; //TODO Check if it collides with any pieces on grid
-        //return this.grid.isValid(piece);
+        return this.grid.isValid(piece);
     }
 
     show(x, y, w, h) {
