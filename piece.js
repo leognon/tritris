@@ -26,6 +26,10 @@ class Piece {
         );
     }
 
+    getBottomRow() {
+        return this.pos.y + this.grid.length;
+    }
+
     show(originX, originY, cellW, cellH, colors) {
         originX += this.pos.x * cellW;
         originY += this.pos.y * cellH;

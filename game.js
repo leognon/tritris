@@ -15,9 +15,18 @@ class Game {
 
         const frameRate = 60.0988; //frames per second
         const msPerFrame = 1000 / frameRate;
+        this.entryDelays = [
+            10 * msPerFrame,
+            12 * msPerFrame,
+            14 * msPerFrame,//Numbers from https://tetris.wiki/Tetris_(NES,_Nintendo)
+            16 * msPerFrame,
+            18 * msPerFrame,
+        ];
 
-        this.currentPiece = new Piece(this.piecesJSON[floor(random(this.piecesJSON.length))]);
-        this.pieceSpeed = msPerFrame * 3;
+        this.currentPiece = new Piece(
+            this.piecesJSON[floor(random(this.piecesJSON.length))]
+        );
+        this.pieceSpeed = msPerFrame * 15;
         this.lastMoveDown = Date.now() + 750;
 
         this.das = 0;
@@ -34,28 +43,35 @@ class Game {
         const deltaTime = Date.now() - this.lastFrame;
 
         if (this.currentPiece == null && Date.now() > this.spawnNextPiece) {
-            this.currentPiece = new Piece(this.piecesJSON[floor(random(this.piecesJSON.length))]);
+            this.currentPiece = new Piece(
+                this.piecesJSON[floor(random(this.piecesJSON.length))]
+            );
             this.lastMoveDown = Date.now();
         }
 
         let pieceSpeed = this.pieceSpeed;
         if (keyIsDown(DOWN_ARROW)) pieceSpeed *= 0.5;
-        if (this.currentPiece !== null && Date.now() >= this.lastMoveDown + pieceSpeed) {
+        if (
+            this.currentPiece !== null &&
+            Date.now() >= this.lastMoveDown + pieceSpeed
+        ) {
             this.currentPiece.move(0, 1); //Move the current piece down
             let validMove = this.isValid(this.currentPiece);
             if (!validMove) {
                 this.currentPiece.move(0, -1); //Move the piece up, place on board
                 this.grid.addPiece(this.currentPiece);
+                const row = this.currentPiece.getBottomRow();
+                this.spawnNextPiece = Date.now() + this.calcEntryDelay(row);
                 this.currentPiece = null; //There is an entry delay for the next piece
-                this.spawnNextPiece = Date.now() + this.entryDelay;
-                //TODO Entry delay should vary based on the height the piece was placed at
             }
             this.lastMoveDown = Date.now();
         }
 
         //If both or neither are pressed, don't move
         let move = false;
-        const oneKeyPressed = keyIsDown(LEFT_ARROW) != keyIsDown(RIGHT_ARROW) && !keyIsDown(DOWN_ARROW);
+        const oneKeyPressed =
+            keyIsDown(LEFT_ARROW) != keyIsDown(RIGHT_ARROW) &&
+            !keyIsDown(DOWN_ARROW);
         if (oneKeyPressed && this.currentPiece !== null) {
             this.das += deltaTime;
             if (!this.keyWasPressed) {
@@ -84,13 +100,22 @@ class Game {
         this.lastFrame = Date.now();
     }
 
+    calcEntryDelay(y) {
+        if (y >= 18) return this.entryDelays[0];
+        if (y >= 14) return this.entryDelays[1];
+        if (y >= 10) return this.entryDelays[2];
+        if (y >= 6) return this.entryDelays[3];
+        return this.entryDelays[4];
+    }
+
     isValid(piece) {
         if (piece.outOfBounds(this.w, this.h)) return false;
         return this.grid.isValid(piece);
     }
 
     show(x, y, w, h) {
-        if (this.currentPiece) this.currentPiece.show(x, y, w / this.w, h / this.h, this.colors);
+        if (this.currentPiece)
+            this.currentPiece.show(x, y, w / this.w, h / this.h, this.colors);
         this.grid.show(x, y, w, h, this.colors);
     }
 }
