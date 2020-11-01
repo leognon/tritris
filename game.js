@@ -13,12 +13,13 @@ class Game {
         ];
         this.piecesJSON = piecesJSON.pieces;
 
-        this.currentPiece = new Piece(this.piecesJSON[0]);
-        this.pieceSpeed = 600;
-        this.lastMoveDown = Date.now() + 750;
-
         const frameRate = 60.0988; //frames per second
         const msPerFrame = 1000 / frameRate;
+
+        this.currentPiece = new Piece(this.piecesJSON[floor(random(this.piecesJSON.length))]);
+        this.pieceSpeed = msPerFrame * 3;
+        this.lastMoveDown = Date.now() + 750;
+
         this.das = 0;
         this.dasMax = msPerFrame * 16; //It takes 16 frames on an NES to fully charge DAS
         this.dasCharged = msPerFrame * 10; //When charged, DAS reset to 10 frames
@@ -37,7 +38,9 @@ class Game {
             this.lastMoveDown = Date.now();
         }
 
-        if (this.currentPiece !== null && Date.now() >= this.lastMoveDown + this.pieceSpeed) {
+        let pieceSpeed = this.pieceSpeed;
+        if (keyIsDown(DOWN_ARROW)) pieceSpeed *= 0.5;
+        if (this.currentPiece !== null && Date.now() >= this.lastMoveDown + pieceSpeed) {
             this.currentPiece.move(0, 1); //Move the current piece down
             let validMove = this.isValid(this.currentPiece);
             if (!validMove) {
@@ -52,7 +55,7 @@ class Game {
 
         //If both or neither are pressed, don't move
         let move = false;
-        const oneKeyPressed = keyIsDown(LEFT_ARROW) != keyIsDown(RIGHT_ARROW);
+        const oneKeyPressed = keyIsDown(LEFT_ARROW) != keyIsDown(RIGHT_ARROW) && !keyIsDown(DOWN_ARROW);
         if (oneKeyPressed && this.currentPiece !== null) {
             this.das += deltaTime;
             if (!this.keyWasPressed) {
