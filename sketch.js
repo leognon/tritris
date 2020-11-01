@@ -8,7 +8,6 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
     game = new Game(piecesJSON);
-    frameRate(30);
 }
 
 function draw() {
