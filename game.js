@@ -108,6 +108,21 @@ class Game {
             !this.rotateLeftWasPressed
         ) {
             this.currentPiece.rotateLeft();
+            const valid = this.isValid(this.currentPiece);
+            if (!valid) {
+                this.currentPiece.rotateRight();
+            }
+        }
+        if (
+            this.currentPiece !== null &&
+            keyIsDown(88) &&
+            !this.rotateLeftWasPressed
+        ) {
+            this.currentPiece.rotateRight();
+            const valid = this.isValid(this.currentPiece);
+            if (!valid) {
+                this.currentPiece.rotateLeft();
+            }
         }
 
         this.keyWasPressed = keyIsDown(LEFT_ARROW) || keyIsDown(RIGHT_ARROW);
