@@ -9,7 +9,32 @@ class Piece {
                 this.grid[row].push(new GridCell(pieces[row][col], clr));
             }
         }
-        this.pos = createVector(Math.ceil((10 - this.grid.length) / 2), 0);
+        this.pos = createVector(Math.ceil((10 - this.grid[0].length) / 2), 0);
+        this.centerOffset = createVector(
+            floor(this.grid[0].length / 2),
+            ceil(this.grid.length / 2)
+        );
+    }
+
+    rotateLeft() {
+        let newGrid = [];
+        for (let newRow = 0; newRow < this.grid[0].length; newRow++) {
+            newGrid.push([]);
+            for (let newCol = 0; newCol < this.grid.length; newCol++) {
+                const oldRow = newCol;
+                const oldCol = this.grid[0].length - 1 - newRow;
+                newGrid[newRow].push(this.grid[oldRow][oldCol].rotateLeft());
+            }
+        }
+        this.grid = newGrid;
+
+        //Calculates a new position so the piece stays centered around the same piece
+        this.pos = createVector(
+            this.pos.x + this.centerOffset.x - floor(this.grid[0].length/2),
+            this.pos.y + this.centerOffset.y - ceil(this.grid.length/2)
+        );
+        this.centerOffset.x = floor(this.grid[0].length/2);
+        this.centerOffset.y = ceil(this.grid.length/2);
     }
 
     move(x, y) {
