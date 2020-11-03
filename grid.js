@@ -137,7 +137,7 @@ class Triangle {
     show(x, y, w, h, row, col, colors) {
         stroke(0);
         strokeWeight(2);
-        fill(colors[this.clr - 1]);
+        fill(colors[this.clr]);
         if (row == 0 && col == 0) {
             triangle(x, y, x + w, y, x, y + h);
         } else if (row == 0 && col == 1) {

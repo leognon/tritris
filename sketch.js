@@ -2,7 +2,7 @@ let game;
 let piecesJSON;
 
 function preload() {
-    piecesJSON = loadJSON('pieces.json');
+    piecesJSON = loadJSON('pieces4.json');
 }
 
 function setup() {
