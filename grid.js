@@ -6,7 +6,12 @@ class Grid {
         for (let i = 0; i < this.h; i++) {
             this.grid.push([]);
             for (let j = 0; j < this.w; j++) {
-                this.grid[i].push(new GridCell());
+                if (j >= 20-i)
+                    this.grid[i].push(new GridCell([[1,0],[0,1]],0));
+                else if (j == 19-i)
+                    this.grid[i].push(new GridCell([[0,0],[0,1]],0));
+                else
+                    this.grid[i].push(new GridCell());
             }
         }
     }
