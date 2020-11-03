@@ -116,7 +116,7 @@ class Game {
         if (
             this.currentPiece !== null &&
             keyIsDown(88) &&
-            !this.rotateLeftWasPressed
+            !this.rotateRightWasPressed
         ) {
             this.currentPiece.rotateRight();
             const valid = this.isValid(this.currentPiece);

@@ -23,7 +23,7 @@ class Piece {
             for (let newCol = 0; newCol < this.grid.length; newCol++) {
                 const oldRow = newCol;
                 const oldCol = this.grid[0].length - 1 - newRow;
-                newGrid[newRow].push(this.grid[oldRow][oldCol].rotateLeft());
+                newGrid[newRow].push(this.grid[oldRow][oldCol].rotatedLeft());
             }
         }
         this.grid = newGrid;
@@ -42,9 +42,9 @@ class Piece {
         for (let newRow = 0; newRow < this.grid[0].length; newRow++) {
             newGrid.push([]);
             for (let newCol = 0; newCol < this.grid.length; newCol++) {
-                const oldRow = newCol;
+                const oldRow = this.grid.length - 1 - newCol;
                 const oldCol = newRow;
-                newGrid[newRow].push(this.grid[oldRow][oldCol].rotateLeft());
+                newGrid[newRow].push(this.grid[oldRow][oldCol].rotatedRight());
             }
         }
         this.grid = newGrid;
