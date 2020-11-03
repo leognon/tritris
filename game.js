@@ -8,7 +8,7 @@ class Game {
             color(0, 255, 0),
             color(255, 255, 0),
             color(255, 0, 255),
-            color(100, 250, 50),
+            color(0, 255, 255),
             color(250, 100, 25),
         ];
         this.piecesJSON = piecesJSON.pieces;
