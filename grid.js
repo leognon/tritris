@@ -87,6 +87,14 @@ class GridCell {
         }
     }
 
+    rotateLeft() {
+        this.tris = [
+            [this.tris[0][1], this.tris[1][1]],
+            [this.tris[0][0], this.tris[1][0]],
+        ];
+        return this;
+    }
+
     addCell(cell) {
         for (let row = 0; row < this.tris.length; row++) {
             for (let col = 0; col < this.tris[0].length; col++) {

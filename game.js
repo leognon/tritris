@@ -18,22 +18,24 @@ class Game {
         this.entryDelays = [
             10 * msPerFrame,
             12 * msPerFrame,
-            14 * msPerFrame,//Numbers from https://tetris.wiki/Tetris_(NES,_Nintendo)
+            14 * msPerFrame, //Numbers from https://tetris.wiki/Tetris_(NES,_Nintendo)
             16 * msPerFrame,
             18 * msPerFrame,
         ];
 
         this.currentPiece = new Piece(
-            this.piecesJSON[floor(random(this.piecesJSON.length))]
+            this.piecesJSON[0]
         );
-        this.pieceSpeed = msPerFrame * 15;
-        this.lastMoveDown = Date.now() + 750;
+        this.pieceSpeed = msPerFrame * 150;
+        this.lastMoveDown = Date.now() - 750;
 
         this.das = 0;
         this.dasMax = msPerFrame * 16; //It takes 16 frames on an NES to fully charge DAS
         this.dasCharged = msPerFrame * 10; //When charged, DAS reset to 10 frames
         this.lastFrame = Date.now();
         this.keyWasPresssed = false;
+        this.rotateLeftWasPressed = false;
+        this.rotateRightWasPressed = false;
 
         this.entryDelay = msPerFrame * 14; //There is a 10 frame entry delay (the time btwn the last piece locking in, and the next spawning)
         this.spawnNextPiece = 0;
@@ -42,6 +44,7 @@ class Game {
     update() {
         const deltaTime = Date.now() - this.lastFrame;
 
+        //Spawn the next piece after entry delay
         if (this.currentPiece == null && Date.now() > this.spawnNextPiece) {
             this.currentPiece = new Piece(
                 this.piecesJSON[floor(random(this.piecesJSON.length))]
@@ -49,6 +52,7 @@ class Game {
             this.lastMoveDown = Date.now();
         }
 
+        //Move the current piece down
         let pieceSpeed = this.pieceSpeed;
         if (keyIsDown(DOWN_ARROW)) pieceSpeed *= 0.5;
         if (
@@ -67,6 +71,7 @@ class Game {
             this.lastMoveDown = Date.now();
         }
 
+        //Move left and right
         //If both or neither are pressed, don't move
         let move = false;
         const oneKeyPressed =
@@ -96,7 +101,18 @@ class Game {
             }
         }
 
+        //Rotation
+        if (
+            this.currentPiece !== null &&
+            keyIsDown(90) &&
+            !this.rotateLeftWasPressed
+        ) {
+            this.currentPiece.rotateLeft();
+        }
+
         this.keyWasPressed = keyIsDown(LEFT_ARROW) || keyIsDown(RIGHT_ARROW);
+        this.rotateLeftWasPressed = keyIsDown(90); //If Z was pressed
+        this.rotateRightWasPressed = keyIsDown(88); //If X was pressed
         this.lastFrame = Date.now();
     }
 
