@@ -24,9 +24,9 @@ class Game {
         ];
 
         this.currentPiece = new Piece(
-            this.piecesJSON[0]
+            this.piecesJSON[floor(random(this.piecesJSON.length))]
         );
-        this.pieceSpeed = msPerFrame * 150;
+        this.pieceSpeed = msPerFrame * 50;
         this.lastMoveDown = Date.now() - 750;
 
         this.das = 0;
