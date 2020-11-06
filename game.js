@@ -26,6 +26,9 @@ class Game {
         this.currentPiece = new Piece(
             this.piecesJSON[floor(random(this.piecesJSON.length))]
         );
+        this.nextPiece = new Piece(
+            this.piecesJSON[floor(random(this.piecesJSON.length))]
+        );
         this.pieceSpeed = msPerFrame * 50;
         this.lastMoveDown = Date.now() - 750;
 
@@ -46,7 +49,8 @@ class Game {
 
         //Spawn the next piece after entry delay
         if (this.currentPiece == null && Date.now() > this.spawnNextPiece) {
-            this.currentPiece = new Piece(
+            this.currentPiece = this.nextPiece;
+            this.nextPiece = new Piece(
                 this.piecesJSON[floor(random(this.piecesJSON.length))]
             );
             this.lastMoveDown = Date.now();
@@ -149,8 +153,25 @@ class Game {
         fill(0);
         rect(x, y, w, h);
 
-        if (this.currentPiece)
-            this.currentPiece.show(x, y, w / this.w, h / this.h, this.colors);
+        const cellW = w / this.w;
+        const cellH = h / this.h;
+        if (this.currentPiece) {
+            this.currentPiece.show(x, y, cellW, cellH, this.colors);
+        }
+        const nextPiecePos = createVector(x + w + cellW, y + cellH);
+        const nextPieceDim = createVector(cellW * 2.5, cellW * 2.5);
+        noFill();
+        stroke(0);
+        strokeWeight(3);
+        rect(nextPiecePos.x, nextPiecePos.y, nextPieceDim.x, nextPieceDim.y);
+        this.nextPiece.showAt(
+            nextPiecePos.x,
+            nextPiecePos.y,
+            nextPieceDim.x,
+            nextPieceDim.y,
+            this.colors
+        );
+        //this.nextPiece.showAt(x + w + 10, y + 10, 100, 100, this.colors);
         this.grid.show(x, y, w, h, this.colors);
     }
 }
