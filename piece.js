@@ -76,6 +76,24 @@ class Piece {
         return this.pos.y + this.grid.length;
     }
 
+    showAt(x, y, w, h, colors) {
+        const dim = 3;//max(this.grid.length, this.grid[0].length);
+        const cellW = w / dim;
+        const cellH = h / dim;
+        const topLeft = x - this.pos.x*cellW;//The subtraction is to offset from when the show function adds
+        const topRight = y - this.pos.y*cellH;
+        const centerX = topLeft + cellW*(3-this.grid[0].length)/2;
+        const centerY = topRight + cellH*(3-this.grid.length)/2;
+        //Centers the piece in the middle of the next box
+        this.show(
+            centerX,
+            centerY,
+            w / dim,
+            h / dim,
+            colors
+        );
+    }
+
     show(originX, originY, cellW, cellH, colors) {
         originX += this.pos.x * cellW;
         originY += this.pos.y * cellH;
