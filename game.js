@@ -30,6 +30,7 @@ class Game {
             this.piecesJSON[floor(random(this.piecesJSON.length))]
         );
         this.pieceSpeed = msPerFrame * 50;
+        this.minDownPieceSpeed = msPerFrame * 8;
         this.lastMoveDown = Date.now() - 750;
 
         this.das = 0;
@@ -58,7 +59,9 @@ class Game {
 
         //Move the current piece down
         let pieceSpeed = this.pieceSpeed;
-        if (keyIsDown(DOWN_ARROW)) pieceSpeed *= 0.5;
+        if (keyIsDown(DOWN_ARROW)) {
+            pieceSpeed = min(pieceSpeed * 0.5, this.minDownPieceSpeed);
+        }
         if (
             this.currentPiece !== null &&
             Date.now() >= this.lastMoveDown + pieceSpeed
