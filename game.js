@@ -1,5 +1,5 @@
 class Game {
-    constructor(piecesJSON) {
+    constructor(piecesJSON, level) {
         this.w = 10;
         this.h = 20;
         this.grid = new Grid(this.w, this.h);
@@ -29,7 +29,36 @@ class Game {
         this.nextPiece = new Piece(
             this.piecesJSON[floor(random(this.piecesJSON.length))]
         );
-        this.pieceSpeed = msPerFrame * 50;
+
+        const speedMultiples = {
+            0: 48,
+            1: 43, //From https://tetris.wiki/Tetris_(NES,_Nintendo)
+            2: 38,
+            3: 33,
+            4: 28,
+            5: 23,
+            6: 18,
+            7: 13,
+            8: 8,
+            9: 6,
+            10: 5, //Level 10-12
+            13: 4, //13 - 15
+            16: 3, //16 - 18
+            19: 2, //19 - 28
+            29: 1, //29+
+        };
+
+        this.pieceSpeed = msPerFrame;
+        //Multiplies the by the number of frames for each level
+        if (level > 29) level = 29;
+        if (level < 0) level = 0;
+        while (true) {
+            if (speedMultiples.hasOwnProperty(level)) {
+                this.pieceSpeed *= speedMultiples[level];
+                break;
+            } //Finds the correct range for the level speed
+            level--;
+        }
         this.minDownPieceSpeed = msPerFrame * 8;
         this.lastMoveDown = Date.now() - 750;
 
