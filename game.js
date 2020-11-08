@@ -75,15 +75,16 @@ class Game {
     }
 
     update() {
-        const deltaTime = Date.now() - this.lastFrame;
+        const now = Date.now();
+        const deltaTime = now - this.lastFrame;
 
         //Spawn the next piece after entry delay
-        if (this.currentPiece == null && Date.now() > this.spawnNextPiece) {
+        if (this.currentPiece == null && now > this.spawnNextPiece) {
             this.currentPiece = this.nextPiece;
             this.nextPiece = new Piece(
                 this.piecesJSON[floor(random(this.piecesJSON.length))]
             );
-            this.lastMoveDown = Date.now();
+            this.lastMoveDown = now;
         }
 
         //Move the current piece down
@@ -101,10 +102,10 @@ class Game {
                 this.currentPiece.move(0, -1); //Move the piece up, place on board
                 this.grid.addPiece(this.currentPiece);
                 const row = this.currentPiece.getBottomRow();
-                this.spawnNextPiece = Date.now() + this.calcEntryDelay(row);
+                this.spawnNextPiece = now + this.calcEntryDelay(row);
                 this.currentPiece = null; //There is an entry delay for the next piece
             }
-            this.lastMoveDown = Date.now();
+            this.lastMoveDown = now;
         }
 
         //Move left and right
@@ -191,7 +192,7 @@ class Game {
             this.currentPiece.show(x, y, cellW, cellH, this.colors);
         }
         const nextPiecePos = createVector(x + w + cellW, y + cellH);
-        const nextPieceDim = createVector(cellW * 2.5, cellW * 2.5);
+        const nextPieceDim = createVector(cellW * 3, cellW * 3);
         noFill();
         stroke(0);
         strokeWeight(3);
