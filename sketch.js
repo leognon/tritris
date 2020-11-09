@@ -18,6 +18,9 @@ function setup() {
     dom.titleDiv = select('#title');
     dom.titleDiv.style('visibility: visible');
 
+    dom.rulesDiv = select('#rules');
+    dom.rulesDiv.style('visibility: visible');
+
     dom.settingsDiv = select('#settings');
     dom.settingsDiv.style('visibility: visible');
     dom.triangles = select('#triangles');
@@ -70,6 +73,9 @@ function resizeDOM() {
 
     dom.titleDiv.position(10, gameY);
     dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);
+
+    dom.rulesDiv.position(nextBoxPosX, nextBoxPosY + 7*cellH);
+    dom.rulesDiv.style(`width: ${width - gameX - gameWidth - cellW - 40}px;`);
 }
 
 function windowResized() {
