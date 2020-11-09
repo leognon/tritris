@@ -34,7 +34,6 @@ function setup() {
 }
 
 function draw() {
-    background(100);
     game.update();
     const gameWidth = min(width / 2, height / 2) - 2 * padding;
     const gameHeight = gameWidth * 2;

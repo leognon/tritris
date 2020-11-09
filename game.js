@@ -60,7 +60,7 @@ class Game {
             level--;
         }
         this.minDownPieceSpeed = msPerFrame * 8;
-        this.lastMoveDown = Date.now() - 750;
+        this.lastMoveDown = Date.now() + 750;
 
         this.das = 0;
         this.dasMax = msPerFrame * 16; //It takes 16 frames on an NES to fully charge DAS
@@ -72,6 +72,8 @@ class Game {
 
         this.entryDelay = msPerFrame * 14; //There is a 10 frame entry delay (the time btwn the last piece locking in, and the next spawning)
         this.spawnNextPiece = 0;
+
+        this.redraw = true;
     }
 
     update() {
@@ -85,6 +87,7 @@ class Game {
                 this.piecesJSON[floor(random(this.piecesJSON.length))]
             );
             this.lastMoveDown = now;
+            this.redraw = true;
         }
 
         //Move the current piece down
@@ -106,6 +109,7 @@ class Game {
                 this.currentPiece = null; //There is an entry delay for the next piece
             }
             this.lastMoveDown = now;
+            this.redraw = true;
         }
 
         //Move left and right
@@ -136,6 +140,7 @@ class Game {
                 this.das = this.dasMax;
                 this.currentPiece.move(-dir, 0);
             }
+            this.redraw = true;
         }
 
         //Rotation
@@ -149,6 +154,7 @@ class Game {
             if (!valid) {
                 this.currentPiece.rotateRight();
             }
+            this.redraw = true;
         }
         if (
             this.currentPiece !== null &&
@@ -160,6 +166,7 @@ class Game {
             if (!valid) {
                 this.currentPiece.rotateLeft();
             }
+            this.redraw = true;
         }
 
         this.keyWasPressed = keyIsDown(LEFT_ARROW) || keyIsDown(RIGHT_ARROW);
@@ -182,6 +189,9 @@ class Game {
     }
 
     show(x, y, w, h) {
+        if (!this.redraw) return;
+        background(100);
+
         noStroke();
         fill(0);
         rect(x, y, w, h);
@@ -206,5 +216,7 @@ class Game {
         );
         //this.nextPiece.showAt(x + w + 10, y + 10, 100, 100, this.colors);
         this.grid.show(x, y, w, h, this.colors);
+
+        this.redraw = false;
     }
 }
