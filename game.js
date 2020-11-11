@@ -3,6 +3,7 @@ class Game {
         this.w = 10;
         this.h = 20;
         this.grid = new Grid(this.w, this.h);
+
         this.colors = [
             color(255, 0, 0),
             color(0, 255, 0),
