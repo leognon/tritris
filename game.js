@@ -10,6 +10,7 @@ class Game {
             color(255, 0, 255),
             color(0, 255, 255),
             color(250, 100, 25),
+            color(255),
         ];
         this.piecesJSON = piecesJSON.pieces;
 
