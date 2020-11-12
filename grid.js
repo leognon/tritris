@@ -11,6 +11,39 @@ class Grid {
         }
     }
 
+    clearLines() {
+        let linesCleared = [];
+        for (let row = 0; row < this.h; row++) {
+            let full = true;
+            for (let col = 0; col < this.w; col++) {
+                if (!this.grid[row][col].isFull()) {
+                    full = false;
+                    break;
+                }
+            }
+            if (full) {
+                linesCleared.push(row);
+            }
+        }
+        return linesCleared;
+    }
+
+    removeRightTri(row, col) {
+        if (col < 0 || col >= this.w) return;
+        this.grid[row][col].removeRightTri();
+    }
+
+    removeLeftTri(row, col) {
+        if (col < 0 || col >= this.w) return;
+        this.grid[row][col].removeLeftTri();
+    }
+
+    removeLine(row) {
+        this.grid.splice(row, 1); //Remove the row
+        this.grid.unshift([]); //Add a new row at the top
+        for (let col = 0; col < this.w; col++) this.grid[0].push(new GridCell());
+    }
+
     addPiece(piece) {
         for (let row = 0; row < piece.grid.length; row++) {
             for (let col = 0; col < piece.grid[0].length; col++) {
@@ -85,6 +118,21 @@ class GridCell {
                 }
             }
         }
+    }
+
+    removeRightTri() {
+        this.tris[0][1] = null;
+        this.tris[1][1] = null;
+    }
+
+    removeLeftTri() {
+        this.tris[0][0] = null;
+        this.tris[1][0] = null;
+    }
+
+    isFull() {
+        return (this.tris[0][0] !== null && this.tris[1][1] !== null) ||
+            (this.tris[1][0] !== null && this.tris[0][1] !== null);
     }
 
     rotatedLeft() {

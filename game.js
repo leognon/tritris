@@ -68,10 +68,15 @@ class Game {
         this.dasMax = msPerFrame * 16; //It takes 16 frames on an NES to fully charge DAS
         this.dasCharged = msPerFrame * 10; //When charged, DAS reset to 10 frames
 
-        this.lastFrame = Date.now();
+        this.lastFrame = Date.now(); //Used to calculate deltaTime and for DAS
 
         this.entryDelay = msPerFrame * 14; //There is a 10 frame entry delay (the time btwn the last piece locking in, and the next spawning)
         this.spawnNextPiece = 0;
+
+        this.animationTime = 0;
+        this.animatingLines = [];
+        this.maxAnimationTime = 20 * msPerFrame;
+        this.lastColCleared = 0;
 
         this.redraw = true;
 
@@ -85,8 +90,44 @@ class Game {
         const now = Date.now();
         const deltaTime = now - this.lastFrame;
 
+        //Play a line clear animation
+        if (now <= this.animationTime) {
+            const percentDone =
+                (this.animationTime - now) / this.maxAnimationTime;
+            const clearingCol = Math.floor(percentDone * 10);
+            for (const row of this.animatingLines) {
+                //Clear as many cols as necessary
+                for (let col = this.lastColCleared; col >= clearingCol; col--) {
+                    //Clear from middle to left (triangle by traingle)
+                    const colPos = Math.floor(col / 2);
+                    if (col % 2 == 1) this.grid.removeRightTri(row, colPos);
+                    else this.grid.removeLeftTri(row, colPos);
+
+                    //Clear from middle to right
+                    const otherColPos = this.w - 1 - colPos;
+                    if (col % 2 == 0)
+                        this.grid.removeRightTri(row, otherColPos);
+                    else this.grid.removeLeftTri(row, otherColPos);
+                }
+            }
+            this.lastColCleared = clearingCol; //To ensure lag doesn't cause any to get skipped
+            this.redraw = true;
+        } else if (this.animatingLines.length > 0) {
+            //Readjust the entry delay to accomodate for the animation time
+            this.spawnNextPiece += this.maxAnimationTime;
+            for (const row of this.animatingLines) {
+                this.grid.removeLine(row);
+            }
+            this.animatingLines = [];
+
+            this.redraw = true;
+        }
         //Spawn the next piece after entry delay
-        if (this.currentPiece == null && now > this.spawnNextPiece) {
+        if (
+            this.currentPiece == null &&
+            now > this.spawnNextPiece &&
+            now > this.animationTime
+        ) {
             this.currentPiece = this.nextPiece;
             this.nextPiece = new Piece(
                 this.piecesJSON[floor(random(this.piecesJSON.length))]
@@ -132,13 +173,14 @@ class Game {
             const moveDown = Date.now() >= this.lastMoveDown + pieceSpeed;
             if (horzDirection != 0 || rotation != 0 || moveDown) {
                 this.redraw = true; //A piece has moved, so the game must be redrawn
-                const placePiece = this.movePiece(horzDirection, rotation, moveDown);
+                const placePiece = this.movePiece(
+                    horzDirection,
+                    rotation,
+                    moveDown
+                );
                 if (placePiece) {
                     //Place the piece
-                    this.grid.addPiece(this.currentPiece);
-                    const row = this.currentPiece.getBottomRow();
-                    this.spawnNextPiece = now + this.calcEntryDelay(row);
-                    this.currentPiece = null; //There is an entry delay for the next piece
+                    this.placePiece();
                 } else {
                     //If the piece was able to just move down, reset the timer
                     if (moveDown) this.lastMoveDown = Date.now();
@@ -151,6 +193,27 @@ class Game {
         this.zWasPressed = keyIsDown(90); //If Z was pressed
         this.xWasPressed = keyIsDown(88); //If X was pressed
         this.lastFrame = Date.now();
+    }
+
+    placePiece() {
+        this.grid.addPiece(this.currentPiece);
+        const row = this.currentPiece.getBottomRow();
+        this.clearLines(); //Clear any complete lines
+
+        const entryDelay = this.calcEntryDelay(row);
+        this.spawnNextPiece = Date.now() + entryDelay;
+
+        this.currentPiece = null; //There is an entry delay for the next piece
+    }
+
+    clearLines() {
+        let linesCleared = this.grid.clearLines();
+        if (linesCleared.length > 0) {
+            //Set the time for when to stop animating
+            this.animationTime = Date.now() + this.maxAnimationTime;
+            this.lastColCleared = 0; //Used to ensure all triangles are removed. Starts at 0 to only remove 1 on the first frame
+            this.animatingLines = linesCleared; //Which lines are being animated (and cleared)
+        }
     }
 
     movePiece(horzDirection, rotation, moveDown) {
