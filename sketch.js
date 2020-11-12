@@ -1,23 +1,23 @@
 const padding = 25;
 let game;
 let piecesJSON;
+let fffForwardFont;
 
 let dom = {};
 
 
 function preload() {
     piecesJSON = loadJSON('pieces.json');
+    fffForwardFont = loadFont('fff-forward.ttf');
 }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    textFont(fffForwardFont);
     newGame(0);
 
     dom.titleDiv = select('#title');
     dom.titleDiv.style('visibility: visible');
-
-    dom.rulesDiv = select('#rules');
-    dom.rulesDiv.style('visibility: visible');
 
     dom.settingsDiv = select('#settings');
     dom.settingsDiv.style('visibility: visible');
@@ -42,6 +42,11 @@ function draw() {
 
 function newGame(level) {
     level = parseInt(level);
+    if (isNaN(level)) {
+        console.error(level + ' is not a proper level');
+        alert('Please select a proper level number');
+        return;
+    }
     if (level < 0) {
         console.error('Negative level selected');
         alert('Please select a positive level');
@@ -56,16 +61,11 @@ function resizeDOM() {
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
     const cellW = gameWidth / game.w;
-    const cellH = gameHeight / game.h;
-    const nextBoxPosX = gameX + gameWidth + cellW;
-    const nextBoxPosY = gameY + cellH;
-    dom.settingsDiv.position(nextBoxPosX, nextBoxPosY + 4*cellH);
 
     dom.titleDiv.position(10, gameY);
     dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);
 
-    dom.rulesDiv.position(nextBoxPosX, nextBoxPosY + 7*cellH);
-    dom.rulesDiv.style(`width: ${width - gameX - gameWidth - cellW - 40}px;`);
+    dom.settingsDiv.position(10, gameY + dom.titleDiv.elt.offsetHeight + 20);
 }
 
 function windowResized() {

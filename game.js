@@ -122,7 +122,9 @@ class Game {
         } else if (this.animatingLines.length > 0) {
             //Readjust the entry delay to accomodate for the animation time
             this.spawnNextPiece += this.maxAnimationTime;
-            this.score += this.scoreWeights[this.animatingLines.length] * (this.level + 1);
+            this.score +=
+                this.scoreWeights[this.animatingLines.length] *
+                (this.level + 1);
             this.lines += this.animatingLines.length;
 
             for (const row of this.animatingLines) {
@@ -194,7 +196,8 @@ class Game {
                 if (placePiece) {
                     if (keyIsDown(DOWN_ARROW)) {
                         //If it was pushed down, give 1 point per grid cell
-                        this.score += this.currentPiece.pos.y - this.downPressedAt;
+                        this.score +=
+                            this.currentPiece.pos.y - this.downPressedAt;
                         this.downPressedAt = 0;
                     }
                     //Place the piece
@@ -293,17 +296,48 @@ class Game {
         fill(0);
         rect(x, y, w, h);
 
-        textSize(20);
-        noStroke();
-        fill(0);
-        text(`Score: ${this.score}\tLines: ${this.lines}`, x, y - 15);
-        
         const cellW = w / this.w;
         const cellH = h / this.h;
         if (this.currentPiece) {
             this.currentPiece.show(x, y, cellW, cellH, this.colors);
         }
-        const nextPiecePos = createVector(x + w + cellW, y + cellH);
+        //const scoreDim =
+        const txtSize = 20;
+        const padding = 10;
+        const scorePos = createVector(x + w + cellW, y + cellH);
+        const scoreTxt = `Score ${this.score}`;
+        const linesTxt = `Lines  ${this.lines}`;
+        const levelTxt = `Level  ${this.level}`;
+        const textW = max(textWidth(scoreTxt), textWidth(linesTxt), textWidth(levelTxt), 4 * cellW);
+        const scoreDim = createVector(
+            textW + padding + 10,
+            txtSize * 4.5 + padding * 2
+        );
+        noFill();
+        stroke(0);
+        strokeWeight(3);
+        //The box outline
+        rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
+        textSize(txtSize);
+        noStroke();
+        fill(0);
+        textAlign(LEFT, TOP);
+        text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
+        text(
+            linesTxt,
+            scorePos.x + padding,
+            scorePos.y + padding + 1.75 * txtSize
+        );
+        text(
+            levelTxt,
+            scorePos.x + padding,
+            scorePos.y + padding + 3.5 * txtSize
+        );
+
+        const nextPiecePos = createVector(
+            scorePos.x,
+            scorePos.y + scoreDim.y + cellH
+        );
         const nextPieceDim = createVector(cellW * 3, cellW * 3);
         noFill();
         stroke(0);
@@ -316,7 +350,7 @@ class Game {
             nextPieceDim.y,
             this.colors
         );
-        //this.nextPiece.showAt(x + w + 10, y + 10, 100, 100, this.colors);
+
         this.grid.show(x, y, w, h, this.colors);
 
         this.redraw = false;
