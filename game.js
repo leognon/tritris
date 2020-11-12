@@ -4,6 +4,11 @@ class Game {
         this.h = 20;
         this.grid = new Grid(this.w, this.h);
 
+        this.level = level;
+        this.lines = 0;
+        this.score = 0;
+        this.scoreWeights = { 1: 40, 2: 100 };
+
         this.colors = [
             color(255, 0, 0),
             color(0, 255, 0),
@@ -80,6 +85,8 @@ class Game {
 
         this.redraw = true;
 
+        this.downPressedAt = 0; //Used to calculate how many cells a piece traveled when down was pressed
+        this.downWasPressed = false;
         this.leftWasPressed = false;
         this.rightWasPressed = false;
         this.zWasPressed = false;
@@ -115,6 +122,9 @@ class Game {
         } else if (this.animatingLines.length > 0) {
             //Readjust the entry delay to accomodate for the animation time
             this.spawnNextPiece += this.maxAnimationTime;
+            this.score += this.scoreWeights[this.animatingLines.length] * (this.level + 1);
+            this.lines += this.animatingLines.length;
+
             for (const row of this.animatingLines) {
                 this.grid.removeLine(row);
             }
@@ -170,6 +180,9 @@ class Game {
                 //Pressing down moves twice as fast, or as fast as the min
                 pieceSpeed = min(pieceSpeed * 0.5, this.minDownPieceSpeed);
             }
+            if (keyIsDown(DOWN_ARROW) && !this.downWasPressed) {
+                this.downPressedAt = this.currentPiece.pos.y; //Save when the piece was first pressed down
+            }
             const moveDown = Date.now() >= this.lastMoveDown + pieceSpeed;
             if (horzDirection != 0 || rotation != 0 || moveDown) {
                 this.redraw = true; //A piece has moved, so the game must be redrawn
@@ -179,6 +192,11 @@ class Game {
                     moveDown
                 );
                 if (placePiece) {
+                    if (keyIsDown(DOWN_ARROW)) {
+                        //If it was pushed down, give 1 point per grid cell
+                        this.score += this.currentPiece.pos.y - this.downPressedAt;
+                        this.downPressedAt = 0;
+                    }
                     //Place the piece
                     this.placePiece();
                 } else {
@@ -188,6 +206,7 @@ class Game {
             }
         }
 
+        this.downWasPressed = keyIsDown(DOWN_ARROW);
         this.leftWasPressed = keyIsDown(LEFT_ARROW);
         this.rightWasPressed = keyIsDown(RIGHT_ARROW);
         this.zWasPressed = keyIsDown(90); //If Z was pressed
@@ -274,6 +293,11 @@ class Game {
         fill(0);
         rect(x, y, w, h);
 
+        textSize(20);
+        noStroke();
+        fill(0);
+        text(`Score: ${this.score}\tLines: ${this.lines}`, x, y - 15);
+        
         const cellW = w / this.w;
         const cellH = h / this.h;
         if (this.currentPiece) {
