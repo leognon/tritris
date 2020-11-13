@@ -4,6 +4,7 @@ class Game {
         this.h = 20;
         this.grid = new Grid(this.w, this.h);
 
+        this.startLevel = level;
         this.level = level;
         this.lines = 0;
         this.score = 0;
@@ -36,7 +37,7 @@ class Game {
         this.spawnPiece(); //This will correctly set the currentPiece and correctly pick a new next piece
         this.nextSingles = 0;
 
-        const speedMultiples = {
+        this.levelSpeeds = {
             0: 48,
             1: 43, //From https://tetris.wiki/Tetris_(NES,_Nintendo)
             2: 38,
@@ -53,18 +54,12 @@ class Game {
             19: 2, //19 - 28
             29: 1, //29+
         };
-
-        this.pieceSpeed = msPerFrame;
-        //Multiplies the by the number of frames for each level
-        if (level > 29) level = 29;
-        if (level < 0) level = 0;
-        while (true) {
-            if (speedMultiples.hasOwnProperty(level)) {
-                this.pieceSpeed *= speedMultiples[level];
-                break;
-            } //Finds the correct range for the level speed
-            level--;
+        for (let lvl of Object.keys(this.levelSpeeds)) {
+            this.levelSpeeds[lvl] *= msPerFrame; //Make sure the are in the correct units
         }
+        this.pieceSpeed = 0;
+        this.setSpeed(); //This will correctly set pieceSpeed depending on which level it's starting on
+
         this.minDownPieceSpeed = msPerFrame * 8;
         this.lastMoveDown = Date.now() + 750;
 
@@ -125,6 +120,11 @@ class Game {
                 this.scoreWeights[this.animatingLines.length] *
                 (this.level + 1);
             this.lines += this.animatingLines.length;
+            //This formula is from https://tetris.wiki/Tetris_(NES,_Nintendo)
+            if (this.lines >= (this.startLevel+1)*10 || this.lines >= max(100, this.startLevel*10 - 50)) {
+                this.level++;
+                this.setSpeed();
+            }
 
             for (const row of this.animatingLines) {
                 this.grid.removeLine(row);
@@ -248,6 +248,24 @@ class Game {
             this.animationTime = Date.now() + this.maxAnimationTime;
             this.lastColCleared = 0; //Used to ensure all triangles are removed. Starts at 0 to only remove 1 on the first frame
             this.animatingLines = linesCleared; //Which lines are being animated (and cleared)
+        }
+    }
+
+    setSpeed() {
+        let lvl = this.level;
+        if (this.level > 29) lvl = 29;
+        if (this.level < 0) lvl = 0;
+        while (true) {
+            if (this.levelSpeeds.hasOwnProperty(lvl)) {
+                this.pieceSpeed = this.levelSpeeds[lvl];
+                break;
+            } //Finds the correct range for the level speed
+            lvl--;
+            if (lvl < 0) {
+                //Uh oh, something went wrong
+                console.error('Level Speed could not be found!');
+                break;
+            }
         }
     }
 
