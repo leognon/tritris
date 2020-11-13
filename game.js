@@ -30,12 +30,12 @@ class Game {
             18 * msPerFrame,
         ];
 
-        this.currentPiece = new Piece(
-            this.piecesJSON[floor(random(this.piecesJSON.length))]
+        this.currentPiece = null; //The current piece starts as null
+        this.nextPiece = new Piece( //The next piece starts as a random piece that isn't a single triangles
+            this.piecesJSON[1+floor(random(this.piecesJSON.length-1))]
         );
-        this.nextPiece = new Piece(
-            this.piecesJSON[floor(random(this.piecesJSON.length))]
-        );
+        this.spawnPiece(); //This will correctly set the currentPiece and correctly pick a new next piece
+        this.nextSingles = 0;
 
         const speedMultiples = {
             0: 48,
@@ -140,10 +140,7 @@ class Game {
             now > this.spawnNextPiece &&
             now > this.animationTime
         ) {
-            this.currentPiece = this.nextPiece;
-            this.nextPiece = new Piece(
-                this.piecesJSON[floor(random(this.piecesJSON.length))]
-            );
+            this.spawnPiece();
             this.lastMoveDown = now;
             this.redraw = true;
         }
@@ -226,6 +223,18 @@ class Game {
         this.spawnNextPiece = Date.now() + entryDelay;
 
         this.currentPiece = null; //There is an entry delay for the next piece
+    }
+
+    spawnPiece() {
+        this.currentPiece = this.nextPiece;
+        let nextPieceIndex = floor(random(this.piecesJSON.length));
+        if (this.nextSingles > 0) {
+            nextPieceIndex = 0; //This will make it spawn 3 single triangles in a row
+            this.nextSingles--;
+        } else if (nextPieceIndex == 0) { //If it randomly chose to spawn 1 triangle, spawn 2 more
+            this.nextSingles = 2;
+        }
+        this.nextPiece = new Piece(this.piecesJSON[nextPieceIndex]);
     }
 
     clearLines() {
