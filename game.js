@@ -7,7 +7,7 @@ class Game {
         this.level = level;
         this.lines = 0;
         this.score = 0;
-        this.scoreWeights = { 1: 40, 2: 100 };
+        this.scoreWeights = { 1: 100, 2: 400, 3: 1200 };
 
         this.colors = [
             color(255, 0, 0),
@@ -31,9 +31,8 @@ class Game {
         ];
 
         this.currentPiece = null; //The current piece starts as null
-        this.nextPiece = new Piece( //The next piece starts as a random piece that isn't a single triangles
-            this.piecesJSON[1+floor(random(this.piecesJSON.length-1))]
-        );
+        this.nextPieceIndex = 1 + floor(random(this.piecesJSON.length - 1));
+        this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]); //The next piece starts as a random piece that isn't a single triangles
         this.spawnPiece(); //This will correctly set the currentPiece and correctly pick a new next piece
         this.nextSingles = 0;
 
@@ -217,7 +216,11 @@ class Game {
     placePiece() {
         this.grid.addPiece(this.currentPiece);
         const row = this.currentPiece.getBottomRow();
-        this.clearLines(); //Clear any complete lines
+
+        //Only clear lines if the next piece is not a triangle, or the next piece is a triangle, but it is a new triplet
+        if (this.nextPieceIndex != 0 || this.nextSingles == 2) {
+            this.clearLines(); //Clear any complete lines
+        }
 
         const entryDelay = this.calcEntryDelay(row);
         this.spawnNextPiece = Date.now() + entryDelay;
@@ -227,14 +230,15 @@ class Game {
 
     spawnPiece() {
         this.currentPiece = this.nextPiece;
-        let nextPieceIndex = floor(random(this.piecesJSON.length));
+        this.nextPieceIndex = floor(random(this.piecesJSON.length));
         if (this.nextSingles > 0) {
-            nextPieceIndex = 0; //This will make it spawn 3 single triangles in a row
+            this.nextPieceIndex = 0; //This will make it spawn 3 single triangles in a row
             this.nextSingles--;
-        } else if (nextPieceIndex == 0) { //If it randomly chose to spawn 1 triangle, spawn 2 more
+        } else if (this.nextPieceIndex == 0) {
+            //If it randomly chose to spawn 1 triangle, spawn 2 more
             this.nextSingles = 2;
         }
-        this.nextPiece = new Piece(this.piecesJSON[nextPieceIndex]);
+        this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]);
     }
 
     clearLines() {
@@ -317,7 +321,12 @@ class Game {
         const scoreTxt = `Score ${this.score}`;
         const linesTxt = `Lines  ${this.lines}`;
         const levelTxt = `Level  ${this.level}`;
-        const textW = max(textWidth(scoreTxt), textWidth(linesTxt), textWidth(levelTxt), 4 * cellW);
+        const textW = max(
+            textWidth(scoreTxt),
+            textWidth(linesTxt),
+            textWidth(levelTxt),
+            4 * cellW
+        );
         const scoreDim = createVector(
             textW + padding + 10,
             txtSize * 4.5 + padding * 2
