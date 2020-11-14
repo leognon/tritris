@@ -34,8 +34,8 @@ class Game {
         this.currentPiece = null; //The current piece starts as null
         this.nextPieceIndex = 1 + floor(random(this.piecesJSON.length - 1));
         this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]); //The next piece starts as a random piece that isn't a single triangles
-        this.spawnPiece(); //This will correctly set the currentPiece and correctly pick a new next piece
         this.nextSingles = 0;
+        this.spawnPiece(); //This will correctly set the currentPiece and correctly pick a new next piece
 
         this.levelSpeeds = {
             0: 48,
