@@ -9,7 +9,7 @@ class Piece {
                 this.grid[row].push(new GridCell(pieces[row][col], clr));
             }
         }
-        this.pos = createVector(Math.ceil((10 - this.grid[0].length) / 2), 0);
+        this.pos = createVector(Math.ceil((8 - this.grid[0].length) / 2), 0);
         this.centerOffset = createVector(
             floor(this.grid[0].length / 2),
             ceil(this.grid.length / 2)
