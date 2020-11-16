@@ -33,8 +33,12 @@ function setup() {
 
 function draw() {
     game.update();
-    const gameWidth = min(width / 2, height / 2) - 2 * padding;
-    const gameHeight = gameWidth * 2;
+    let gameWidth = min(width / 2, height / 2) - 2 * padding;
+    let gameHeight = gameWidth * (game.h / game.w);
+    if (gameHeight > height) {
+        gameHeight = height - 2*padding;
+        gameWidth = gameHeight * (game.w / game.h);
+    }
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
     game.show(gameX, gameY, gameWidth, gameHeight);

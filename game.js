@@ -1,7 +1,7 @@
 class Game {
     constructor(piecesJSON, level) {
-        this.w = 10;
-        this.h = 20;
+        this.w = 8;
+        this.h = 16;
         this.grid = new Grid(this.w, this.h);
 
         this.startLevel = level;
