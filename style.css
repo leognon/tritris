@@ -14,7 +14,8 @@ canvas {
     display: block;
 }
 
-h1, h4 {
+h1,
+h4 {
     font-family: fff-forward;
 }
 
@@ -23,6 +24,21 @@ h1, h4 {
     padding: 5px;
     line-height: 30px;
     border: 3px solid black;
+}
+
+#settings {
+    position: absolute;
+    text-align: center;
+    width: 200px;
+    height: 200px;
+    background-color: rgb(150, 150, 150);
+    font-family: fff-forward;
+}
+
+input, button {
+    padding: 3px;
+    margin: 3px;
+    font-size: 15pt;
 }
 
 #level {
