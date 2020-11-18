@@ -11,6 +11,9 @@ let piecesJSON;
 let game;
 let gameState = gameStates.MENU;
 
+let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
+let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
+
 function preload() {
     piecesJSON = loadJSON('pieces.json');
     fffForwardFont = loadFont('fff-forward.ttf');
@@ -22,6 +25,12 @@ function setup() {
     createGame(0);
     game.currentPiece.grid = [[]];
     game.nextPiece.grid = [[]]; //Makes no piece display when page first loaded
+
+    dom.recordsDiv = select('#records');
+    dom.recordsDiv.style('visibility: visible');
+    dom.pointsHigh = select('#pointsHigh');
+    dom.linesHigh = select('#linesHigh');
+    setHighScores(0, 0); //Sets some default scores
 
     dom.titleDiv = select('#title');
     dom.titleDiv.style('visibility: visible');
@@ -45,10 +54,24 @@ function draw() {
         game.update();
         showGame();
         if (!game.alive) {
+            setHighScores(game.score, game.lines);
             gameState = gameStates.INGAME;
             dom.settingsDiv.show();
         }
     }
+}
+
+function setHighScores(score, lines) {
+    if (score > pointsHigh) {
+        pointsHigh = score;
+        localStorage.setItem('TritrisPointsHigh', pointsHigh);
+    }
+    if (lines > linesHigh) {
+        linesHigh = lines;
+        localStorage.setItem('TritrisLinesHigh', linesHigh);
+    }
+    dom.pointsHigh.elt.innerText = 'Points: ' + pointsHigh;
+    dom.linesHigh.elt.innerText = 'Lines: ' + linesHigh;
 }
 
 function showGame() {
@@ -93,6 +116,9 @@ function resizeDOM() {
 
     dom.titleDiv.position(10, gameY);
     dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);
+    const titleHeight = dom.titleDiv.elt.offsetHeight;
+
+    dom.recordsDiv.position(10, gameY + titleHeight + 10);
 
     const settingsW = dom.settingsDiv.elt.offsetWidth;
     const settingsH = dom.settingsDiv.elt.offsetHeight;
