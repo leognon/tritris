@@ -1,10 +1,15 @@
+const gameStates = {
+    MENU: 0,
+    INGAME: 1,
+};
 const padding = 25;
-let game;
-let piecesJSON;
-let fffForwardFont;
 
+let fffForwardFont;
 let dom = {};
 
+let piecesJSON;
+let game;
+let gameState = gameStates.MENU;
 
 function preload() {
     piecesJSON = loadJSON('pieces.json');
@@ -14,7 +19,9 @@ function preload() {
 function setup() {
     createCanvas(windowWidth, windowHeight);
     textFont(fffForwardFont);
-    newGame(0);
+    createGame(0);
+    game.currentPiece.grid = [[]];
+    game.nextPiece.grid = [[]]; //Makes no piece display when page first loaded
 
     dom.titleDiv = select('#title');
     dom.titleDiv.style('visibility: visible');
@@ -25,18 +32,30 @@ function setup() {
     dom.level = select('#level');
     dom.newGame = select('#newGame');
     dom.newGame.mousePressed(() => {
-        newGame(dom.level.value());
-    });
+        newGame();
+   });
 
     resizeDOM();
+    showGame();
 }
 
 function draw() {
-    game.update();
+    if (gameState == gameStates.MENU) {
+    } else {
+        game.update();
+        showGame();
+        if (!game.alive) {
+            gameState = gameStates.INGAME;
+            dom.settingsDiv.show();
+        }
+    }
+}
+
+function showGame() {
     let gameWidth = min(width / 2, height / 2) - 2 * padding;
     let gameHeight = gameWidth * (game.h / game.w);
     if (gameHeight > height) {
-        gameHeight = height - 2*padding;
+        gameHeight = height - 2 * padding;
         gameWidth = gameHeight * (game.w / game.h);
     }
     const gameX = width / 2 - gameWidth / 2;
@@ -44,7 +63,13 @@ function draw() {
     game.show(gameX, gameY, gameWidth, gameHeight);
 }
 
-function newGame(level) {
+function newGame() {
+    createGame(dom.level.value());
+    gameState = gameStates.INGAME;
+    dom.settingsDiv.hide();
+}
+
+function createGame(level) {
     level = parseInt(level);
     if (isNaN(level)) {
         console.error(level + ' is not a proper level');
@@ -69,11 +94,14 @@ function resizeDOM() {
     dom.titleDiv.position(10, gameY);
     dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);
 
-    dom.settingsDiv.position(10, gameY + dom.titleDiv.elt.offsetHeight + 20);
+    const settingsW = dom.settingsDiv.elt.offsetWidth;
+    const settingsH = dom.settingsDiv.elt.offsetHeight;
+    dom.settingsDiv.position((width - settingsW) / 2, (height - settingsH) / 2);
 }
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
     resizeDOM();
     game.redraw = true;
+    showGame();
 }

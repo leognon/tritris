@@ -4,6 +4,10 @@ class Game {
         this.h = 16;
         this.grid = new Grid(this.w, this.h);
 
+        this.alive = true;
+
+        if (level < 0) level = 0;
+        if (level > 29) level = 29;
         this.startLevel = level;
         this.level = level;
         this.lines = 0;
@@ -88,6 +92,8 @@ class Game {
     }
 
     update() {
+        if (!this.alive) return;
+
         const now = Date.now();
         const deltaTime = now - this.lastFrame;
 
@@ -152,6 +158,7 @@ class Game {
 
             this.redraw = true;
         }
+
         //Spawn the next piece after entry delay
         if (
             this.currentPiece == null &&
@@ -161,6 +168,9 @@ class Game {
             this.spawnPiece();
             this.lastMoveDown = now;
             this.redraw = true;
+            if (!this.isValid(this.currentPiece)) {
+                this.alive = false; //If the new piece is already blocked, game over
+            }
         }
         if (this.currentPiece !== null) {
             //If either left is pressed or right is pressed and down isn't
@@ -351,8 +361,10 @@ class Game {
         if (this.currentPiece) {
             this.currentPiece.show(x, y, cellW, cellH, this.colors);
         }
-        //const scoreDim =
+
         const txtSize = 20;
+        textSize(txtSize);
+        textAlign(LEFT, TOP);
         const padding = 10;
         const scorePos = createVector(x + w + cellW, y + cellH);
         const scoreTxt = `Score ${this.score}`;
@@ -373,10 +385,8 @@ class Game {
         strokeWeight(3);
         //The box outline
         rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
-        textSize(txtSize);
         noStroke();
         fill(0);
-        textAlign(LEFT, TOP);
         text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
         text(
             linesTxt,
