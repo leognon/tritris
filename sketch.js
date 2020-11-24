@@ -15,8 +15,8 @@ let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
 let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
 
 function preload() {
-    piecesJSON = loadJSON('pieces.json');
-    fffForwardFont = loadFont('fff-forward.ttf');
+    piecesJSON = loadJSON('assets/pieces.json');
+    fffForwardFont = loadFont('assets/fff-forward.ttf');
 }
 
 function setup() {
@@ -49,15 +49,14 @@ function setup() {
 }
 
 function draw() {
-    if (gameState == gameStates.MENU) {
-    } else {
-        game.update();
-        showGame();
-        if (!game.alive) {
-            setHighScores(game.score, game.lines);
-            gameState = gameStates.INGAME;
-            dom.settingsDiv.show();
-        }
+    if (gameState == gameStates.MENU)
+        return;
+    game.update();
+    showGame();
+    if (!game.alive) {
+        setHighScores(game.score, game.lines);
+        gameState = gameStates.INGAME;
+        dom.settingsDiv.show();
     }
 }
 
