@@ -89,6 +89,10 @@ class Game {
         this.rightWasPressed = false;
         this.zWasPressed = false;
         this.xWasPressed = false;
+
+        this.playClearSound = false;
+        this.playFallSound = false;
+        this.playMoveSound = false;
     }
 
     update() {
@@ -268,6 +272,7 @@ class Game {
             this.nextSingles = 2;
         }
         this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]);
+        this.playFallSound = true;
     }
 
     clearLines() {
@@ -277,6 +282,7 @@ class Game {
             this.animationTime = Date.now() + this.maxAnimationTime;
             this.lastColCleared = 0; //Used to ensure all triangles are removed. Starts at 0 to only remove 1 on the first frame
             this.animatingLines = linesCleared; //Which lines are being animated (and cleared)
+            this.playClearSound = true;
         }
     }
 
@@ -309,6 +315,10 @@ class Game {
         let valid = this.isValid(this.currentPiece);
         if (valid) {
             //The piece (possibly) moved horizontally, rotated and moved down
+            if (horzDirection != 0) {
+                this.playMoveSound = true;
+            }
+            if (rotation != 0) this.playMoveSound = true;
             return false; //Don't place the piece
         }
         //If blocked, undo horz move and maybe wall-charge
@@ -317,6 +327,7 @@ class Game {
         if (valid) {
             //If the piece was block when moving horz, then wall charge
             this.das = this.dasMax;
+            if (rotation != 0) this.playMoveSound = true;
             return false;
         }
 
@@ -346,6 +357,21 @@ class Game {
     isValid(piece) {
         if (piece.outOfBounds(this.w, this.h)) return false;
         return this.grid.isValid(piece);
+    }
+
+    playSounds(clearSound, fallSound, moveSound) {
+        if (this.playClearSound) {
+            if (!clearSound.isPlaying()) clearSound.play();
+            this.playClearSound = false;
+        }
+        if (this.playFallSound) {
+            if (!fallSound.isPlaying()) fallSound.play();
+            this.playFallSound = false;
+        }
+        if (this.playMoveSound) {
+            if (!moveSound.isPlaying()) moveSound.play();
+            this.playMoveSound = false;
+        }
     }
 
     show(x, y, w, h) {
