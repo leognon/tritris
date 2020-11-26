@@ -5,6 +5,9 @@ const gameStates = {
 const padding = 25;
 
 let fffForwardFont;
+let moveSound;
+let fallSound;
+let clearSound;
 let dom = {};
 
 let piecesJSON;
@@ -17,6 +20,9 @@ let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
 function preload() {
     piecesJSON = loadJSON('assets/pieces.json');
     fffForwardFont = loadFont('assets/fff-forward.ttf');
+    moveSound = loadSound('assets/move.wav');
+    fallSound = loadSound('assets/fall.wav');
+    clearSound = loadSound('assets/clear.wav');
 }
 
 function setup() {
@@ -83,6 +89,7 @@ function showGame() {
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
     game.show(gameX, gameY, gameWidth, gameHeight);
+    game.playSounds(clearSound, fallSound, moveSound);
 }
 
 function newGame() {
