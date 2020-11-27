@@ -4,11 +4,12 @@ const gameStates = {
 };
 const padding = 25;
 
+let dom = {};
 let fffForwardFont;
 let moveSound;
 let fallSound;
 let clearSound;
-let dom = {};
+let playSound = true;
 
 let piecesJSON;
 let game;
@@ -50,6 +51,16 @@ function setup() {
         newGame();
    });
 
+    dom.sound = select('#sound');
+    dom.sound.changed(() => {
+        if (game) {
+            game.playClearSound = false;
+            game.playFallSound = false;
+            game.playMoveSound = false;
+        }
+        playSound = !playSound;
+    });
+
     resizeDOM();
     showGame();
 }
@@ -89,7 +100,8 @@ function showGame() {
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
     game.show(gameX, gameY, gameWidth, gameHeight);
-    game.playSounds(clearSound, fallSound, moveSound);
+    if (playSound)
+        game.playSounds(clearSound, fallSound, moveSound);
 }
 
 function newGame() {
