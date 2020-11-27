@@ -5,6 +5,7 @@ let pieces4json;
 
 let dom = {};
 
+
 function preload() {
     pieces3json = loadJSON('pieces3.json');
     pieces4json = loadJSON('pieces4.json');

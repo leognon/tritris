@@ -32,3 +32,14 @@ h1, h4 {
 #newGame {
     border: none;
 }
+
+.box {
+    visibility: hidden;
+    padding: 5px;
+    line-height: 30px;
+    border: 3px solid black;
+}
+
+#level {
+    width: 40px;
+}
