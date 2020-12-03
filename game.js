@@ -384,9 +384,12 @@ class Game {
 
         const cellW = w / this.w;
         const cellH = h / this.h;
+
         if (this.currentPiece) {
             this.currentPiece.show(x, y, cellW, cellH, this.colors);
         }
+
+        this.grid.show(x, y, w, h, this.colors);
 
         const txtSize = 20;
         textSize(txtSize);
@@ -441,8 +444,6 @@ class Game {
             nextPieceDim.y,
             this.colors
         );
-
-        this.grid.show(x, y, w, h, this.colors);
 
         this.redraw = false;
     }
