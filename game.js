@@ -130,6 +130,10 @@ class Game {
     }
 
     show(x, y, w, h) {
+        noStroke();
+        fill(0);
+        rect(x, y, w, h);
+
         if (this.currentPiece)
             this.currentPiece.show(x, y, w / this.w, h / this.h, this.colors);
         this.grid.show(x, y, w, h, this.colors);
