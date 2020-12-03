@@ -54,8 +54,8 @@ class Grid {
         }
 
         //Draws the grid outline
-        stroke(0);
-        strokeWeight(3);
+        stroke(100);
+        strokeWeight(2);
         //Vertical lines
         for (let i = 0; i <= this.w; i++)
             line(x + i * cellW, y, x + i * cellW, y + h);
@@ -135,7 +135,7 @@ class Triangle {
     }
 
     show(x, y, w, h, row, col, colors) {
-        stroke(0);
+        stroke(100);
         strokeWeight(2);
         fill(colors[this.clr]);
         if (row == 0 && col == 0) {
