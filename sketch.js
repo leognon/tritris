@@ -48,8 +48,19 @@ function setup() {
     dom.level = select('#level');
     dom.newGame = select('#newGame');
     dom.newGame.mousePressed(() => {
+        dom.tutorial.style('visibility: hidden');
         newGame();
    });
+    
+    dom.tutorial = select('#tutorial');
+    dom.openTutorial = select('#openTutorial');
+    dom.openTutorial.mousePressed(() => {
+        dom.tutorial.style('visibility: visible');
+    });
+    dom.openTutorial = select('#closeTutorial');
+    dom.openTutorial.mousePressed(() => {
+        dom.tutorial.style('visibility: hidden');
+    });
 
     dom.sound = select('#sound');
     dom.sound.changed(() => {
