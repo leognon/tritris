@@ -374,7 +374,7 @@ class Game {
         }
     }
 
-    show(x, y, w, h) {
+    show(x, y, w, h, paused) {
         if (!this.redraw) return;
         background(100);
 
@@ -385,11 +385,11 @@ class Game {
         const cellW = w / this.w;
         const cellH = h / this.h;
 
-        if (this.currentPiece) {
+        if (this.currentPiece && !paused) {
             this.currentPiece.show(x, y, cellW, cellH, this.colors);
         }
 
-        this.grid.show(x, y, w, h, this.colors);
+        this.grid.show(x, y, w, h, this.colors, paused);
 
         const txtSize = 20;
         textSize(txtSize);
@@ -437,13 +437,15 @@ class Game {
         stroke(0);
         strokeWeight(3);
         rect(nextPiecePos.x, nextPiecePos.y, nextPieceDim.x, nextPieceDim.y);
-        this.nextPiece.showAt(
-            nextPiecePos.x,
-            nextPiecePos.y,
-            nextPieceDim.x,
-            nextPieceDim.y,
-            this.colors
-        );
+        if (!paused) {
+            this.nextPiece.showAt(
+                nextPiecePos.x,
+                nextPiecePos.y,
+                nextPieceDim.x,
+                nextPieceDim.y,
+                this.colors
+            );
+        }
 
         this.redraw = false;
     }

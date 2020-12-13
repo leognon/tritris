@@ -69,20 +69,22 @@ class Grid {
         return true;
     }
 
-    show(x, y, w, h, colors) {
+    show(x, y, w, h, colors, paused) {
         const cellW = w / this.w;
         const cellH = h / this.h;
 
-        //Draws the triangles in the grid
-        for (let i = 0; i < this.h; i++) {
-            for (let j = 0; j < this.w; j++) {
-                this.grid[i][j].show(
-                    x + j * cellW,
-                    y + i * cellH,
-                    cellW,
-                    cellH,
-                    colors
-                );
+        if (!paused) {
+            //Draws the triangles in the grid
+            for (let i = 0; i < this.h; i++) {
+                for (let j = 0; j < this.w; j++) {
+                    this.grid[i][j].show(
+                        x + j * cellW,
+                        y + i * cellH,
+                        cellW,
+                        cellH,
+                        colors
+                    );
+                }
             }
         }
 
