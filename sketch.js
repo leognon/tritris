@@ -1,6 +1,7 @@
 const gameStates = {
     MENU: 0,
     INGAME: 1,
+    PAUSED: 2
 };
 const padding = 25;
 
@@ -30,8 +31,6 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     textFont(fffForwardFont);
     createGame(0);
-    game.currentPiece.grid = [[]];
-    game.nextPiece.grid = [[]]; //Makes no piece display when page first loaded
 
     dom.recordsDiv = select('#records');
     dom.recordsDiv.style('visibility: visible');
@@ -48,7 +47,6 @@ function setup() {
     dom.level = select('#level');
     dom.newGame = select('#newGame');
     dom.newGame.mousePressed(() => {
-        dom.tutorial.style('visibility: hidden');
         newGame();
    });
     
@@ -73,18 +71,28 @@ function setup() {
     });
 
     resizeDOM();
-    showGame();
+    showGame(true);
 }
 
 function draw() {
     if (gameState == gameStates.MENU)
         return;
-    game.update();
-    showGame();
-    if (!game.alive) {
-        setHighScores(game.score, game.lines);
-        gameState = gameStates.INGAME;
-        dom.settingsDiv.show();
+
+    if (gameState == gameStates.INGAME) {
+        game.update();
+        showGame(false); //Show the game, (and it's not paused)
+        if (!game.alive) {
+            setHighScores(game.score, game.lines);
+            gameState = gameStates.MENU;
+            dom.settingsDiv.show();
+        }
+    } else if (gameState == gameStates.PAUSED) {
+        showGame(true); //If paused, show empty grid
+        fill(255);
+        stroke(0);
+        textSize(30);
+        textAlign(CENTER, CENTER);
+        text('PAUSED', width/2, height/3);
     }
 }
 
@@ -101,7 +109,7 @@ function setHighScores(score, lines) {
     dom.linesHigh.elt.innerText = 'Lines: ' + linesHigh;
 }
 
-function showGame() {
+function showGame(paused) {
     let gameWidth = min(width / 2, height / 2) - 2 * padding;
     let gameHeight = gameWidth * (game.h / game.w);
     if (gameHeight > height) {
@@ -110,7 +118,7 @@ function showGame() {
     }
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
-    game.show(gameX, gameY, gameWidth, gameHeight);
+    game.show(gameX, gameY, gameWidth, gameHeight, paused);
     if (playSound)
         game.playSounds(clearSound, fallSound, moveSound);
 }
@@ -119,6 +127,22 @@ function newGame() {
     createGame(dom.level.value());
     gameState = gameStates.INGAME;
     dom.settingsDiv.hide();
+    dom.tutorial.style('visibility: hidden');
+}
+
+function keyPressed() {
+    if (keyCode == 13) {
+        //Enter key is pressed
+        if (gameState == gameStates.INGAME) {
+            gameState = gameStates.PAUSED;
+            game.redraw = true;
+        } else if (gameState == gameStates.PAUSED) {
+            gameState = gameStates.INGAME;
+            game.redraw = true;
+        } else if (gameState == gameStates.MENU) {
+            newGame();
+        }
+    }
 }
 
 function createGame(level) {
@@ -158,5 +182,5 @@ function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
     resizeDOM();
     game.redraw = true;
-    showGame();
+    showGame(gameState == gameStates.PAUSED);
 }
