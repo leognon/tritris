@@ -11,6 +11,7 @@ let fffForwardFont;
 let moveSound;
 let fallSound;
 let clearSound;
+let tritrisSound;
 let playSound = true;
 
 let piecesJSON;
@@ -26,6 +27,7 @@ function preload() {
     moveSound = loadSound('assets/move.wav');
     fallSound = loadSound('assets/fall.wav');
     clearSound = loadSound('assets/clear.wav');
+    tritrisSound = loadSound('assets/tritris.wav');
 }
 
 function setup() {
@@ -122,7 +124,7 @@ function showGame(paused) {
     const gameY = height / 2 - gameHeight / 2;
     game.show(gameX, gameY, gameWidth, gameHeight, paused);
     if (playSound)
-        game.playSounds(clearSound, fallSound, moveSound);
+        game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
 }
 
 function newGame() {
