@@ -1,7 +1,8 @@
 const gameStates = {
-    MENU: 0,
-    INGAME: 1,
-    PAUSED: 2
+    LOADING: 0,
+    MENU: 1,
+    INGAME: 2,
+    PAUSED: 3
 };
 const padding = 25;
 
@@ -14,7 +15,7 @@ let playSound = true;
 
 let piecesJSON;
 let game;
-let gameState = gameStates.MENU;
+let gameState = gameStates.LOADING;
 
 let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
 let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
@@ -28,6 +29,7 @@ function preload() {
 }
 
 function setup() {
+    gameState = gameStates.MENU;
     createCanvas(windowWidth, windowHeight);
     textFont(fffForwardFont);
     createGame(0);
@@ -124,6 +126,7 @@ function showGame(paused) {
 }
 
 function newGame() {
+    if (gameState == gameStates.LOADING) return;
     createGame(dom.level.value());
     gameState = gameStates.INGAME;
     dom.settingsDiv.hide();
