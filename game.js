@@ -80,6 +80,9 @@ class Game {
         this.animatingLines = [];
         this.maxAnimationTime = 20 * msPerFrame;
         this.lastColCleared = 0;
+        this.maxFlashTime = 20 * msPerFrame;
+        this.flashTime = 0;
+        this.flashAmount = 4;
 
         this.redraw = true;
 
@@ -93,6 +96,7 @@ class Game {
         this.playClearSound = false;
         this.playFallSound = false;
         this.playMoveSound = false;
+        this.playTritrisSound = false;
     }
 
     update() {
@@ -282,7 +286,13 @@ class Game {
             this.animationTime = Date.now() + this.maxAnimationTime;
             this.lastColCleared = 0; //Used to ensure all triangles are removed. Starts at 0 to only remove 1 on the first frame
             this.animatingLines = linesCleared; //Which lines are being animated (and cleared)
-            this.playClearSound = true;
+            if (linesCleared.length == 3) {
+                //Tritris!
+                this.flashTime = Date.now() + this.maxFlashTime;
+                this.playTritrisSound = true;
+            } else {
+                this.playClearSound = true;
+            }
         }
     }
 
@@ -359,7 +369,7 @@ class Game {
         return this.grid.isValid(piece);
     }
 
-    playSounds(clearSound, fallSound, moveSound) {
+    playSounds(clearSound, fallSound, moveSound, tritrisSound) {
         if (this.playClearSound) {
             if (!clearSound.isPlaying()) clearSound.play();
             this.playClearSound = false;
@@ -372,11 +382,30 @@ class Game {
             if (!moveSound.isPlaying()) moveSound.play();
             this.playMoveSound = false;
         }
+        if (this.playTritrisSound) {
+            if (!tritrisSound.isPlaying()) tritrisSound.play();
+            this.playTritrisSound = false;
+        }
     }
 
     show(x, y, w, h, paused) {
-        if (!this.redraw) return;
-        background(100);
+        //Play flashing animation
+        const flashing = this.flashTime >= Date.now();
+        if (!this.redraw && !flashing) return; //If not flashing, only draw when necessary
+
+        if (flashing) {
+            const timePassed = this.flashTime - Date.now();
+            const interval = Math.floor(this.flashAmount * timePassed / this.maxFlashTime);
+            if (interval % 2 == 0) {
+                background(150);
+            } else {
+                background(100);
+            }
+            this.redraw = true; //If flashing, redraw each frame
+        } else {
+            background(100);
+        }
+
 
         noStroke();
         fill(0);
@@ -447,6 +476,6 @@ class Game {
             );
         }
 
-        this.redraw = false;
+        if (!flashing) this.redraw = false;
     }
 }
