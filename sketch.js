@@ -21,6 +21,8 @@ let gameState = gameStates.LOADING;
 let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
 let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
 
+let keyImg = {};
+
 function preload() {
     piecesJSON = loadJSON('assets/pieces.json');
     fffForwardFont = loadFont('assets/fff-forward.ttf');
@@ -28,6 +30,13 @@ function preload() {
     fallSound = loadSound('assets/fall.wav');
     clearSound = loadSound('assets/clear.wav');
     tritrisSound = loadSound('assets/tritris.wav');
+
+    keyImg.left = loadImage('assets/leftKey.png');
+    keyImg.right = loadImage('assets/rightKey.png');
+    keyImg.up = loadImage('assets/upKey.png');
+    keyImg.down = loadImage('assets/downKey.png');
+    keyImg.z = loadImage('assets/zKey.png');
+    keyImg.x = loadImage('assets/xKey.png');
 }
 
 function setup() {
@@ -53,7 +62,7 @@ function setup() {
     dom.newGame.mousePressed(() => {
         newGame();
    });
-    
+
     dom.tutorial = select('#tutorial');
     dom.openTutorial = select('#openTutorial');
     dom.openTutorial.mousePressed(() => {
@@ -125,6 +134,33 @@ function showGame(paused) {
     game.show(gameX, gameY, gameWidth, gameHeight, paused);
     if (playSound)
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
+
+    let keyPosX = gameX + gameWidth + 30;
+    let keyPosY = gameY + gameHeight - 50;
+
+    if (keyIsDown(90)) tint(255, 0, 0);
+    else noTint();
+    image(keyImg.z, keyPosX, keyPosY, 50, 50);
+
+    if (keyIsDown(88)) tint(255, 0, 0);
+    else noTint();
+    image(keyImg.x, keyPosX + 60, keyPosY, 50, 50);
+
+    if (keyIsDown(LEFT_ARROW)) tint(255, 0, 0);
+    else noTint();
+    image(keyImg.left, keyPosX + 120, keyPosY, 50, 50);
+
+    if (keyIsDown(DOWN_ARROW)) tint(255, 0, 0);
+    else noTint();
+    image(keyImg.down, keyPosX + 180, keyPosY, 50, 50);
+
+    if (keyIsDown(UP_ARROW)) tint(255, 0, 0);
+    else noTint();
+    image(keyImg.up, keyPosX + 180, keyPosY - 60, 50, 50);
+
+    if (keyIsDown(RIGHT_ARROW)) tint(255, 0, 0);
+    else noTint();
+    image(keyImg.right, keyPosX + 240, keyPosY, 50, 50);
 }
 
 function newGame() {
