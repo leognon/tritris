@@ -147,6 +147,10 @@ function keyPressed() {
         } else if (gameState == gameStates.MENU) {
             newGame();
         }
+    } else if (keyCode == 27) { //Escape pressed
+        if (gameState == gameStates.INGAME) {
+            game.alive = false;
+        }
     }
 }
 
