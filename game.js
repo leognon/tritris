@@ -35,6 +35,7 @@ class Game {
             18 * msPerFrame,
         ];
 
+        this.currentPieceIndex = -1;
         this.currentPiece = null; //The current piece starts as null
         this.nextPieceIndex = 1 + floor(random(this.piecesJSON.length - 1));
         this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]); //The next piece starts as a random piece that isn't a single triangles
@@ -266,14 +267,21 @@ class Game {
     }
 
     spawnPiece() {
-        this.currentPiece = this.nextPiece;
-        this.nextPieceIndex = floor(random(this.piecesJSON.length));
+        this.currentPieceIndex = this.nextPieceIndex;
+        this.currentPiece = this.nextPiece; //Assign the new current piece
         if (this.nextSingles > 0) {
             this.nextPieceIndex = 0; //This will make it spawn 3 single triangles in a row
             this.nextSingles--;
-        } else if (this.nextPieceIndex == 0) {
-            //If it randomly chose to spawn 1 triangle, spawn 2 more
-            this.nextSingles = 2;
+        } else {
+            this.nextPieceIndex = floor(random(this.piecesJSON.length));
+            if (this.nextPieceIndex == this.currentPieceIndex) {
+                //Reroll to make it less likely to get the same piece twice in a row
+                this.nextPieceIndex = floor(random(this.piecesJSON.length));
+            }
+            if (this.nextPieceIndex == 0) {
+                //If it randomly chose to spawn 1 triangle, spawn 2 more
+                this.nextSingles = 2;
+            }
         }
         this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]);
         this.playFallSound = true;
