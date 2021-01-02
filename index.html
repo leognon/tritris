@@ -5,7 +5,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.sound.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.min.js"></script>
         <link rel="stylesheet" type="text/css" href="style.css" />
-        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="icon" type="image/png" href="favicon.png" />
         <meta charset="utf-8" />
         <title>Tritris</title>
     </head>
@@ -20,10 +20,15 @@
             <p style="font-size: 12pt">
                 Welcome to Tritris!
                 <br />
-                Use the pieces to fill as many lines as possible
-                before the game gets too fast and you top out!
-                <br />
-
+                Use the pieces to fill as many lines as possible before the game
+                gets too fast and you top out!
+                <br /> <br />
+                Click the <b>"How to Play"</b> button for controls and strategies.
+                <br /> <br />
+                <a href="https://youtu.be/HMkfj1OJ08Q" style="color: black">
+                    <b>Watch the video!</b> <img width="30" src="assets/youtubeLogo.png">
+                </a>
+                <br /> <br />
                 <label>Sound</label>
                 <input type="checkbox" id="sound" checked />
             </p>
@@ -50,8 +55,8 @@
             <h3>Controls</h3>
             <p>
                 Use the arrow keys to move left and right. Press down to soft
-                drop. Use Z and X to rotate. Press enter to pause/unpause.
-                Press escape to quick reset.
+                drop. Use Z and X to rotate. Press enter to pause/unpause. Press
+                escape to quick reset.
             </p>
             <hr />
             <h3>Mechanics</h3>
@@ -70,9 +75,9 @@
             <p>
                 One of the most unique mechanics of Tritris is phasing. A piece
                 will always move to the next location as long as the next
-                location is valid (no intersecting triangles).
-                By moving a piece in multiple ways at the same time, peices are
-                able to do many types of tucks and spins. Below are a few examples.
+                location is valid (no intersecting triangles). By moving a piece
+                in multiple ways at the same time, peices are able to do many
+                types of tucks and spins. Below are a few examples.
             </p>
             <div class="grid">
                 <div class="gifContainer">
@@ -85,8 +90,9 @@
                 <div class="gifContainer">
                     <img class="gif" src="assets/downRotate.gif" />
                     <p>
-                        For the bottom right triangle, down and X (rotate) are pressed
-                        simultaneously. Once all 3 triangles are placed, the line clears.
+                        For the bottom right triangle, down and X (rotate) are
+                        pressed simultaneously. Once all 3 triangles are placed,
+                        the line clears.
                     </p>
                 </div>
                 <div class="gifContainer">
@@ -107,15 +113,22 @@
 
             <h3>Scoring</h3>
             <div style="overflow: hidden">
-                <div style="float: right; padding-right: 10px; padding-left: 10px;" class="gifContainer">
+                <div
+                    style="
+                        float: right;
+                        padding-right: 10px;
+                        padding-left: 10px;
+                    "
+                    class="gifContainer"
+                >
                     <img class="gif" src="assets/tritris.gif" />
                     <p>A Tritris is scored!</p>
                 </div>
                 <p>
                     In Tritris, clearing 4 lines at a time is not possible, so
-                    the highest score value is obtained from 3 lines at a
-                    time, a Tritris. This can only be achieved by settings up 3
-                    rows, each missing only one triangle, then placing a single
+                    the highest score value is obtained from 3 lines at a time,
+                    a Tritris. This can only be achieved by settings up 3 rows,
+                    each missing only one triangle, then placing a single
                     triangle in each row. Once all triangles are placed, the
                     rows clear and a Tritris is scored!
                     <br />
