@@ -65,7 +65,7 @@ class Game {
         this.pieceSpeed = 0;
         this.setSpeed(); //This will correctly set pieceSpeed depending on which level it's starting on
 
-        this.minDownPieceSpeed = msPerFrame * 8;
+        this.softDropSpeed = msPerFrame * 2;
         this.lastMoveDown = Date.now() + 750;
 
         this.das = 0;
@@ -214,7 +214,7 @@ class Game {
             let pieceSpeed = this.pieceSpeed;
             if (keyIsDown(DOWN_ARROW)) {
                 //Pressing down moves twice as fast, or as fast as the min
-                pieceSpeed = min(pieceSpeed * 0.5, this.minDownPieceSpeed);
+                pieceSpeed = min(pieceSpeed, this.softDropSpeed);
             }
             if (keyIsDown(DOWN_ARROW) && !this.downWasPressed) {
                 this.downPressedAt = this.currentPiece.pos.y; //Save when the piece was first pressed down
