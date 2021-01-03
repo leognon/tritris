@@ -10,10 +10,8 @@ class Piece {
             }
         }
         this.pos = createVector(Math.ceil((8 - this.grid[0].length) / 2), 0);
-        this.centerOffset = createVector(
-            floor(this.grid[0].length / 2),
-            ceil(this.grid.length / 2)
-        );
+        this.rotation = 0;
+        this.rotations = json.rotationOffset || [[0, 0]]; //How the position should change when rotated. If not specified, the pos can stay the same (for pieces with square dimensions)
     }
 
     rotateLeft() {
@@ -29,12 +27,8 @@ class Piece {
         this.grid = newGrid;
 
         //Calculates a new position so the piece stays centered around the same piece
-        this.pos = createVector(
-            this.pos.x + this.centerOffset.x - floor(this.grid[0].length / 2),
-            this.pos.y + this.centerOffset.y - ceil(this.grid.length / 2)
-        );
-        this.centerOffset.x = floor(this.grid[0].length / 2);
-        this.centerOffset.y = ceil(this.grid.length / 2);
+        this.pos.add(this.rotations[this.rotation][0], this.rotations[this.rotation][1]);
+        this.rotation = (this.rotation + 1) % this.rotations.length;
     }
 
     rotateRight() {
@@ -50,12 +44,8 @@ class Piece {
         this.grid = newGrid;
 
         //Calculates a new position so the piece stays centered around the same piece
-        this.pos = createVector(
-            this.pos.x + this.centerOffset.x - floor(this.grid[0].length / 2),
-            this.pos.y + this.centerOffset.y - ceil(this.grid.length / 2)
-        );
-        this.centerOffset.x = floor(this.grid[0].length / 2);
-        this.centerOffset.y = ceil(this.grid.length / 2);
+        this.rotation = (this.rotation - 1 + this.rotations.length) % this.rotations.length;
+        this.pos.sub(this.rotations[this.rotation][0], this.rotations[this.rotation][1]);
     }
 
     move(x, y) {
