@@ -92,7 +92,9 @@ class Game {
         this.leftWasPressed = false;
         this.rightWasPressed = false;
         this.zWasPressed = false;
+        this.zCharged = false;
         this.xWasPressed = false;
+        this.xCharged = false;
 
         this.playClearSound = false;
         this.playFallSound = false;
@@ -181,6 +183,7 @@ class Game {
                 this.alive = false; //If the new piece is already blocked, game over
             }
         }
+
         if (this.currentPiece !== null) {
             //If either left is pressed or right is pressed and down isn't
             const oneKeyPressed =
@@ -207,8 +210,8 @@ class Game {
                 if (keyIsDown(RIGHT_ARROW)) horzDirection = 1;
             }
 
-            const zPressed = keyIsDown(90) && !this.zWasPressed;
-            const xPressed = keyIsDown(88) && !this.xWasPressed;
+            const zPressed = keyIsDown(90) && (!this.zWasPressed || this.zCharged);
+            const xPressed = keyIsDown(88) && (!this.xWasPressed || this.xCharged);
             const rotation = (zPressed ? -1 : 0) + (xPressed ? 1 : 0);
 
             let pieceSpeed = this.pieceSpeed;
@@ -236,6 +239,8 @@ class Game {
                     }
                     //Place the piece
                     this.placePiece();
+                    this.zCharged = false; //After a piece is placed, don't rotate the next piece
+                    this.xCharged = false;
                 } else {
                     //If the piece was able to just move down, reset the timer
                     if (moveDown) this.lastMoveDown = Date.now();
@@ -248,6 +253,8 @@ class Game {
         this.rightWasPressed = keyIsDown(RIGHT_ARROW);
         this.zWasPressed = keyIsDown(90); //If Z was pressed
         this.xWasPressed = keyIsDown(88); //If X was pressed
+        if (!keyIsDown(90)) this.zCharged = false; //If the player is pressing anymore, they no longer want to rotate, so don't charge
+        if (!keyIsDown(88)) this.xCharged = false;
         this.lastFrame = Date.now();
     }
 
@@ -336,7 +343,11 @@ class Game {
             if (horzDirection != 0) {
                 this.playMoveSound = true;
             }
-            if (rotation != 0) this.playMoveSound = true;
+            if (rotation != 0) {
+                this.playMoveSound = true;
+                this.zCharged = false;
+                this.xCharged = false;
+            }
             return false; //Don't place the piece
         }
         //If blocked, undo horz move and maybe wall-charge
@@ -345,7 +356,11 @@ class Game {
         if (valid) {
             //If the piece was block when moving horz, then wall charge
             this.das = this.dasMax;
-            if (rotation != 0) this.playMoveSound = true;
+            if (rotation != 0) {
+                this.playMoveSound = true;
+                this.zCharged = false; //If it was able to move, don't keep rotating
+                this.xCharged = false;
+            }
             return false;
         }
 
@@ -355,6 +370,9 @@ class Game {
         valid = this.isValid(this.currentPiece);
         if (valid) {
             //The piece was blocked by rotating
+            if (rotation == 1) this.xCharged = true;
+            if (rotation == -1) this.zCharged = true;
+            if (horzDirection != 0) this.das = this.dasMax; //Also charge das if blocked by a rotation/wall
             return false; //Don't place the piece
         }
 
