@@ -71,8 +71,9 @@ function setup() {
             game.playFallSound = false;
             game.playMoveSound = false;
         }
-        playSound = !playSound;
+        playSound = dom.sound.checked();
     });
+    playSound = dom.sound.checked();
 
     resizeDOM();
     showGame(true);
