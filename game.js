@@ -35,12 +35,16 @@ class Game {
             18 * msPerFrame,
         ];
 
-        this.currentPieceIndex = -1;
         this.currentPiece = null; //The current piece starts as null
-        this.nextPieceIndex = 1 + floor(random(this.piecesJSON.length - 1));
-        this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]); //The next piece starts as a random piece that isn't a single triangles
+        this.nextPiece = null; //The next piece starts as a random piece that isn't a single triangles
+        this.nextPieceIndex = null;
         this.nextSingles = 0;
-        this.spawnPiece(); //This will correctly set the currentPiece and correctly pick a new next piece
+        this.bag = [];
+        for (let i = 1; i < this.piecesJSON.length; i++)
+            this.bag.push(i); //Fill initial bag with all pieces except white triangle
+        this.spawnPiece();//Sets the next piece (to anything except for white single)
+        this.bag.push(0); //After next piece is chosen, then it is possible to get white triangle
+        this.spawnPiece(); //Make next piece current, and pick new next (poss to get white triangle)
 
         this.levelSpeeds = {
             0: 48,
@@ -274,22 +278,24 @@ class Game {
     }
 
     spawnPiece() {
-        this.currentPieceIndex = this.nextPieceIndex;
+        if (this.bag.length == []) {
+            for (let i = 0; i < this.piecesJSON.length; i++) {
+                this.bag.push(i); //Refill the bag with each piece
+            }
+        }
         this.currentPiece = this.nextPiece; //Assign the new current piece
         if (this.nextSingles > 0) {
             this.nextPieceIndex = 0; //This will make it spawn 3 single triangles in a row
             this.nextSingles--;
         } else {
-            this.nextPieceIndex = floor(random(this.piecesJSON.length));
-            if (this.nextPieceIndex == this.currentPieceIndex) {
-                //Reroll to make it less likely to get the same piece twice in a row
-                this.nextPieceIndex = floor(random(this.piecesJSON.length));
-            }
+            const bagIndex = Math.floor(Math.random() * this.bag.length);
+            this.nextPieceIndex = this.bag.splice(bagIndex, 1)[0]; //Pick 1 item and remove it from bag
             if (this.nextPieceIndex == 0) {
                 //If it randomly chose to spawn 1 triangle, spawn 2 more
                 this.nextSingles = 2;
             }
         }
+
         this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]);
         this.playFallSound = true;
     }
