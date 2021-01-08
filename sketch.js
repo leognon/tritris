@@ -53,15 +53,26 @@ function setup() {
     dom.newGame.mousePressed(() => {
         newGame();
    });
-    
+
     dom.tutorial = select('#tutorial');
     dom.openTutorial = select('#openTutorial');
     dom.openTutorial.mousePressed(() => {
         dom.tutorial.style('visibility: visible');
     });
-    dom.openTutorial = select('#closeTutorial');
-    dom.openTutorial.mousePressed(() => {
+    dom.closeTutorial = select('#closeTutorial');
+    dom.closeTutorial.mousePressed(() => {
         dom.tutorial.style('visibility: hidden');
+    });
+
+    dom.changelog = select('#changelog');
+    dom.openChangelog = select('#openChangelog');
+    dom.openChangelog.mousePressed(() => {
+        if (gameState == gameStates.MENU)
+            dom.changelog.style('visibility: visible');
+    });
+    dom.closeChangelog = select('#closeChangelog');
+    dom.closeChangelog.mousePressed(() => {
+        dom.changelog.style('visibility: hidden');
     });
 
     dom.sound = select('#sound');
@@ -134,6 +145,7 @@ function newGame() {
     gameState = gameStates.INGAME;
     dom.settingsDiv.hide();
     dom.tutorial.style('visibility: hidden');
+    dom.changelog.style('visibility: hidden');
 }
 
 function keyPressed() {
