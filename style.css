@@ -30,11 +30,11 @@ h3 {
     border: 3px solid black;
 }
 
-#settings {
+#play {
     position: absolute;
     text-align: center;
     width: 200px;
-    height: 200px;
+    height: 230px;
     background-color: rgb(150, 150, 150);
     font-family: fff-forward;
 }
@@ -124,4 +124,31 @@ hr {
     height: 75%;
     overflow-y: scroll;
     line-height: 14px;
+}
+
+#settings {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: 70%;
+    background-color: inherit;
+    top: 70px;
+    height: 75%;
+    overflow-y: scroll;
+}
+
+.control {
+    font-size: 12pt;
+    width: 100px;
+}
+.settingControl {
+    animation: blinker 0.5s infinite;
+}
+@keyframes blinker {
+    50% {
+        color: red;
+    }
 }

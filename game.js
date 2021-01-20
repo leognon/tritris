@@ -191,14 +191,14 @@ class Game {
         if (this.currentPiece !== null) {
             //If either left is pressed or right is pressed and down isn't
             const oneKeyPressed =
-                keyIsDown(LEFT_ARROW) != keyIsDown(RIGHT_ARROW) &&
-                !keyIsDown(DOWN_ARROW);
+                keyIsDown(controls.left) != keyIsDown(controls.right) &&
+                !keyIsDown(controls.down);
             let move = false;
             if (oneKeyPressed) {
                 this.das += deltaTime;
                 if (
-                    (keyIsDown(LEFT_ARROW) && !this.leftWasPressed) ||
-                    (keyIsDown(RIGHT_ARROW) && !this.rightWasPressed)
+                    (keyIsDown(controls.left) && !this.leftWasPressed) ||
+                    (keyIsDown(controls.right) && !this.rightWasPressed)
                 ) {
                     //If it was tapped, move and reset das
                     move = true;
@@ -208,22 +208,23 @@ class Game {
                     this.das = this.dasCharged;
                 }
             }
+
             let horzDirection = 0;
             if (move) {
-                if (keyIsDown(LEFT_ARROW)) horzDirection = -1;
-                if (keyIsDown(RIGHT_ARROW)) horzDirection = 1;
+                if (keyIsDown(controls.left)) horzDirection = -1;
+                if (keyIsDown(controls.right)) horzDirection = 1;
             }
 
-            const zPressed = keyIsDown(90) && (!this.zWasPressed || this.zCharged);
-            const xPressed = keyIsDown(88) && (!this.xWasPressed || this.xCharged);
+            const zPressed = keyIsDown(controls.counterClock) && (!this.zWasPressed || this.zCharged);
+            const xPressed = keyIsDown(controls.clock) && (!this.xWasPressed || this.xCharged);
             const rotation = (zPressed ? -1 : 0) + (xPressed ? 1 : 0);
 
             let pieceSpeed = this.pieceSpeed;
-            if (keyIsDown(DOWN_ARROW)) {
+            if (keyIsDown(controls.down)) {
                 //Pressing down moves twice as fast, or as fast as the min
                 pieceSpeed = min(pieceSpeed, this.softDropSpeed);
             }
-            if (keyIsDown(DOWN_ARROW) && !this.downWasPressed) {
+            if (keyIsDown(controls.down) && !this.downWasPressed) {
                 this.downPressedAt = this.currentPiece.pos.y; //Save when the piece was first pressed down
             }
             const moveDown = Date.now() >= this.lastMoveDown + pieceSpeed;
@@ -235,7 +236,7 @@ class Game {
                     moveDown
                 );
                 if (placePiece) {
-                    if (keyIsDown(DOWN_ARROW)) {
+                    if (keyIsDown(controls.down)) {
                         //If it was pushed down, give 1 point per grid cell
                         this.score +=
                             this.currentPiece.pos.y - this.downPressedAt;
@@ -252,13 +253,13 @@ class Game {
             }
         }
 
-        this.downWasPressed = keyIsDown(DOWN_ARROW);
-        this.leftWasPressed = keyIsDown(LEFT_ARROW);
-        this.rightWasPressed = keyIsDown(RIGHT_ARROW);
-        this.zWasPressed = keyIsDown(90); //If Z was pressed
-        this.xWasPressed = keyIsDown(88); //If X was pressed
-        if (!keyIsDown(90)) this.zCharged = false; //If the player is pressing anymore, they no longer want to rotate, so don't charge
-        if (!keyIsDown(88)) this.xCharged = false;
+        this.downWasPressed = keyIsDown(controls.down);
+        this.leftWasPressed = keyIsDown(controls.left);
+        this.rightWasPressed = keyIsDown(controls.right);
+        this.zWasPressed = keyIsDown(controls.counterClock); //If Z was pressed
+        this.xWasPressed = keyIsDown(controls.clock); //If X was pressed
+        if (!keyIsDown(controls.counterClock)) this.zCharged = false; //If the player is pressing anymore, they no longer want to rotate, so don't charge
+        if (!keyIsDown(controls.clock)) this.xCharged = false;
         this.lastFrame = Date.now();
     }
 

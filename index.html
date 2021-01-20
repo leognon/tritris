@@ -53,13 +53,14 @@
             <h3 id="linesHigh">Lines: 0</h3>
         </div>
 
-        <div id="settings" class="box" style="position: absolute">
+        <div id="play" class="box" style="position: absolute">
             <h1>Tritris</h1>
             <label>Level: </label>
             <input id="level" type="number" value="0" min="0" max="29" />
             <br />
             <button id="newGame">New Game</button>
             <button id="openTutorial">How to Play</button>
+            <button id="openSettings">Settings</button>
         </div>
 
         <div id="tutorial" class="box" style="visibility: hidden">
@@ -183,6 +184,26 @@
 
             <br>
             <button id="closeChangelog">Close</button>
+        </div>
+
+        <div id="settings" class="box" style="visibility: visible">
+            <h1>Settings</h1>
+            <h3>Controls</h3>
+            <b>Click the button for each control, then press the key you would like to use</b>
+            <div style="text-align: left; padding-left: 15px; line-height: 8px;">
+                <p>Rotate Counter-Clockwise: <button id="counterClock" class="control">Z</button></p>
+                <p>Rotate Clockwise: <button id="clock" class="control">X</button></p>
+                <p>Left: <button id="left" class="control">LEFT</button></p>
+                <p>Right: <button id="right" class="control">RIGHT</button></p>
+                <p>Down: <button id="down" class="control">DOWN</button></p>
+                <br>
+                <p>Start/Pause/Unpause: <button id="start" class="control">ENTER</button></p>
+                <p>Quick Restart: <button id="restart" class="control">ESCAPE</button></p>
+            </div>
+            <button id="defaultControls">Revert to Default Controls</button>
+
+            <br>
+            <button id="closeSettings">Close</button>
         </div>
     </body>
 </html>
