@@ -404,19 +404,19 @@ class Game {
 
     playSounds(clearSound, fallSound, moveSound, tritrisSound) {
         if (this.playClearSound) {
-            if (!clearSound.isPlaying()) clearSound.play();
+            clearSound.play();
             this.playClearSound = false;
         }
         if (this.playFallSound) {
-            if (!fallSound.isPlaying()) fallSound.play();
+            fallSound.play();
             this.playFallSound = false;
         }
         if (this.playMoveSound) {
-            if (!moveSound.isPlaying()) moveSound.play();
+            moveSound.play();
             this.playMoveSound = false;
         }
         if (this.playTritrisSound) {
-            if (!tritrisSound.isPlaying()) tritrisSound.play();
+            tritrisSound.play();
             this.playTritrisSound = false;
         }
     }

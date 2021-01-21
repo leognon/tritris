@@ -45,10 +45,10 @@ let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
 function preload() {
     piecesJSON = loadJSON('assets/pieces.json');
     fffForwardFont = loadFont('assets/fff-forward.ttf');
-    moveSound = loadSound('assets/move.wav');
-    fallSound = loadSound('assets/fall.wav');
-    clearSound = loadSound('assets/clear.wav');
-    tritrisSound = loadSound('assets/tritris.wav');
+    moveSound = new Sound('assets/move.wav');
+    fallSound = new Sound('assets/fall.wav');
+    clearSound = new Sound('assets/clear.wav');
+    tritrisSound = new Sound('assets/tritris.wav');
 }
 
 function setup() {
