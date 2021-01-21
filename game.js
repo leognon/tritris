@@ -15,13 +15,56 @@ class Game {
         this.scoreWeights = { 1: 100, 2: 400, 3: 1200 };
 
         this.colors = [
-            color(255, 0, 0),
-            color(0, 255, 0),
-            color(255, 255, 0),
-            color(255, 0, 255),
-            color(0, 255, 255),
-            color(250, 100, 25),
-            color(255),
+            [ //Lvl 0
+                color(252, 252, 252),
+                color(60, 188, 252),
+                color(0, 88, 248),
+            ],
+            [ //Lvl 1
+                color(252, 252, 252),
+                color(184, 248, 24),
+                color(0, 168, 0),
+            ],
+            [ //Lvl 2
+                color(252, 252, 252),
+                color(248, 120, 248),
+                color(216, 0, 204),
+            ],
+            [ //Lvl 3
+                color(252, 252, 252),
+                color(88, 216, 84),
+                color(0, 88, 248),
+            ],
+            [ //Lvl 4
+                color(252, 252, 252),
+                color(88, 248, 152),
+                color(22, 0, 88),
+            ],
+            [ //Lvl 5
+                color(252, 252, 252),
+                color(104, 136, 252),
+                color(88, 248, 152),
+            ],
+            [ //Lvl 6
+                color(252, 252, 252),
+                color(124, 124, 124),
+                color(248, 56, 0),
+            ],
+            [ //Lvl 7
+                color(252, 252, 252),
+                color(168, 0, 32),
+                color(104, 68, 252),
+            ],
+            [ //Lvl 8
+                color(252, 252, 252),
+                color(248, 56, 0),
+                color(0, 88, 248),
+            ],
+            [ //Lvl 9
+                color(252, 252, 252),
+                color(252, 160, 68),
+                color(248, 56, 0),
+            ],
         ];
         this.piecesJSON = piecesJSON.pieces;
 
@@ -448,10 +491,11 @@ class Game {
         const cellH = h / this.h;
 
         if (this.currentPiece && !paused) {
-            this.currentPiece.show(x, y, cellW, cellH, this.colors);
+            this.currentPiece.show(x, y, cellW, cellH, this.colors[this.level%10]);
         }
 
-        this.grid.show(x, y, w, h, this.colors, paused);
+        
+        this.grid.show(x, y, w, h, this.colors[this.level%10], paused);
 
         const txtSize = 20;
         textSize(txtSize);
@@ -505,7 +549,7 @@ class Game {
                 nextPiecePos.y,
                 nextPieceDim.x,
                 nextPieceDim.y,
-                this.colors
+                this.colors[this.level%10]
             );
         }
 

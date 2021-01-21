@@ -1,7 +1,7 @@
 {
     "pieces": [
         {
-            "color": 6,
+            "color": 0,
             "pieces": [
                 [
                     [
@@ -12,7 +12,7 @@
             ]
         },
         {
-            "color": 0,
+            "color": 2,
             "pieces": [
                 [
                     [
@@ -37,7 +37,7 @@
             ]
         },
         {
-            "color": 1,
+            "color": 0,
             "pieces": [
                 [
                     [
@@ -85,7 +85,7 @@
             ]
         },
         {
-            "color": 3,
+            "color": 1,
             "pieces": [
                 [
                     [
@@ -110,7 +110,7 @@
             ]
         },
         {
-            "color": 4,
+            "color": 1,
             "rotationOffset": [
                 [-1, 1],
                 [1, 0],
@@ -133,7 +133,7 @@
             ]
         },
         {
-            "color": 5,
+            "color": 0,
             "pieces": [
                 [
                     [
