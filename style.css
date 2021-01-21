@@ -34,7 +34,7 @@ h3 {
     position: absolute;
     text-align: center;
     width: 200px;
-    height: 230px;
+    height: 160px;
     background-color: rgb(150, 150, 150);
     font-family: fff-forward;
 }
@@ -43,6 +43,12 @@ input, button {
     padding: 3px;
     margin: 3px;
     font-size: 15pt;
+    cursor: pointer;
+}
+
+.darkButton {
+    font-size: 12pt;
+    background-color: rgb(130,130,130);
 }
 
 #level {
@@ -142,7 +148,7 @@ hr {
 
 .control {
     font-size: 12pt;
-    width: 100px;
+    min-width: 75px;
 }
 .settingControl {
     animation: blinker 0.5s infinite;
