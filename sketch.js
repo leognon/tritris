@@ -80,6 +80,12 @@ function setup() {
     dom.playDiv.style('visibility: visible');
     dom.triangles = select('#triangles');
     dom.level = select('#level');
+    if (localStorage.hasOwnProperty('startLevel')) {
+        dom.level.value(localStorage.getItem('startLevel'));
+    }
+    dom.level.changed(() => {
+        localStorage.setItem('startLevel', dom.level.value());
+    });
     dom.newGame = select('#newGame');
     dom.newGame.mousePressed(() => {
         newGame(false);
