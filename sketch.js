@@ -12,7 +12,11 @@ let moveSound;
 let fallSound;
 let clearSound;
 let tritrisSound;
+
 let playSound = true;
+if (localStorage.hasOwnProperty('playSound')) {
+    playSound = JSON.parse(localStorage.getItem('playSound'));
+}
 
 let piecesJSON;
 let game;
@@ -134,6 +138,7 @@ function setup() {
     });
 
     dom.sound = select('#sound');
+    dom.sound.checked(playSound);
     dom.sound.changed(() => {
         if (game) {
             game.playClearSound = false;
@@ -141,8 +146,8 @@ function setup() {
             game.playMoveSound = false;
         }
         playSound = dom.sound.checked();
+        localStorage.setItem('playSound', playSound);
     });
-    playSound = dom.sound.checked();
 
     resizeDOM();
     showGame(true);
