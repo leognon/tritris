@@ -434,7 +434,7 @@ class Game {
         }
     }
 
-    show(x, y, w, h, paused) {
+    show(x, y, w, h, paused, showGridLines) {
         //Play flashing animation
         const flashing = this.flashTime >= Date.now();
         if (!this.redraw && !flashing) return; //If not flashing, only draw when necessary
@@ -464,7 +464,7 @@ class Game {
             this.currentPiece.show(x, y, cellW, cellH, this.colors);
         }
 
-        this.grid.show(x, y, w, h, this.colors, paused);
+        this.grid.show(x, y, w, h, this.colors, paused, showGridLines);
 
         const txtSize = 20;
         textSize(txtSize);
@@ -542,7 +542,7 @@ class Game {
         stroke(0);
         strokeWeight(3);
         rect(nextPiecePos.x, nextPiecePos.y, nextPieceDim.x, nextPieceDim.y);
-        if (!paused) {
+        if (!paused && this.nextPiece) {
             this.nextPiece.showAt(
                 nextPiecePos.x,
                 nextPiecePos.y,

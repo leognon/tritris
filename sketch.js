@@ -17,6 +17,10 @@ let playSound = true;
 if (localStorage.hasOwnProperty('playSound')) {
     playSound = JSON.parse(localStorage.getItem('playSound'));
 }
+let showGridLines = true;
+if (localStorage.hasOwnProperty('showGridLines')) {
+    showGridLines = JSON.parse(localStorage.getItem('showGridLines'));
+}
 
 let piecesJSON;
 let game;
@@ -60,6 +64,8 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     textFont(fffForwardFont);
     createGame(0);
+    game.currentPiece = null;
+    game.nextPiece = null;
 
     dom.recordsDiv = select('#records');
     dom.recordsDiv.style('visibility: visible');
@@ -148,6 +154,16 @@ function setup() {
         playSound = dom.sound.checked();
         localStorage.setItem('playSound', playSound);
     });
+    dom.showGridLines = select('#showGridLines');
+    dom.showGridLines.checked(showGridLines);
+    dom.showGridLines.changed(() => {
+        showGridLines = dom.showGridLines.checked();
+        localStorage.setItem('showGridLines', showGridLines);
+        if (game) {
+            game.redraw = true;
+            showGame(gameState == gameStates.PAUSED);
+        }
+    });
 
     resizeDOM();
     showGame(true);
@@ -198,7 +214,7 @@ function showGame(paused) {
     }
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
-    game.show(gameX, gameY, gameWidth, gameHeight, paused);
+    game.show(gameX, gameY, gameWidth, gameHeight, paused, showGridLines);
     if (playSound)
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
 }

@@ -69,7 +69,7 @@ class Grid {
         return true;
     }
 
-    show(x, y, w, h, colors, paused) {
+    show(x, y, w, h, colors, paused, showGridLines) {
         const cellW = w / this.w;
         const cellH = h / this.h;
 
@@ -88,15 +88,17 @@ class Grid {
             }
         }
 
-        //Draws the grid outline
-        stroke(100);
-        strokeWeight(2);
-        //Vertical lines
-        for (let i = 0; i <= this.w; i++)
-            line(x + i * cellW, y, x + i * cellW, y + h);
-        //Horizontal lines
-        for (let j = 0; j <= this.h; j++)
-            line(x, y + j * cellH, x + w, y + j * cellH);
+        if (showGridLines) {
+            //Draws the grid outline
+            stroke(100);
+            strokeWeight(2);
+            //Vertical lines
+            for (let i = 0; i <= this.w; i++)
+                line(x + i * cellW, y, x + i * cellW, y + h);
+            //Horizontal lines
+            for (let j = 0; j <= this.h; j++)
+                line(x, y + j * cellH, x + w, y + j * cellH);
+        }
     }
 }
 
