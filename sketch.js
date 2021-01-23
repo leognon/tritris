@@ -21,6 +21,10 @@ let showGridLines = true;
 if (localStorage.hasOwnProperty('showGridLines')) {
     showGridLines = JSON.parse(localStorage.getItem('showGridLines'));
 }
+let showKeys = false;
+if (localStorage.hasOwnProperty('showKeys')) {
+    showKeys = JSON.parse(localStorage.getItem('showKeys'));
+}
 
 let piecesJSON;
 let game;
@@ -49,6 +53,7 @@ let settingControl = null;
 
 let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
 let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
+let keyImg = {};
 
 function preload() {
     piecesJSON = loadJSON('assets/pieces.json');
@@ -57,6 +62,12 @@ function preload() {
     fallSound = new Sound('assets/fall.wav');
     clearSound = new Sound('assets/clear.wav');
     tritrisSound = new Sound('assets/tritris.wav');
+
+    keyImg.left = loadImage('assets/leftKey.png');
+    keyImg.right = loadImage('assets/rightKey.png');
+    keyImg.down = loadImage('assets/downKey.png');
+    keyImg.z = loadImage('assets/zKey.png');
+    keyImg.x = loadImage('assets/xKey.png');
 }
 
 function setup() {
@@ -94,7 +105,6 @@ function setup() {
     dom.practiceGame.mousePressed(() => {
         newGame(true);
     });
-
 
     dom.tutorial = select('#tutorial');
     dom.openTutorial = select('#openTutorial');
@@ -170,6 +180,16 @@ function setup() {
             showGame(gameState == gameStates.PAUSED);
         }
     });
+    dom.showKeys = select('#showKeys');
+    dom.showKeys.checked(showKeys);
+    dom.showKeys.changed(() => {
+        showKeys = dom.showKeys.checked();
+        localStorage.setItem('showKeys', showKeys);
+        if (game) {
+            game.redraw = true;
+            showGame(gameState == gameStates.PAUSED);
+        }
+    });
 
     resizeDOM();
     showGame(true);
@@ -223,6 +243,31 @@ function showGame(paused) {
     game.show(gameX, gameY, gameWidth, gameHeight, paused, showGridLines);
     if (playSound)
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
+
+    if (showKeys) {
+        const keyPosX = gameX + gameWidth + 30;
+        const keyPosY = gameY + gameHeight - 50;
+
+        if (keyIsDown(controls.counterClock)) tint(255, 0, 0);
+        else noTint();
+        image(keyImg.z, keyPosX, keyPosY, 50, 50);
+
+        if (keyIsDown(controls.clock)) tint(255, 0, 0);
+        else noTint();
+        image(keyImg.x, keyPosX + 60, keyPosY, 50, 50);
+
+        if (keyIsDown(controls.left)) tint(255, 0, 0);
+        else noTint();
+        image(keyImg.left, keyPosX + 120, keyPosY, 50, 50);
+
+        if (keyIsDown(controls.down)) tint(255, 0, 0);
+        else noTint();
+        image(keyImg.down, keyPosX + 180, keyPosY, 50, 50);
+
+        if (keyIsDown(controls.right)) tint(255, 0, 0);
+        else noTint();
+        image(keyImg.right, keyPosX + 240, keyPosY, 50, 50);
+    }
 }
 
 function newGame(practice) {
