@@ -14,6 +14,11 @@ class Piece {
         this.rotations = json.rotationOffset || [[0, 0]]; //How the position should change when rotated. If not specified, the pos can stay the same (for pieces with square dimensions)
     }
 
+    rotate180() {
+        this.rotateLeft(); //The lazy way to rotate 180
+        this.rotateLeft();
+    }
+
     rotateLeft() {
         let newGrid = [];
         for (let newRow = 0; newRow < this.grid[0].length; newRow++) {

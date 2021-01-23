@@ -223,7 +223,10 @@ class Game {
 
             const zPressed = keyIsDown(controls.counterClock) && (!this.zWasPressed || this.zCharged);
             const xPressed = keyIsDown(controls.clock) && (!this.xWasPressed || this.xCharged);
-            const rotation = (zPressed ? -1 : 0) + (xPressed ? 1 : 0);
+            let rotation = 0;
+            if (zPressed && xPressed) rotation = 2;
+            else if (xPressed) rotation = 1;
+            else if (zPressed) rotation = -1;
 
             let pieceSpeed = this.pieceSpeed;
             if (keyIsDown(controls.down)) {
@@ -352,6 +355,7 @@ class Game {
         this.currentPiece.move(horzDirection, vertDirection);
         if (rotation == -1) this.currentPiece.rotateLeft();
         if (rotation == 1) this.currentPiece.rotateRight();
+        if (rotation == 2) this.currentPiece.rotate180();
 
         //Try with all transformations
         let valid = this.isValid(this.currentPiece);
@@ -384,11 +388,16 @@ class Game {
         //If not valid, undo rotation
         if (rotation == 1) this.currentPiece.rotateLeft();
         if (rotation == -1) this.currentPiece.rotateRight();
+        if (rotation == 2) this.currentPiece.rotate180();
         valid = this.isValid(this.currentPiece);
         if (valid) {
             //The piece was blocked by rotating
             if (rotation == 1) this.xCharged = true;
             if (rotation == -1) this.zCharged = true;
+            if (rotation == 2) {
+                this.xCharged = true;
+                this.zCharged = true;
+            }
             if (horzDirection != 0) this.das = this.dasMax; //Also charge das if blocked by a rotation/wall
             return false; //Don't place the piece
         }
