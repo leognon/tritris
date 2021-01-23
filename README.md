@@ -1,5 +1,6 @@
 # Tritris
 ### Tetris with Triangles!
+Join the Discord! https://discord.gg/NUKWP6UCHF
 
 Watch the video!
 <br>
