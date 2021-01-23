@@ -72,8 +72,13 @@ function setup() {
     dom.level = select('#level');
     dom.newGame = select('#newGame');
     dom.newGame.mousePressed(() => {
-        newGame();
-   });
+        newGame(false);
+    });
+    dom.practiceGame = select('#practiceGame');
+    dom.practiceGame.mousePressed(() => {
+        newGame(true);
+    });
+
 
     dom.tutorial = select('#tutorial');
     dom.openTutorial = select('#openTutorial');
@@ -151,7 +156,8 @@ function draw() {
         game.update();
         showGame(false); //Show the game, (and it's not paused)
         if (!game.alive) {
-            setHighScores(game.score, game.lines);
+            if (!game.practice)
+                setHighScores(game.score, game.lines);
             gameState = gameStates.MENU;
             dom.playDiv.show();
         }
@@ -192,12 +198,12 @@ function showGame(paused) {
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
 }
 
-function newGame() {
+function newGame(practice) {
     if (gameState == gameStates.LOADING) return;
     if (getComputedStyle(dom.settings.elt).visibility == 'visible')
         return; //Make sure to not start a game when the settings box is open
 
-    createGame(dom.level.value());
+    createGame(dom.level.value(), practice);
     gameState = gameStates.INGAME;
     dom.playDiv.hide();
     dom.tutorial.style('visibility: hidden');
@@ -217,7 +223,7 @@ function keyPressed() {
             gameState = gameStates.INGAME;
             game.redraw = true;
         } else if (gameState == gameStates.MENU) {
-            newGame();
+            newGame(false);
         }
     } else if (keyCode == controls.restart) { //Escape pressed
         if (gameState == gameStates.INGAME) {
@@ -244,7 +250,7 @@ function setControl(keyCode) { //When a user presses the key they want to use fo
     localStorage.setItem('controls', JSON.stringify(controls)); //Save the new controls for a later session
 }
 
-function createGame(level) {
+function createGame(level, practice) {
     level = parseInt(level);
     if (isNaN(level)) {
         console.error(level + ' is not a proper level');
@@ -256,7 +262,7 @@ function createGame(level) {
         alert('Please select a positive level');
         return;
     }
-    game = new Game(piecesJSON, level);
+    game = new Game(piecesJSON, level, practice);
 }
 
 function resizeDOM() {

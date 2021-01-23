@@ -1,5 +1,5 @@
 class Game {
-    constructor(piecesJSON, level) {
+    constructor(piecesJSON, level, practice) {
         this.w = 8;
         this.h = 16;
         this.grid = new Grid(this.w, this.h);
@@ -13,6 +13,13 @@ class Game {
         this.lines = 0;
         this.score = 0;
         this.scoreWeights = { 1: 100, 2: 400, 3: 1200 };
+
+        this.practice = practice;
+        if (this.practice) {
+            for (const lineAmt in this.scoreWeights) {
+                this.scoreWeights[lineAmt] = 0; //No points in practice mode
+            }
+        }
 
         this.colors = [
             color(255, 0, 0),
@@ -70,6 +77,7 @@ class Game {
         this.setSpeed(); //This will correctly set pieceSpeed depending on which level it's starting on
 
         this.softDropSpeed = msPerFrame * 2;
+        if (this.practice) this.softDropSpeed *= 4;
         this.lastMoveDown = Date.now() + 750;
 
         this.das = 0;
@@ -138,10 +146,10 @@ class Game {
             //After a line clear animation has just been completed
             //Readjust the entry delay to accomodate for the animation time
             this.spawnNextPiece += this.maxAnimationTime;
-            this.score +=
-                this.scoreWeights[this.animatingLines.length] *
-                (this.level + 1);
-            this.lines += this.animatingLines.length;
+            if (!this.practice) { //No lines or score in practice mode
+                this.score += this.scoreWeights[this.animatingLines.length] * (this.level + 1);
+                this.lines += this.animatingLines.length;
+            }
 
             //Increase the level after a certain amt of lines, then every 10 lines
             let incLevel = false;
@@ -161,7 +169,7 @@ class Game {
                 const newLineAmt = Math.floor(this.lines / 10);
                 if (newLineAmt > prevLineAmt) incLevel = true;
             }
-            if (incLevel) {
+            if (incLevel && !this.practice) {
                 this.level++;
                 this.setSpeed();
             }
@@ -190,9 +198,10 @@ class Game {
 
         if (this.currentPiece !== null) {
             //If either left is pressed or right is pressed and down isn't
-            const oneKeyPressed =
-                keyIsDown(controls.left) != keyIsDown(controls.right) &&
-                !keyIsDown(controls.down);
+            let oneKeyPressed = keyIsDown(controls.left) != keyIsDown(controls.right);
+            if (!this.practice && keyIsDown(controls.down)) {
+                oneKeyPressed = false; //Allows down and left/right to be pressed in practice, but not in a real game
+            }
             let move = false;
             if (oneKeyPressed) {
                 this.das += deltaTime;
@@ -227,7 +236,10 @@ class Game {
             if (keyIsDown(controls.down) && !this.downWasPressed) {
                 this.downPressedAt = this.currentPiece.pos.y; //Save when the piece was first pressed down
             }
-            const moveDown = Date.now() >= this.lastMoveDown + pieceSpeed;
+            let moveDown = Date.now() >= this.lastMoveDown + pieceSpeed;
+            if (this.practice && !keyIsDown(controls.down)) {
+                moveDown = false; //Pieces only move down when down is pressed in practice mode
+            }
             if (horzDirection != 0 || rotation != 0 || moveDown) {
                 this.redraw = true; //A piece has moved, so the game must be redrawn
                 const placePiece = this.movePiece(
@@ -238,8 +250,9 @@ class Game {
                 if (placePiece) {
                     if (keyIsDown(controls.down)) {
                         //If it was pushed down, give 1 point per grid cell
-                        this.score +=
-                            this.currentPiece.pos.y - this.downPressedAt;
+                        if (!this.practice) {
+                            this.score += this.currentPiece.pos.y - this.downPressedAt;
+                        }
                         this.downPressedAt = 0;
                     }
                     //Place the piece
@@ -458,37 +471,67 @@ class Game {
         textAlign(LEFT, TOP);
         const padding = 10;
         const scorePos = createVector(x + w + cellW, y + cellH);
-        const scoreTxt = `Score ${this.score}`;
-        const linesTxt = `Lines  ${this.lines}`;
-        const levelTxt = `Level  ${this.level}`;
-        const textW = max(
-            textWidth(scoreTxt),
-            textWidth(linesTxt),
-            textWidth(levelTxt),
-            4 * cellW
-        );
-        const scoreDim = createVector(
-            textW + padding + 10,
-            txtSize * 4.5 + padding * 2
-        );
-        noFill();
-        stroke(0);
-        strokeWeight(3);
-        //The box outline
-        rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
-        noStroke();
-        fill(0);
-        text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
-        text(
-            linesTxt,
-            scorePos.x + padding,
-            scorePos.y + padding + 1.75 * txtSize
-        );
-        text(
-            levelTxt,
-            scorePos.x + padding,
-            scorePos.y + padding + 3.5 * txtSize
-        );
+        let scoreDim;
+
+        if (!this.practice) {
+            const scoreTxt = `Score ${this.score}`;
+            const linesTxt = `Lines  ${this.lines}`;
+            const levelTxt = `Level  ${this.level}`;
+            const textW = max(
+                textWidth(scoreTxt),
+                textWidth(linesTxt),
+                textWidth(levelTxt),
+                4 * cellW
+            );
+            scoreDim = createVector(
+                textW + padding + 10,
+                txtSize * 4.5 + padding * 2
+            );
+            noFill();
+            stroke(0);
+            strokeWeight(3);
+            //The box outline
+            rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
+            noStroke();
+            fill(0);
+            text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
+            text(
+                linesTxt,
+                scorePos.x + padding,
+                scorePos.y + padding + 1.75 * txtSize
+            );
+            text(
+                levelTxt,
+                scorePos.x + padding,
+                scorePos.y + padding + 3.5 * txtSize
+            );
+        } else {
+            //Practice mode text
+            const line1 = 'PRACTICE';
+            const line2 = 'MODE';
+            const textW = max(
+                textWidth(line1),
+                textWidth(line2),
+                4 * cellW
+            );
+            scoreDim = createVector(
+                textW + padding + 10,
+                txtSize * 4.5 + padding * 2
+            );
+            noFill();
+            stroke(0);
+            strokeWeight(3);
+            //The box outline
+            rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
+            noStroke();
+            fill(0);
+            text(line1, scorePos.x + padding, scorePos.y + padding);
+            text(
+                line2,
+                scorePos.x + padding,
+                scorePos.y + padding + 1.75 * txtSize
+            );
+        }
 
         const nextPiecePos = createVector(
             scorePos.x,
