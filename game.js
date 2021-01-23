@@ -471,7 +471,11 @@ class Game {
         let scoreDim;
 
         if (!this.practice) {
-            const scoreTxt = `Score ${this.score}`;
+            let formattedScore = this.score.toString();
+            for (let i = formattedScore.length-3; i > 0; i -= 3) {
+                formattedScore = formattedScore.slice(0, i) + " " + formattedScore.slice(i);
+            } //Put a space every 3 characters (from the end)
+            const scoreTxt = `Score ${formattedScore}`;
             const linesTxt = `Lines  ${this.lines}`;
             const levelTxt = `Level  ${this.level}`;
             const textW = max(
