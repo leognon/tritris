@@ -47,11 +47,8 @@ class Game {
         this.nextPieceIndex = null;
         this.nextSingles = 0;
         this.bag = [];
-        for (let i = 1; i < this.piecesJSON.length; i++)
-            this.bag.push(i); //Fill initial bag with all pieces except white triangle
-        this.spawnPiece();//Sets the next piece (to anything except for white single)
-        this.bag.push(0); //After next piece is chosen, then it is possible to get white triangle
-        this.spawnPiece(); //Make next piece current, and pick new next (poss to get white triangle)
+        this.spawnPiece(); //Sets the next piece
+        this.spawnPiece(); //Make next piece current, and pick new next
 
         this.levelSpeeds = {
             0: 48,
