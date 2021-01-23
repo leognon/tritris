@@ -552,6 +552,13 @@ class Game {
             );
         }
 
+        if (this.practice) {
+            stroke(255,0,0);
+            strokeWeight(4);
+            noFill();
+            rect(x, y, w, h);
+        }
+
         if (!flashing) this.redraw = false;
     }
 }
