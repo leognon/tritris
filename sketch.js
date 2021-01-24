@@ -227,7 +227,11 @@ function setHighScores(score, lines) {
         linesHigh = lines;
         localStorage.setItem('TritrisLinesHigh', linesHigh);
     }
-    dom.pointsHigh.elt.innerText = 'Points: ' + pointsHigh;
+    let formattedScore = pointsHigh.toString();
+    for (let i = formattedScore.length-3; i > 0; i -= 3) {
+        formattedScore = formattedScore.slice(0, i) + " " + formattedScore.slice(i);
+    } //Put a space every 3 characters (from the end)
+    dom.pointsHigh.elt.innerText = 'Points: ' + formattedScore;
     dom.linesHigh.elt.innerText = 'Lines: ' + linesHigh;
 }
 
