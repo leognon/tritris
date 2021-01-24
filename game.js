@@ -8,6 +8,7 @@ class Game {
 
         if (level < 0) level = 0;
         if (level > 29) level = 29;
+        if (level >= 20 && level <= 28) level = 19; //Can only start on 0-19 or 29
         this.startLevel = level;
         this.level = level;
         this.lines = 0;
