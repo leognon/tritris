@@ -95,6 +95,9 @@ class Game {
         this.flashTime = 0;
         this.flashAmount = 4;
 
+        this.tritrisAmt = 0; //For statistics
+        this.totalTime = 0;
+
         this.redraw = true;
 
         this.downPressedAt = 0; //Used to calculate how many cells a piece traveled when down was pressed
@@ -117,6 +120,7 @@ class Game {
 
         const now = Date.now();
         const deltaTime = now - this.lastFrame;
+        this.totalTime += deltaTime;
 
         //Play a line clear animation
         if (now <= this.animationTime) {
@@ -147,6 +151,8 @@ class Game {
             if (!this.practice) { //No lines or score in practice mode
                 this.score += this.scoreWeights[this.animatingLines.length] * (this.level + 1);
                 this.lines += this.animatingLines.length;
+                if (this.animatingLines.length == 3)
+                    this.tritrisAmt++;
             }
 
             //Increase the level after a certain amt of lines, then every 10 lines
@@ -441,7 +447,7 @@ class Game {
         }
     }
 
-    show(x, y, w, h, paused, showGridLines) {
+    show(x, y, w, h, paused, showGridLines, showStats) {
         //Play flashing animation
         const flashing = this.flashTime >= Date.now();
         if (!this.redraw && !flashing) return; //If not flashing, only draw when necessary
@@ -560,6 +566,45 @@ class Game {
                 nextPieceDim.x,
                 nextPieceDim.y,
                 this.colors
+            );
+        }
+
+        if (showStats && !this.practice) {
+            const statPos = createVector(
+                scorePos.x,
+                nextPiecePos.y + nextPieceDim.y + cellH
+            );
+
+            let tritrisPercent = Math.round(100 * 3*this.tritrisAmt / this.lines);
+            if (this.lines == 0) tritrisPercent = '--';
+            const tritrisPercentText = `Tri ${tritrisPercent}%`;
+
+            const totalSec = Math.round(this.totalTime / 1000) % 60;
+            const totalM = Math.floor(this.totalTime / (1000*60));
+            const startLevelText = `Time ${nf(totalM,2)}:${nf(totalSec,2)}`;
+
+            const textW = max(
+                textWidth(tritrisPercentText),
+                textWidth(startLevelText),
+                4 * cellW
+            );
+
+            const statDim = createVector(
+                textW + padding + 10,
+                txtSize * 2.75 + padding * 2
+            );
+            noFill();
+            stroke(0);
+            strokeWeight(3);
+            //The box outline
+            rect(statPos.x, statPos.y, statDim.x, statDim.y);
+            noStroke();
+            fill(0);
+            text(tritrisPercentText, statPos.x + padding, statPos.y + padding);
+            text(
+                startLevelText,
+                statPos.x + padding,
+                statPos.y + padding + 1.75 * txtSize
             );
         }
 
