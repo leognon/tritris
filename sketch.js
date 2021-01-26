@@ -364,7 +364,15 @@ function resizeDOM() {
 
     dom.titleDiv.position(10, gameY);
     dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);
-    const titleHeight = dom.titleDiv.elt.offsetHeight;
+    let titleHeight = dom.titleDiv.elt.offsetHeight;
+    const maxTitleHeight = height - gameY - dom.recordsDiv.elt.offsetHeight - 30;
+    if (titleHeight > maxTitleHeight) {
+        dom.titleDiv.style(`height: ${maxTitleHeight}px;`);
+        titleHeight = maxTitleHeight;
+    } else {
+        dom.titleDiv.style('height: auto;');
+    }
+    titleHeight = dom.titleDiv.elt.offsetHeight; //Recalculate height since it might be auto now
 
     dom.recordsDiv.position(10, gameY + titleHeight + 10);
 
