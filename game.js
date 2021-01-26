@@ -146,36 +146,32 @@ class Game {
             this.redraw = true;
         } else if (this.animatingLines.length > 0) {
             //After a line clear animation has just been completed
-            //Readjust the entry delay to accomodate for the animation time
+            //Readjust the entry delay to accommodate for the animation time
             this.spawnNextPiece += this.maxAnimationTime;
             if (!this.practice) { //No lines or score in practice mode
-                this.score += this.scoreWeights[this.animatingLines.length] * (this.level + 1);
                 this.lines += this.animatingLines.length;
+
+                //Increase the level after a certain amt of lines, then every 10 lines
+                let incLevel = false;
+                if (this.level == this.startLevel) {
+                    //This formula is from https://tetris.wiki/Tetris_(NES,_Nintendo)
+                    if (this.lines >= (this.startLevel + 1) * 10 || this.lines >= max(100, this.startLevel * 10 - 50)) {
+                        incLevel = true;
+                    }
+                } else {
+                    //If the tens digit increases (Ex from 128 to 131)
+                    const prevLineAmt = Math.floor((this.lines - this.animatingLines.length) / 10);
+                    const newLineAmt = Math.floor(this.lines / 10);
+                    if (newLineAmt > prevLineAmt) incLevel = true;
+                }
+
+                if (incLevel) {
+                    this.level++;
+                    this.setSpeed();
+                }
+                this.score += this.scoreWeights[this.animatingLines.length] * (this.level + 1);
                 if (this.animatingLines.length == 3)
                     this.tritrisAmt++;
-            }
-
-            //Increase the level after a certain amt of lines, then every 10 lines
-            let incLevel = false;
-            if (this.level == this.startLevel) {
-                //This formula is from https://tetris.wiki/Tetris_(NES,_Nintendo)
-                if (
-                    this.lines >= (this.startLevel + 1) * 10 ||
-                    this.lines >= max(100, this.startLevel * 10 - 50)
-                ) {
-                    incLevel = true;
-                }
-            } else {
-                //If the tens digit increases (Ex from 128 to 131)
-                const prevLineAmt = Math.floor(
-                    (this.lines - this.animatingLines.length) / 10
-                );
-                const newLineAmt = Math.floor(this.lines / 10);
-                if (newLineAmt > prevLineAmt) incLevel = true;
-            }
-            if (incLevel && !this.practice) {
-                this.level++;
-                this.setSpeed();
             }
 
             for (const row of this.animatingLines) {
