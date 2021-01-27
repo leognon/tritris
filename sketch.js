@@ -367,10 +367,10 @@ function resizeDOM() {
     let titleHeight = dom.titleDiv.elt.offsetHeight;
     const maxTitleHeight = height - gameY - dom.recordsDiv.elt.offsetHeight - 30;
     if (titleHeight > maxTitleHeight) {
-        dom.titleDiv.style(`height: ${maxTitleHeight}px;`);
+        dom.titleDiv.style(`height: ${maxTitleHeight}px; overflow-y: scroll`);
         titleHeight = maxTitleHeight;
     } else {
-        dom.titleDiv.style('height: auto;');
+        dom.titleDiv.style('height: auto; overflow-y: hidden');
     }
     titleHeight = dom.titleDiv.elt.offsetHeight; //Recalculate height since it might be auto now
 
