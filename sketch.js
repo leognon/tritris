@@ -93,7 +93,6 @@ function setup() {
 
     dom.playDiv = select('#play');
     dom.playDiv.style('visibility: visible');
-    dom.triangles = select('#triangles');
     dom.level = select('#level');
     if (localStorage.hasOwnProperty('startLevel')) {
         dom.level.value(localStorage.getItem('startLevel'));
