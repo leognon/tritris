@@ -155,8 +155,10 @@ function setup() {
 }
 
 function draw() {
-    if (gameState == gameStates.MENU)
+    if (gameState == gameStates.MENU) {
+        cursor();
         return;
+    }
 
     if (gameState == gameStates.INGAME) {
         game.update();
@@ -193,6 +195,14 @@ function showGame(paused) {
     }
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
+
+    if (gameState == gameStates.INGAME && mouseX > gameX && mouseX < gameX + gameWidth
+        && mouseY > gameY && mouseY < gameY + gameHeight) {
+        noCursor();
+    } else {
+        cursor();
+    }
+
     game.show(gameX, gameY, gameWidth, gameHeight, paused, showGridLines, showStats);
     if (playSound)
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
