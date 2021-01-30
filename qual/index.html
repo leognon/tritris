@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <link rel="icon" type="image/png" href="../favicon.png" />
+        <meta charset="utf-8" />
+        <title>Tritris</title>
+    </head>
+    <body>
+        <script src="sketch.js"></script>
+        <script src="../sound.js"></script>
+        <script src="../grid.js"></script>
+        <script src="../piece.js"></script>
+        <script src="../game.js"></script>
+
+        <div id="title" class="box">
+            <h1>Tritris Quals</h1>
+            <p style="font-size: 12pt">
+                Welcome to Tritris Qualifiers!
+                <br />
+                Each month you will get to play 5 games.
+                The best 2 games are averaged to be your
+                final qualifying score.
+                <br />
+                <b>WARNING: Once you start a game, it is final.
+                Make sure you are live streaming before you
+                start a game.</b>
+                <br />
+                <label>Sound</label>
+                <input type="checkbox" id="sound" />
+            </p>
+        </div>
+
+        <div id="records" class="box">
+            <h1>Scores</h1>
+            <h3 id="game0">Game 1: --</h3>
+            <h3 id="game1">Game 2: --</h3>
+            <h3 id="game2">Game 3: --</h3>
+            <h3 id="game3">Game 4: --</h3>
+            <h3 id="game4">Game 5: --</h3>
+
+            <br />
+            <h3 id="avgOf2">Qual Score: --</h3>
+        </div>
+
+        <div id="play" class="box" style="position: absolute">
+            <h1>Tritris</h1>
+            <label id="levelLabel">Level: </label>
+            <input id="level" type="number" value="0" min="0" max="29" />
+            <br />
+            <button id="newGame">New Game</button>
+        </div>
+
+        </div>
+    </body>
+</html>
