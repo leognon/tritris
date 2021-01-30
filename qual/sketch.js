@@ -38,7 +38,7 @@ const gameStatus = {
     FINISHED: 2,
     DISCONNECTED: 3 //If they close the page mid-game
 };
-let games = [];
+let games = new Array(5);
 for (let i = 0; i < 5; i++) {
     games[i] = {
         score: -1,
@@ -148,6 +148,29 @@ function setup() {
     }
     dom.avgOf2 = select('#avgOf2');
     dom.levelLabel = select('#levelLabel');
+
+    dom.resetScores = select('#resetScores');
+    dom.resetScores.mousePressed(() => {
+        if (gameState == gameStates.INGAME) {
+            alert('You cannot reset during a game!');
+            return;
+        }
+        if (!confirm('Are you sure you want to reset your scores? This cannot be undone.'))
+            return;
+        games = new Array(5);
+        for (let i = 0; i < 5; i++) {
+            games[i] = {
+                score: -1,
+                lines: -1,
+                startLevel: -1,
+                date: -1,
+                status: gameStatus.NOT_STARTED
+            };
+        }
+        currentGame = 0;
+        localStorage.setItem(gameSaveName, JSON.stringify(games));
+        updateDisplay();
+    });
     updateDisplay();
 
     resizeDOM();
@@ -238,6 +261,10 @@ function updateDisplay() {
         dom.levelLabel.elt.innerText = 'Congrats! Your qualification is complete!';
         dom.level.style('visibility: hidden');
         dom.newGame.style('visibility: hidden');
+    } else {
+        dom.levelLabel.elt.innerText = 'Level: ';
+        dom.level.style('visibility: visible');
+        dom.newGame.style('visibility: visible');
     }
     for (let i = 0; i < 5; i++) {
         if (gameState == gameStates.INGAME && currentGame == i) {
