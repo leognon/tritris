@@ -18,8 +18,12 @@
         <div id="title" class="box">
             <h1>Tritris Quals</h1>
             <p style="font-size: 12pt">
-                Welcome to Tritris Qualifiers!
-                <br />
+                <p id="welcomeMsg">Welcome to Tritris Qualifiers!</p>
+                <script>
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const msg = `Welcome to the ${months[new Date().getMonth()]} Tritris Qualifiers!`;
+                    document.getElementById('welcomeMsg').innerText = msg;
+                </script>
                 Each month you will get to play 5 games.
                 The best 2 games are averaged to be your
                 final qualifying score.

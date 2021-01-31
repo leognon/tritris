@@ -31,7 +31,9 @@ let piecesJSON;
 let game;
 let gameState = gameStates.LOADING;
 
-const gameSaveName = 'testQual';
+const month = new Date().getMonth();
+const year = new Date().getYear(); //It will be a new set of scores each month
+const gameSaveName = `${month}/${year}qual`;
 const gameStatus = {
     NOT_STARTED: 0,
     INPROGRESS: 1,
