@@ -556,13 +556,26 @@ class Game {
         strokeWeight(3);
         rect(nextPiecePos.x, nextPiecePos.y, nextPieceDim.x, nextPieceDim.y);
         if (!paused && this.nextPiece) {
-            this.nextPiece.showAt(
-                nextPiecePos.x,
-                nextPiecePos.y,
-                nextPieceDim.x,
-                nextPieceDim.y,
-                this.colors
-            );
+            if (this.nextSingles == 0) { //Show next piece normally
+                this.nextPiece.showAt(
+                    nextPiecePos.x,
+                    nextPiecePos.y,
+                    nextPieceDim.x,
+                    nextPieceDim.y,
+                    this.colors
+                );
+            } else if (this.nextSingles == 2) { //Show 3 Ninjas coming up
+                const spacingX = nextPieceDim.x / 7;
+                const spacingY = nextPieceDim.y / 7;
+                this.nextPiece.showAt(nextPiecePos.x - spacingX, nextPiecePos.y - spacingY, nextPieceDim.x, nextPieceDim.y, this.colors);
+                this.nextPiece.showAt(nextPiecePos.x, nextPiecePos.y, nextPieceDim.x, nextPieceDim.y, this.colors);
+                this.nextPiece.showAt(nextPiecePos.x + spacingX, nextPiecePos.y + spacingY, nextPieceDim.x, nextPieceDim.y, this.colors);
+            } else if (this.nextSingles == 1) { //Show 2 ninjas coming up
+                const spacingX = nextPieceDim.x / 7;
+                const spacingY = nextPieceDim.y / 7;
+                this.nextPiece.showAt(nextPiecePos.x - spacingX/2, nextPiecePos.y - spacingY/2, nextPieceDim.x, nextPieceDim.y, this.colors);
+                this.nextPiece.showAt(nextPiecePos.x + spacingX/2, nextPiecePos.y + spacingY/2, nextPieceDim.x, nextPieceDim.y, this.colors);
+            }
         }
 
         if (showStats && !this.practice) {
