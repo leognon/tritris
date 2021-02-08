@@ -320,6 +320,7 @@ function keyPressed() {
             game.redraw = true;
         } else if (gameState == gameStates.PAUSED) {
             gameState = gameStates.INGAME;
+            game.lastFrame = Date.now(); //So the timer doesn't go crazy when pausing
             game.redraw = true;
         } else if (gameState == gameStates.MENU) {
             newGame(false);
