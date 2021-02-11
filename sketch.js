@@ -13,9 +13,9 @@ let fallSound;
 let clearSound;
 let tritrisSound;
 
-let playSound = true;
-if (localStorage.hasOwnProperty('playSound')) {
-    playSound = JSON.parse(localStorage.getItem('playSound'));
+let volume = 75;
+if (localStorage.hasOwnProperty('volume')) {
+    volume = JSON.parse(localStorage.getItem('volume'));
 }
 let showGridLines = true;
 if (localStorage.hasOwnProperty('showGridLines')) {
@@ -162,17 +162,25 @@ function setup() {
         settingControl = 'restart'; setControl(27);
     });
 
-    dom.sound = select('#sound');
-    dom.sound.checked(playSound);
-    dom.sound.changed(() => {
+    dom.volume = select('#volume');
+    dom.volume.value(volume);
+    dom.volume.changed(updateVolume);
+    function updateVolume() {
         if (game) {
             game.playClearSound = false;
             game.playFallSound = false;
             game.playMoveSound = false;
         }
-        playSound = dom.sound.checked();
-        localStorage.setItem('playSound', playSound);
-    });
+        volume = dom.volume.value();
+        localStorage.setItem('volume', volume);
+
+        moveSound.setVolume(volume / 100);
+        fallSound.setVolume(volume / 100);
+        clearSound.setVolume(volume / 100);
+        tritrisSound.setVolume(volume / 100);
+    };
+    updateVolume();
+
     dom.showGridLines = select('#showGridLines');
     dom.showGridLines.checked(showGridLines);
     dom.showGridLines.changed(() => {
@@ -268,7 +276,7 @@ function showGame(paused) {
     }
 
     game.show(gameX, gameY, gameWidth, gameHeight, paused, showGridLines, showStats);
-    if (playSound)
+    if (volume > 1) //Small buffer to mute sound
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
 
     if (showKeys) {

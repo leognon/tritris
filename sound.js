@@ -9,6 +9,10 @@ class Sound {
         document.body.appendChild(this.sound);
     }
 
+    setVolume(vol) {
+        this.sound.volume = vol;
+    }
+
     play() {
         this.sound.play();
     }
