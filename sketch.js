@@ -153,13 +153,13 @@ function setup() {
     }
     dom.controls.default = select('#defaultControls');
     dom.controls.default.mousePressed(() => { //Reset all controls to default
-        settingControl = 'counterClock'; setControl(90);
-        settingControl = 'clock'; setControl(88);
-        settingControl = 'left'; setControl(37);
-        settingControl = 'right'; setControl(39);
-        settingControl = 'down'; setControl(40);
-        settingControl = 'start'; setControl(13);
-        settingControl = 'restart'; setControl(27);
+        settingControl = setControl('counterClock', 90);
+        settingControl = setControl('clock', 88);
+        settingControl = setControl('left', 37);
+        settingControl = setControl('right', 39);
+        settingControl = setControl('down', 40);
+        settingControl = setControl('start', 13);
+        settingControl = setControl('restart', 27);
     });
 
     dom.volume = select('#volume');
@@ -308,7 +308,7 @@ function newGame(practice) {
 
 function keyPressed() {
     if (settingControl != null) {
-        setControl(keyCode);
+        setControl(settingControl, keyCode);
     } else if (keyCode == controls.start) {
         //Enter key is pressed
         if (gameState == gameStates.INGAME) {
@@ -336,10 +336,10 @@ function beginSetControl(control) { //When a user clicks a button to choose the 
     dom.controls[settingControl].elt.innerText = 'Press a key';
     dom.closeSettings.elt.disabled = true; //They can't close the box while waiting for them to press a key
 }
-function setControl(keyCode) { //When a user presses the key they want to use for that control
-    dom.controls[settingControl].removeClass('settingControl');
-    dom.controls[settingControl].elt.innerText = keyboardMap[keyCode];
-    controls[settingControl] = keyCode; //Set the control
+function setControl(setControl, keyCode) { //When a user presses the key they want to use for that control
+    dom.controls[setControl].removeClass('settingControl');
+    dom.controls[setControl].elt.innerText = keyboardMap[keyCode];
+    controls[setControl] = keyCode; //Set the control
     settingControl = null;
     dom.closeSettings.elt.disabled = false;
 
