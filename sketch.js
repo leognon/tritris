@@ -41,8 +41,8 @@ let controls = {
     counterClock: 90, //Z
     clock: 88, //X
     left: 37, //Left arrow
-    right: 39, //Right arrow
     down: 40, //Down arrow
+    right: 39, //Right arrow
     start: 13, //Enter
     restart: 27 //Escape
 }
@@ -283,25 +283,13 @@ function showGame(paused) {
         const keyPosX = gameX + gameWidth + 30;
         const keyPosY = gameY + gameHeight - 50;
 
-        if (keyIsDown(controls.counterClock)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.z, keyPosX, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.clock)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.x, keyPosX + 60, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.left)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.left, keyPosX + 120, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.down)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.down, keyPosX + 180, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.right)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.right, keyPosX + 240, keyPosY, 50, 50);
+        offset = 0;
+        for (key in controls) {
+            if (keyIsDown(controls[key])) tint(255, 0, 0);
+            else noTint();
+            image(keyImg.z, keyPosX + offset, keyPosY, 50, 50);
+            offset += 60;
+	}
     }
 }
 
