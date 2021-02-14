@@ -44,8 +44,10 @@ let controls = {
     down: 40, //Down arrow
     right: 39, //Right arrow
     start: 13, //Enter
-    restart: 27 //Escape
+    restart: 27, //Escape
+    restartFast: 82 //R
 }
+
 if (localStorage.hasOwnProperty('controls')) {
     //Load custom controls
     controls = JSON.parse(localStorage.getItem('controls'));
@@ -53,6 +55,7 @@ if (localStorage.hasOwnProperty('controls')) {
     //Set default controls
     localStorage.setItem('controls', JSON.stringify(controls));
 }
+
 let settingControl = null;
 
 let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
@@ -160,6 +163,7 @@ function setup() {
         settingControl = setControl('down', 40);
         settingControl = setControl('start', 13);
         settingControl = setControl('restart', 27);
+        settingControl = setControl('restartFast', 82);
     });
 
     dom.volume = select('#volume');
@@ -324,6 +328,10 @@ function keyPressed() {
     } else if (keyCode == controls.restart) { //Escape pressed
         if (gameState == gameStates.INGAME) {
             game.alive = false;
+	}
+    } else if (keyCode == controls.restartFast) { //R pressed
+        if (gameState == gameStates.INGAME) {
+            newGame(game.practice);
         }
     }
 }
