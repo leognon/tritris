@@ -122,6 +122,16 @@ class Game {
         const deltaTime = now - this.lastFrame;
         this.totalTime += deltaTime;
 
+        let controlsPressed = {
+            moveDown          : (mouseIsPressed && mouseY - lastMouseY >  20 && abs(mouseX - lastMouseX) < 20 || keyIsDown(controls.down )),
+            moveLeft          : (mouseIsPressed && mouseX - lastMouseX < -20 && abs(mouseY - lastMouseY) < 20 || keyIsDown(controls.left )),
+            moveRight         : (mouseIsPressed && mouseX - lastMouseX >  20 && abs(mouseY - lastMouseY) < 20 || keyIsDown(controls.right)),
+
+            rotateCounterClock: (mouseJustReleased && abs(mouseX - lastMouseX) <= 20 && abs(mouseY - lastMouseY) <= 20 && mouseX <  width / 2 || keyIsDown(controls.counterClock)),
+            rotateClock       : (mouseJustReleased && abs(mouseX - lastMouseX) <= 20 && abs(mouseY - lastMouseY) <= 20 && mouseX >= width / 2 || keyIsDown(controls.clock       ))
+	};
+        mouseJustReleased = false;
+
         //Play a line clear animation
         if (now <= this.animationTime) {
             const percentDone =
@@ -198,16 +208,16 @@ class Game {
 
         if (this.currentPiece !== null) {
             //If either left is pressed or right is pressed and down isn't
-            let oneKeyPressed = keyIsDown(controls.left) != keyIsDown(controls.right);
-            if (!this.practice && keyIsDown(controls.down)) {
+            let oneKeyPressed = controlsPressed.moveLeft != controlsPressed.moveRight;
+            if (!this.practice && controlsPressed.moveDown) {
                 oneKeyPressed = false; //Allows down and left/right to be pressed in practice, but not in a real game
             }
             let move = false;
             if (oneKeyPressed) {
                 this.das += deltaTime;
                 if (
-                    (keyIsDown(controls.left) && !this.leftWasPressed) ||
-                    (keyIsDown(controls.right) && !this.rightWasPressed)
+                    (controlsPressed.moveLeft && !this.leftWasPressed) ||
+                    (controlsPressed.moveRight && !this.rightWasPressed)
                 ) {
                     //If it was tapped, move and reset das
                     move = true;
@@ -220,27 +230,27 @@ class Game {
 
             let horzDirection = 0;
             if (move) {
-                if (keyIsDown(controls.left)) horzDirection = -1;
-                if (keyIsDown(controls.right)) horzDirection = 1;
+                if (controlsPressed.moveLeft) horzDirection = -1;
+                if (controlsPressed.moveRight) horzDirection = 1;
             }
 
-            const zPressed = keyIsDown(controls.counterClock) && (!this.zWasPressed || this.zCharged);
-            const xPressed = keyIsDown(controls.clock) && (!this.xWasPressed || this.xCharged);
+            const zPressed = controlsPressed.rotateCounterClock && (!this.zWasPressed || this.zCharged);
+            const xPressed = controlsPressed.rotateClock && (!this.xWasPressed || this.xCharged);
             let rotation = 0;
             if (zPressed && xPressed) rotation = 2;
             else if (xPressed) rotation = 1;
             else if (zPressed) rotation = -1;
 
             let pieceSpeed = this.pieceSpeed;
-            if (keyIsDown(controls.down)) {
+            if (controlsPressed.moveDown) {
                 //Pressing down moves twice as fast, or as fast as the min
                 pieceSpeed = min(pieceSpeed, this.softDropSpeed);
             }
-            if (keyIsDown(controls.down) && !this.downWasPressed) {
+            if (controlsPressed.moveDown && !this.downWasPressed) {
                 this.downPressedAt = this.currentPiece.pos.y; //Save when the piece was first pressed down
             }
             let moveDown = Date.now() >= this.lastMoveDown + pieceSpeed;
-            if (this.practice && !keyIsDown(controls.down)) {
+            if (this.practice && !controlsPressed.moveDown) {
                 moveDown = false; //Pieces only move down when down is pressed in practice mode
             }
             if (horzDirection != 0 || rotation != 0 || moveDown) {
@@ -251,7 +261,7 @@ class Game {
                     moveDown
                 );
                 if (placePiece) {
-                    if (keyIsDown(controls.down)) {
+                    if (controlsPressed.moveDown) {
                         //If it was pushed down, give 1 point per grid cell
                         if (!this.practice) {
                             this.score += this.currentPiece.pos.y - this.downPressedAt;
@@ -269,13 +279,13 @@ class Game {
             }
         }
 
-        this.downWasPressed = keyIsDown(controls.down);
-        this.leftWasPressed = keyIsDown(controls.left);
-        this.rightWasPressed = keyIsDown(controls.right);
-        this.zWasPressed = keyIsDown(controls.counterClock); //If Z was pressed
-        this.xWasPressed = keyIsDown(controls.clock); //If X was pressed
-        if (!keyIsDown(controls.counterClock)) this.zCharged = false; //If the player is pressing anymore, they no longer want to rotate, so don't charge
-        if (!keyIsDown(controls.clock)) this.xCharged = false;
+        this.downWasPressed = controlsPressed.moveDown;
+        this.leftWasPressed = controlsPressed.moveLeft;
+        this.rightWasPressed = controlsPressed.moveRight;
+        this.zWasPressed = controlsPressed.rotateCounterClock; //If Z was pressed
+        this.xWasPressed = controlsPressed.rotateClock; //If X was pressed
+        if (!controlsPressed.rotateCounterClock) this.zCharged = false; //If the player is pressing anymore, they no longer want to rotate, so don't charge
+        if (!controlsPressed.rotateClock) this.xCharged = false;
         this.lastFrame = Date.now();
     }
 

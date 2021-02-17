@@ -62,6 +62,10 @@ let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
 let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
 let keyImg = {};
 
+let lastMouseX = null;
+let lastMouseY = null;
+let mouseJustReleased = false;
+
 function preload() {
     piecesJSON = loadJSON('assets/pieces.json');
     fffForwardFont = loadFont('assets/fff-forward.ttf');
@@ -274,7 +278,7 @@ function showGame(paused) {
 
     if (gameState == gameStates.INGAME && mouseX > gameX && mouseX < gameX + gameWidth
         && mouseY > gameY && mouseY < gameY + gameHeight) {
-        noCursor();
+        //noCursor();
     } else {
         cursor();
     }
@@ -335,6 +339,16 @@ function keyPressed() {
         }
     }
 }
+
+function mousePressed() {
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+}
+
+function mouseReleased() {
+    mouseJustReleased = true;
+}
+//These 2 functions are here so that game.update() can use these variables to do stuff.
 
 function beginSetControl(control) { //When a user clicks a button to choose the control
     if (settingControl != null) return; //Only set 1 at a time
