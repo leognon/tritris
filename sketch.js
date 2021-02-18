@@ -250,10 +250,20 @@ function setHighScores(score, lines) {
         linesHigh = lines;
         localStorage.setItem('TritrisLinesHigh', linesHigh);
     }
-    let formattedScore = pointsHigh.toString();
+    let normal = pointsHigh % 100000;
+    let dig = Math.floor(pointsHigh / 100000);
+    let formattedScore = normal.toString();
+    if (dig > 0) {
+        while (formattedScore.length < 5) formattedScore = '0' + formattedScore; //Make sure the length is correct
+    }
     for (let i = formattedScore.length-3; i > 0; i -= 3) {
         formattedScore = formattedScore.slice(0, i) + " " + formattedScore.slice(i);
     } //Put a space every 3 characters (from the end)
+    if (dig > 0) {
+        let str = dig.toString();
+        if (dig >= 10 && dig <= 35) str = String.fromCharCode('A'.charCodeAt(0) + dig - 10);
+        formattedScore = str + formattedScore;
+    }
     dom.pointsHigh.elt.innerText = 'Points: ' + formattedScore;
     dom.linesHigh.elt.innerText = 'Lines: ' + linesHigh;
 }
