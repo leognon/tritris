@@ -123,14 +123,13 @@ class Game {
         this.totalTime += deltaTime;
 
         let controlsPressed = {
-            moveDown          : (mouseIsPressed && mouseY - lastMouseY >  50 && abs(mouseX - lastMouseX) < 50 || keyIsDown(controls.down )),
-            moveLeft          : (mouseIsPressed && mouseX - lastMouseX < -50 && abs(mouseY - lastMouseY) < 50 || keyIsDown(controls.left )),
-            moveRight         : (mouseIsPressed && mouseX - lastMouseX >  50 && abs(mouseY - lastMouseY) < 50 || keyIsDown(controls.right)),
+            moveDown          : (mobileControlsPressed.down  || keyIsDown(controls.down )),
+            moveLeft          : (mobileControlsPressed.left  || keyIsDown(controls.left )),
+            moveRight         : (mobileControlsPressed.right || keyIsDown(controls.right)),
 
-            rotateCounterClock: (mouseJustReleased && abs(mouseX - lastMouseX) <= 50 && abs(mouseY - lastMouseY) <= 50 && mouseX <  width / 2 || keyIsDown(controls.counterClock)),
-            rotateClock       : (mouseJustReleased && abs(mouseX - lastMouseX) <= 50 && abs(mouseY - lastMouseY) <= 50 && mouseX >= width / 2 || keyIsDown(controls.clock       ))
+            rotateCounterClock: (mobileControlsPressed.counterClock || mobileControlsPressed.turn180 || keyIsDown(controls.counterClock)),
+            rotateClock       : (mobileControlsPressed.clock        || mobileControlsPressed.turn180 || keyIsDown(controls.clock       ))
 	};
-        mouseJustReleased = false;
 
         //Play a line clear animation
         if (now <= this.animationTime) {

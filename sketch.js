@@ -48,6 +48,15 @@ let controls = {
     restartFast: 82 //R
 }
 
+let mobileControlsPressed = {
+    counterClock: false,
+    clock: false,
+    turn180: false,
+    left: false,
+    down: false,
+    right: false
+}
+
 if (localStorage.hasOwnProperty('controls')) {
     //Load custom controls
     controls = JSON.parse(localStorage.getItem('controls'));
@@ -61,10 +70,6 @@ let settingControl = null;
 let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
 let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
 let keyImg = {};
-
-let lastMouseX = null;
-let lastMouseY = null;
-let mouseJustReleased = false;
 
 function preload() {
     piecesJSON = loadJSON('assets/pieces.json');
@@ -93,6 +98,8 @@ function setup() {
     dom.recordsDiv.style('visibility: visible');
     dom.pointsHigh = select('#pointsHigh');
     dom.linesHigh = select('#linesHigh');
+    dom.mobileControls = select('#mobileControls');
+    dom.mobileControls.style('visibility: visible');
     setHighScores(0, 0); //Sets some default scores
 
     dom.titleDiv = select('#title');
@@ -341,15 +348,31 @@ function keyPressed() {
     }
 }
 
-function mousePressed() {
-    lastMouseX = mouseX;
-    lastMouseY = mouseY;
+function mobileControlEvent(control, keyWasPressed) {
+    console.log(control + " " + keyWasPressed + " " + frameCount);
+    switch (control) {
+        case 0:
+            mobileControlsPressed.counterClock = keyWasPressed;
+            break;
+        case 1:
+            mobileControlsPressed.clock = keyWasPressed;
+            break;
+        case 2:
+            mobileControlsPressed.turn180 = keyWasPressed;
+            break;
+        case 3:
+            mobileControlsPressed.left = keyWasPressed;
+            break;
+        case 4:
+            mobileControlsPressed.down = keyWasPressed;
+            break;
+        case 5:
+            mobileControlsPressed.right = keyWasPressed;
+            break;
+        default:
+            console.log("Somehow, a mobile control was pressed that doesn't exist.");
+    }
 }
-
-function mouseReleased() {
-    mouseJustReleased = true;
-}
-//These 2 functions are here so that game.update() can use these variables to do stuff.
 
 function beginSetControl(control) { //When a user clicks a button to choose the control
     if (settingControl != null) return; //Only set 1 at a time
@@ -391,10 +414,12 @@ function resizeDOM() {
     const gameY = height / 2 - gameHeight / 2;
     const cellW = gameWidth / game.w;
 
+    dom.mobileControls.style(`width: ${gameX - 16 - 10 - cellW}px;`);
+
     dom.titleDiv.position(10, gameY);
     dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);
     let titleHeight = dom.titleDiv.elt.offsetHeight;
-    const maxTitleHeight = height - gameY - dom.recordsDiv.elt.offsetHeight - 30;
+    const maxTitleHeight = height - gameY - dom.recordsDiv.elt.offsetHeight - dom.mobileControls.elt.offsetHeight - 60;
     if (titleHeight > maxTitleHeight) {
         dom.titleDiv.style(`height: ${maxTitleHeight}px; overflow-y: scroll`);
         titleHeight = maxTitleHeight;
@@ -404,6 +429,7 @@ function resizeDOM() {
     titleHeight = dom.titleDiv.elt.offsetHeight; //Recalculate height since it might be auto now
 
     dom.recordsDiv.position(10, gameY + titleHeight + 10);
+    dom.mobileControls.position(10, gameY + titleHeight + dom.recordsDiv.elt.offsetHeight + 20);
 
     const playW = dom.playDiv.elt.offsetWidth;
     const playH = dom.playDiv.elt.offsetHeight;
