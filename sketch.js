@@ -285,7 +285,7 @@ function showGame(paused) {
 
     if (gameState == gameStates.INGAME && mouseX > gameX && mouseX < gameX + gameWidth
         && mouseY > gameY && mouseY < gameY + gameHeight) {
-        //noCursor();
+        noCursor();
     } else {
         cursor();
     }
