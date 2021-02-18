@@ -335,6 +335,7 @@ function keyPressed() {
 	}
     } else if (keyCode == controls.restartFast) { //R pressed
         if (gameState == gameStates.INGAME) {
+            setHighScores(game.score, game.lines);
             newGame(game.practice);
         }
     }
