@@ -4,6 +4,13 @@ class Game {
         this.h = 16;
         this.grid = new Grid(this.w, this.h);
 
+        this.tritrisAmt = 0; //For statistics
+        this.totalTime = 0;
+
+        this.history = [];
+        this.currentSnapshot = new Snapshot(this.totalTime);
+        this.firstPieceIndex = 0;
+
         this.alive = true;
 
         if (level < 0) level = 0;
@@ -49,6 +56,7 @@ class Game {
         this.nextSingles = 0;
         this.bag = [];
         this.spawnPiece(); //Sets the next piece
+        this.firstPieceIndex = this.nextPieceIndex; //Used for saving games
         this.spawnPiece(); //Make next piece current, and pick new next
 
         this.levelSpeeds = {
@@ -94,9 +102,6 @@ class Game {
         this.maxFlashTime = 20 * msPerFrame;
         this.flashTime = 0;
         this.flashAmount = 4;
-
-        this.tritrisAmt = 0; //For statistics
-        this.totalTime = 0;
 
         this.redraw = true;
 
@@ -192,6 +197,7 @@ class Game {
             this.lastMoveDown = now;
             this.redraw = true;
             if (!this.isValid(this.currentPiece)) {
+                this.updateHistory();
                 this.alive = false; //If the new piece is already blocked, game over
             }
         }
@@ -251,15 +257,22 @@ class Game {
                     moveDown
                 );
                 if (placePiece) {
+                    let pushDownPoints = 0;
                     if (keyIsDown(controls.down)) {
                         //If it was pushed down, give 1 point per grid cell
                         if (!this.practice) {
-                            this.score += this.currentPiece.pos.y - this.downPressedAt;
+                            pushDownPoints = this.currentPiece.pos.y - this.downPressedAt;
                         }
+                        this.score += pushDownPoints;
                         this.downPressedAt = 0;
                     }
+
                     //Place the piece
                     this.placePiece();
+
+                    this.currentSnapshot.setPushDown(pushDownPoints);
+                    this.updateHistory();
+
                     this.zCharged = false; //After a piece is placed, don't rotate the next piece
                     this.xCharged = false;
                 } else {
@@ -313,6 +326,7 @@ class Game {
             }
         }
 
+        this.currentSnapshot.setNext(this.nextPieceIndex);
         this.nextPiece = new Piece(this.piecesJSON[this.nextPieceIndex]);
         this.playFallSound = true;
     }
@@ -320,6 +334,7 @@ class Game {
     clearLines() {
         let linesCleared = this.grid.clearLines();
         if (linesCleared.length > 0) {
+            this.currentSnapshot.setLines(linesCleared);
             //Set the time for when to stop animating
             this.animationTime = Date.now() + this.maxAnimationTime;
             this.lastColCleared = 0; //Used to ensure all triangles are removed. Starts at 0 to only remove 1 on the first frame
@@ -372,6 +387,8 @@ class Game {
                 this.zCharged = false;
                 this.xCharged = false;
             }
+
+            this.currentSnapshot.addMove(this.totalTime, horzDirection, moveDown, rotation);
             return false; //Don't place the piece
         }
         //If blocked, undo horz move and maybe wall-charge
@@ -385,6 +402,7 @@ class Game {
                 this.zCharged = false; //If it was able to move, don't keep rotating
                 this.xCharged = false;
             }
+            this.currentSnapshot.addMove(this.totalTime, 0, moveDown, rotation);
             return false;
         }
 
@@ -402,6 +420,7 @@ class Game {
                 this.zCharged = true;
             }
             if (horzDirection != 0) this.das = this.dasMax; //Also charge das if blocked by a rotation/wall
+            this.currentSnapshot.addMove(this.totalTime, 0, moveDown, 0);
             return false; //Don't place the piece
         }
 
@@ -638,4 +657,186 @@ class Game {
 
         if (!flashing) this.redraw = false;
     }
+
+    updateHistory() {
+        this.history.push(this.currentSnapshot);
+        this.currentSnapshot = new Snapshot(this.totalTime);
+    }
+
+    toString() {
+        /* Encoding Scheme:
+         * First char - version (currently 0)
+         * Second char - Start level (encoded as big int)
+         * Third char - First piece index (encoded as big int)
+         * Snapshot: (Repeat for all pieces in the game)
+         *     First char - nextPieceIndex
+         *     For all moves:
+         *         Next char - Binary encoded movement
+         *         Next char - deltaTime (encoded as big int)
+         *     Repeat for all movements of that piece
+         *     Next char - '~' Signifies piece movement is done
+         *     Next char - numPoints (encoded as bigInt)
+         *     Next char(s) - Lines cleared
+         *         if numLines == 0:
+         *              nothing
+         *         if numLines == 1:
+         *              Prefix with an '@', then which number line was cleared (encoded as bigInt)
+         *          if numLines == 2:
+         *              Prefix with an '#', then the numbers of the 2 lines that were cleared (encoded as bigInt)
+         *          if numLines == 3:
+         *              Prefix with '$', then the numbers of the 3 lines that were cleared (encoded as bigInt)
+         *
+         *
+         * Big int encoding:
+         * For an integer x, if x < 64:
+         *      Encoded as base64 (with digits 0-9, A-Z, a-z +, =)
+         * Otherwise, the number is prefixed with the number of chars x takes up (everything in base64)
+         *      A symbol indicates how many chars are used.
+         *          ! = 2, @ = 3, # = 4, $ = 5, % = 6, ^ = 7, & = 8
+         *      If more than 8 chars are needed (which should never happen, and might not be possible):
+         *          It is prefixed with *, then base64 of how many chars are used, then the number
+         */
+
+        //The first 0 is to indicate version 0, to allow for better compatibility
+        let str = '0' + bigIntToBase64(this.startLevel) + bigIntToBase64(this.firstPieceIndex);
+        for (let i = 0; i < this.history.length; i++) {
+            str += this.history[i].toString();
+        }
+        return str;
+    }
+}
+
+class Snapshot { //All the data for the movements of 1 piece
+    constructor(spawnTime) {
+        this.nextPiece = 0;
+        this.moves = [];
+        this.lastMoveTime = spawnTime;
+        this.pushDownPoints = 0;
+        this.linesCleared = new LinesCleared([]);
+    }
+
+    setPushDown(points) {
+        this.pushDownPoints = points;
+    }
+
+    setNext(index) {
+        this.nextPiece = index;
+    }
+
+    setLines(lines) {
+        this.linesCleared = new LinesCleared(lines);
+    }
+
+    addMove(totalTime, horzDirection, moveDown, rotation) {
+        const deltaTime = totalTime - this.lastMoveTime;
+        const moveAction = new MoveAction(deltaTime, horzDirection, moveDown, rotation);
+        this.moves.push(moveAction);
+
+        this.lastMoveTime = totalTime;
+    }
+
+    toString() {
+        let str = this.nextPiece.toString();
+        for (let move of this.moves) {
+            str += move.toString();
+        }
+        str += '~' + bigIntToBase64(this.pushDownPoints);
+        str += this.linesCleared.toString();
+
+        return str;
+    }
+}
+
+class MoveAction {
+    constructor(deltaTime, horzDir, moveDown, rot) {
+        this.correctedTime = Math.floor(deltaTime / 2); //To reduce file size, it looses some precision
+        this.horzDir = horzDir;
+        this.moveDown = moveDown;
+        this.rot = rot;
+
+        let bin = 0; //The binary encoding of the piece
+        //From right to left,
+        //First bit: 0 - Don't move down, 1 - Move down
+        if (this.moveDown) bin += 0b1;
+        //Second bit: 0 - Don't move right, 1 - Move right
+        if (this.horzDir == 1) bin += 0b10;
+        //Third bit: 0 - Don't move left, 1 - Move left
+        if (this.horzDir == -1) bin += 0b100;
+        //Fourth/Fifth bit:
+        //     00 - No rotate
+        //     10 - Counterclock rotate
+        //     01 - Clockwise rotate
+        //     11 - 180 rotate
+        if (this.rot == -1)     bin += 0b10000;
+        else if (this.rot == 1) bin += 0b01000;
+        else if (this.rot == 2) bin += 0b11000;
+
+        this.str = intToBase64(bin) + bigIntToBase64(this.correctedTime);
+    }
+
+    toString() {
+        return this.str;
+    }
+}
+
+class LinesCleared {
+    constructor(lines) {
+        this.lines = lines;
+
+        this.str = '';
+        let encoded = '';
+        for (let line of this.lines) encoded += bigIntToBase64(line);
+        const lens = ['!', '@', '#', '$', '%', '^', '&'];
+        if (this.lines.length > 0) {
+            this.str = lens[this.lines.length-1] + encoded;
+        }
+    }
+
+    toString() {
+        return this.str;
+    }
+}
+
+function bigIntToBase64(x) {
+    let base64 = intToBase64(x);
+    if (base64.length > 1) { //Extra characters used for big numbers
+        //The prefix indicating the num of chars in the num
+        const lens = ['!', '@', '#', '$', '%', '^', '&'];
+        if (base64.length-2 > lens.length) {
+            //Number is too big (this is totally overkill, I don't think JS even stores numbers this big)
+            //Prefix with *, then another char indicating the len
+            base64 = '*' + intToBase64(base64.length) + base64;
+        } else {
+            //Num only needs a symbolic prefix
+            base64 = lens[base64.length-2] + base64;
+        }
+    }
+
+    return base64;
+}
+
+function intToBase64(x) {
+    if (x == 0) return '0';
+
+    let ans = '';
+    while (x > 0) {
+        let nextDigit = x % 64;
+        let nextChar;
+        if (nextDigit <= 9) {
+            nextChar = String.fromCharCode(nextDigit + 48); //Digits 0-9
+        } else if (nextDigit <= 35) {
+            nextChar = String.fromCharCode(nextDigit - 10 + 65); //Uppercase A-Z
+        } else if (nextDigit <= 61) {
+            nextChar = String.fromCharCode(nextDigit - 36 + 97); //Lowercase a-z
+        } else if (nextDigit == 62) {
+            nextChar = '+'; //Out of letters and numbers...
+        } if (nextDigit == 63) {
+            nextChar = '=';
+       }
+
+        ans = nextChar + ans;
+        x = Math.floor(x / 64);
+    }
+
+    return ans;
 }

@@ -345,6 +345,7 @@ function keyPressed() {
         }
     } else if (keyCode == controls.restart) { //Escape pressed
         if (gameState == gameStates.INGAME) {
+            game.updateHistory();
             game.alive = false;
         }
     }
@@ -381,6 +382,25 @@ function createGame(level, practice) {
         return;
     }
     game = new Game(piecesJSON, level, practice);
+}
+
+function saveGame() {
+    if (!game) {
+        alert('Something went wrong. The game does not exist.');
+        return;
+    }
+    const str = game.toString();
+    const fileName = `tritris ${game.score}`;
+    const triPercent = (3*game.tritrisAmt/game.lines) || 0;
+    const json = {
+        'score': game.score,
+        'lines': game.lines,
+        'time': game.totalTime,
+        'triPercent': triPercent,
+        'gameData': str
+    }
+
+    saveJSON(json, fileName);
 }
 
 function resizeDOM() {
