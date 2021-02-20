@@ -69,7 +69,7 @@ class Grid {
         return true;
     }
 
-    show(x, y, w, h, colors, pieceImages, paused, showGridLines) {
+    show(x, y, w, h, colors, pieceImages, paused, showGridLines, oldGraphics) {
         const cellW = w / this.w;
         const cellH = h / this.h;
 
@@ -83,7 +83,8 @@ class Grid {
                         cellW,
                         cellH,
                         colors,
-                        pieceImages
+                        pieceImages,
+                        oldGraphics
                     );
                 }
             }
@@ -182,11 +183,11 @@ class GridCell {
         return false;
     }
 
-    show(x, y, w, h, colors, pieceImages) {
+    show(x, y, w, h, colors, pieceImages, oldGraphics) {
         for (let row = 0; row < this.tris.length; row++) {
             for (let col = 0; col < this.tris[0].length; col++) {
                 if (this.tris[row][col])
-                    this.tris[row][col].show(x, y, w, h, row, col, colors, pieceImages);
+                    this.tris[row][col].show(x, y, w, h, row, col, colors, pieceImages, oldGraphics);
             }
         }
     }
@@ -197,30 +198,33 @@ class Triangle {
         this.clr = clr;
     }
 
-    show(x, y, w, h, row, col, colors, pieceImages) {
-        const thisColor = pieceImages[this.clr];
-        let rot;
-        if (row == 0 && col == 0) { //Top left
-            rot = 3;
-        } else if (row == 0 && col == 1) { //Top right
-            rot = 2;
-        } else if (row == 1 && col == 0) { //Bottom left
-            rot = 1;
-        } else if (row == 1 && col == 1) { //Bottom right
-            rot = 0;
+    show(x, y, w, h, row, col, colors, pieceImages, oldGraphics) {
+        if (oldGraphics) {
+            stroke(100);
+            strokeWeight(2);
+            fill(colors[this.clr]);
+            if (row == 0 && col == 0) {
+                triangle(x, y, x + w, y, x, y + h);
+            } else if (row == 0 && col == 1) {
+                triangle(x, y, x + w, y, x + w, y + h);
+            } else if (row == 1 && col == 0) {
+                triangle(x, y, x, y + h, x + w, y + h);
+            } else if (row == 1 && col == 1) {
+                triangle(x, y + h, x + w, y, x + w, y + h);
+            }
+        } else {
+            const thisColor = pieceImages[this.clr];
+            let rot;
+            if (row == 0 && col == 0) { //Top left
+                rot = 3;
+            } else if (row == 0 && col == 1) { //Top right
+                rot = 2;
+            } else if (row == 1 && col == 0) { //Bottom left
+                rot = 1;
+            } else if (row == 1 && col == 1) { //Bottom right
+                rot = 0;
+            }
+            image(thisColor[rot], x, y, w, h);
         }
-        image(thisColor[rot], x, y, w, h);
-        /*stroke(100);
-        strokeWeight(2);
-        fill(colors[this.clr]);
-        if (row == 0 && col == 0) {
-            triangle(x, y, x + w, y, x, y + h);
-        } else if (row == 0 && col == 1) {
-            triangle(x, y, x + w, y, x + w, y + h);
-        } else if (row == 1 && col == 0) {
-            triangle(x, y, x, y + h, x + w, y + h);
-        } else if (row == 1 && col == 1) {
-            triangle(x, y + h, x + w, y, x + w, y + h);
-        }*/
     }
 }

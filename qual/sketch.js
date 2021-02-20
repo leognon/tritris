@@ -17,6 +17,10 @@ let volume = 75;
 if (localStorage.hasOwnProperty('volume')) {
     volume = JSON.parse(localStorage.getItem('volume'));
 }
+let oldGraphics = false;
+if (localStorage.hasOwnProperty('oldGraphics')) {
+    oldGraphics = JSON.parse(localStorage.getItem('oldGraphics'));
+}
 let showGridLines = true;
 if (localStorage.hasOwnProperty('showGridLines')) {
     showGridLines = JSON.parse(localStorage.getItem('showGridLines'));
@@ -256,7 +260,7 @@ function showGame(paused) {
         cursor();
     }
 
-    game.show(gameX, gameY, gameWidth, gameHeight, paused, showGridLines, showStats);
+    game.show(gameX, gameY, gameWidth, gameHeight, paused, oldGraphics, showGridLines, showStats);
     if (volume > 1)
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
 

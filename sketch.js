@@ -17,6 +17,10 @@ let volume = 75;
 if (localStorage.hasOwnProperty('volume')) {
     volume = JSON.parse(localStorage.getItem('volume'));
 }
+let oldGraphics = false;
+if (localStorage.hasOwnProperty('oldGraphics')) {
+    oldGraphics = JSON.parse(localStorage.getItem('oldGraphics'));
+}
 let showGridLines = true;
 if (localStorage.hasOwnProperty('showGridLines')) {
     showGridLines = JSON.parse(localStorage.getItem('showGridLines'));
@@ -187,6 +191,16 @@ function setup() {
     };
     updateVolume();
 
+    dom.oldGraphics = select('#oldGraphics');
+    dom.oldGraphics.checked(oldGraphics);
+    dom.oldGraphics.changed(() => {
+        oldGraphics = dom.oldGraphics.checked();
+        localStorage.setItem('oldGraphics', oldGraphics);
+        if (game) {
+            game.redraw = true;
+            showGame(gameState == gameStates.PAUSED);
+        }
+    });
     dom.showGridLines = select('#showGridLines');
     dom.showGridLines.checked(showGridLines);
     dom.showGridLines.changed(() => {
@@ -291,7 +305,7 @@ function showGame(paused) {
         cursor();
     }
 
-    game.show(gameX, gameY, gameWidth, gameHeight, paused, showGridLines, showStats);
+    game.show(gameX, gameY, gameWidth, gameHeight, paused, oldGraphics, showGridLines, showStats);
     if (volume > 1) //Small buffer to mute sound
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
 
