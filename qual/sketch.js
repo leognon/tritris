@@ -199,6 +199,9 @@ function draw() {
             gameState = gameStates.MENU;
             dom.playDiv.show();
 
+            if (!game.practice)
+                setHighScores(game.score, game.lines);
+
             games[currentGame].status = gameStatus.FINISHED;
             games[currentGame].score = game.score;
             games[currentGame].lines = game.lines;
@@ -215,6 +218,18 @@ function draw() {
         textSize(30);
         textAlign(CENTER, CENTER);
         text('PAUSED', width/2, height/3);
+    }
+}
+
+function setHighScores(score, lines) {
+    const pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
+    const linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
+
+    if (score > pointsHigh) {
+        localStorage.setItem('TritrisPointsHigh', score);
+    }
+    if (lines > linesHigh) {
+        localStorage.setItem('TritrisLinesHigh', lines);
     }
 }
 
