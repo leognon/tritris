@@ -71,7 +71,7 @@ class Piece {
         return this.pos.y + this.grid.length;
     }
 
-    showAt(x, y, w, h, colors) {
+    showAt(x, y, w, h, colors, pieceImages) {
         const dim = 3;//max(this.grid.length, this.grid[0].length);
         const cellW = w / dim;
         const cellH = h / dim;
@@ -85,11 +85,12 @@ class Piece {
             centerY,
             w / dim,
             h / dim,
-            colors
+            colors,
+            pieceImages
         );
     }
 
-    show(originX, originY, cellW, cellH, colors) {
+    show(originX, originY, cellW, cellH, colors, pieceImages) {
         originX += this.pos.x * cellW;
         originY += this.pos.y * cellH;
         for (let row = 0; row < this.grid.length; row++) {
@@ -99,7 +100,8 @@ class Piece {
                     originY + row * cellH,
                     cellW,
                     cellH,
-                    colors
+                    colors,
+                    pieceImages
                 );
             }
         }

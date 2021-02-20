@@ -31,6 +31,8 @@ if (localStorage.hasOwnProperty('showStats')) {
 }
 
 let piecesJSON;
+let piecesImage; //The entire spritesheet
+let pieceImages = []; //A 2d array of all the individual triangles
 let game;
 let gameState = gameStates.LOADING;
 
@@ -72,9 +74,13 @@ function preload() {
     keyImg.down = loadImage('assets/downKey.png');
     keyImg.z = loadImage('assets/zKey.png');
     keyImg.x = loadImage('assets/xKey.png');
+
+    piecesImage = loadImage('assets/piecesImageSmall.png');
 }
 
 function setup() {
+    pieceImages = loadPieces(piecesImage); //This will take some time, so it run before setting gameState to MENU
+
     gameState = gameStates.MENU;
     createCanvas(windowWidth, windowHeight);
     textFont(fffForwardFont);
@@ -312,6 +318,8 @@ function showGame(paused) {
         if (keyIsDown(controls.right)) tint(255, 0, 0);
         else noTint();
         image(keyImg.right, keyPosX + 240, keyPosY, 50, 50);
+
+        noTint();
     }
 }
 
@@ -381,7 +389,7 @@ function createGame(level, practice) {
         alert('Please select a positive level');
         return;
     }
-    game = new Game(piecesJSON, level, practice);
+    game = new Game(piecesJSON, pieceImages, level, practice);
 }
 
 function saveGame() {
