@@ -265,8 +265,8 @@ class Game {
                             pushDownPoints = this.currentPiece.pos.y - this.downPressedAt;
                         }
                         this.score += pushDownPoints;
-                        this.downPressedAt = 0;
                     }
+                    this.downPressedAt = 0;
 
                     //Place the piece
                     this.placePiece();
