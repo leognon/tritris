@@ -13,25 +13,12 @@ let fallSound;
 let clearSound;
 let tritrisSound;
 
-let volume = 75;
-if (localStorage.hasOwnProperty('volume')) {
-    volume = JSON.parse(localStorage.getItem('volume'));
-}
-let oldGraphics = false;
-if (localStorage.hasOwnProperty('oldGraphics')) {
-    oldGraphics = JSON.parse(localStorage.getItem('oldGraphics'));
-}
-let showGridLines = true;
-if (localStorage.hasOwnProperty('showGridLines')) {
-    showGridLines = JSON.parse(localStorage.getItem('showGridLines'));
-}
-let showKeys = false;
-if (localStorage.hasOwnProperty('showKeys')) {
-    showKeys = JSON.parse(localStorage.getItem('showKeys'));
-}
-let showStats = false;
-if (localStorage.hasOwnProperty('showStats')) {
-    showStats = JSON.parse(localStorage.getItem('showStats'));
+let volume = getSavedValue('volume', 75);
+let settings = {
+    oldGraphics: getSavedValue('oldGraphics', false),
+    showGridLines: getSavedValue('showGridLines', true),
+    showKeys: getSavedValue('showKeys', false),
+    showStats: getSavedValue('showStats', false)
 }
 
 let piecesJSON;
@@ -43,7 +30,7 @@ let gameState = gameStates.LOADING;
 const keyboardMap = [ //From https://stackoverflow.com/questions/1772179/get-character-value-from-keycode-in-javascript-then-trim
   '','','','CANCEL','','','HELP','','BACK_SPACE','TAB','','','CLEAR','ENTER','ENTER_SPECIAL','','SHIFT','CONTROL','ALT','PAUSE','CAPS_LOCK','KANA','EISU','JUNJA','FINAL','HANJA','','ESCAPE','CONVERT','NONCONVERT','ACCEPT','MODECHANGE','SPACE','PAGE_UP','PAGE_DOWN','END','HOME','LEFT ARROW','UP ARROW','RIGHT ARROW','DOWN ARROW','SELECT','PRINT','EXECUTE','PRINTSCREEN','INSERT','DELETE','','0','1','2','3','4','5','6','7','8','9','COLON','SEMICOLON','LESS_THAN','EQUALS','GREATER_THAN','QUESTION_MARK','AT','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','OS_KEY','','CONTEXT_MENU','','SLEEP','NUMPAD0','NUMPAD1','NUMPAD2','NUMPAD3','NUMPAD4','NUMPAD5','NUMPAD6','NUMPAD7','NUMPAD8','NUMPAD9','MULTIPLY','ADD','SEPARATOR','SUBTRACT','DECIMAL','DIVIDE','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12','F13','F14','F15','F16','F17','F18','F19','F20','F21','F22','F23','F24','','','','','','','','','NUM_LOCK','SCROLL_LOCK','WIN_OEM_FJ_JISHO','WIN_OEM_FJ_MASSHOU','WIN_OEM_FJ_TOUROKU','WIN_OEM_FJ_LOYA','WIN_OEM_FJ_ROYA','','','','','','','','','','CIRCUMFLEX','EXCLAMATION','DOUBLE_QUOTE','HASH','DOLLAR','PERCENT','AMPERSAND','UNDERSCORE','OPEN_PAREN','CLOSE_PAREN','ASTERISK','PLUS','PIPE','HYPHEN_MINUS','OPEN_CURLY_BRACKET','CLOSE_CURLY_BRACKET','TILDE','','','','','VOLUME_MUTE','VOLUME_DOWN','VOLUME_UP','','','SEMICOLON','EQUALS','COMMA','MINUS','PERIOD','SLASH','BACK_QUOTE','','','','','','','','','','','','','','','','','','','','','','','','','','','OPEN_BRACKET','BACK_SLASH','CLOSE_BRACKET','QUOTE','','META','ALTGR','','WIN_ICO_HELP','WIN_ICO_00','','WIN_ICO_CLEAR','','','WIN_OEM_RESET','WIN_OEM_JUMP','WIN_OEM_PA1','WIN_OEM_PA2','WIN_OEM_PA3','WIN_OEM_WSCTRL','WIN_OEM_CUSEL','WIN_OEM_ATTN','WIN_OEM_FINISH','WIN_OEM_COPY','WIN_OEM_AUTO','WIN_OEM_ENLW','WIN_OEM_BACKTAB','ATTN','CRSEL','EXSEL','EREOF','PLAY','ZOOM','','PA1','WIN_OEM_CLEAR',''
 ];
-let controls = {
+let controls = getSavedValue('controls', {
     counterClock: 90, //Z
     clock: 88, //X
     left: 37, //Left arrow
@@ -51,18 +38,9 @@ let controls = {
     down: 40, //Down arrow
     start: 13, //Enter
     restart: 27 //Escape
-}
-if (localStorage.hasOwnProperty('controls')) {
-    //Load custom controls
-    controls = JSON.parse(localStorage.getItem('controls'));
-} else {
-    //Set default controls
-    localStorage.setItem('controls', JSON.stringify(controls));
-}
+});
 let settingControl = null;
 
-let pointsHigh = localStorage.getItem('TritrisPointsHigh') || 0;
-let linesHigh = localStorage.getItem('TritrisLinesHigh') || 0;
 let keyImg = {};
 
 function preload() {
@@ -88,69 +66,35 @@ function setup() {
     gameState = gameStates.MENU;
     createCanvas(windowWidth, windowHeight);
     textFont(fffForwardFont);
-    createGame(0);
-    game.currentPiece = null;
+
+    game = createGame(0);
+    game.currentPiece = null; //The initial load doesn't have any pieces show up
     game.nextPiece = null;
 
     dom.recordsDiv = select('#records');
     dom.recordsDiv.style('visibility: visible');
-    dom.pointsHigh = select('#pointsHigh');
-    dom.linesHigh = select('#linesHigh');
-    setHighScores(0, 0); //Sets some default scores
+    setHighScores(0, 0, true); //Sets some default scores
 
     dom.titleDiv = select('#title');
     dom.titleDiv.style('visibility: visible');
 
     dom.playDiv = select('#play');
     dom.playDiv.style('visibility: visible');
-    dom.level = select('#level');
-    if (localStorage.hasOwnProperty('startLevel')) {
-        dom.level.value(localStorage.getItem('startLevel'));
-    }
+
+    dom.level = select('#level'); //Select
+    dom.level.value(getSavedValue('startLevel', 0));
     dom.level.changed(() => {
         localStorage.setItem('startLevel', dom.level.value());
     });
+
     dom.newGame = select('#newGame');
-    dom.newGame.mousePressed(() => {
-        newGame(false);
-    });
+    dom.newGame.mousePressed(() => { newGame(false); });
     dom.practiceGame = select('#practiceGame');
-    dom.practiceGame.mousePressed(() => {
-        newGame(true);
-    });
+    dom.practiceGame.mousePressed(() => { newGame(true); });
 
-    dom.tutorial = select('#tutorial');
-    dom.openTutorial = select('#openTutorial');
-    dom.openTutorial.mousePressed(() => {
-        if (gameState == gameStates.MENU)
-            dom.tutorial.style('visibility: visible');
-    });
-    dom.closeTutorial = select('#closeTutorial');
-    dom.closeTutorial.mousePressed(() => {
-        dom.tutorial.style('visibility: hidden');
-    });
-
-    dom.changelog = select('#changelog');
-    dom.openChangelog = select('#openChangelog');
-    dom.openChangelog.mousePressed(() => {
-        if (gameState == gameStates.MENU)
-            dom.changelog.style('visibility: visible');
-    });
-    dom.closeChangelog = select('#closeChangelog');
-    dom.closeChangelog.mousePressed(() => {
-        dom.changelog.style('visibility: hidden');
-    });
-
-    dom.settings = select('#settings');
-    dom.openSettings = select('#openSettings');
-    dom.openSettings.mousePressed(() => {
-        if (gameState == gameStates.MENU)
-            dom.settings.style('visibility: visible');
-    });
-    dom.closeSettings = select('#closeSettings');
-    dom.closeSettings.mousePressed(() => {
-        dom.settings.style('visibility: hidden');
-    });
+    createMenuBox('tutorial', 'openTutorial', 'closeTutorial');
+    createMenuBox('changelog', 'openChangelog', 'closeChangelog');
+    createMenuBox('settings', 'openSettings', 'closeSettings');
 
     dom.controls = {};
     for (const control in controls) {
@@ -191,46 +135,10 @@ function setup() {
     };
     updateVolume();
 
-    dom.oldGraphics = select('#oldGraphics');
-    dom.oldGraphics.checked(oldGraphics);
-    dom.oldGraphics.changed(() => {
-        oldGraphics = dom.oldGraphics.checked();
-        localStorage.setItem('oldGraphics', oldGraphics);
-        if (game) {
-            game.redraw = true;
-            showGame(gameState == gameStates.PAUSED);
-        }
-    });
-    dom.showGridLines = select('#showGridLines');
-    dom.showGridLines.checked(showGridLines);
-    dom.showGridLines.changed(() => {
-        showGridLines = dom.showGridLines.checked();
-        localStorage.setItem('showGridLines', showGridLines);
-        if (game) {
-            game.redraw = true;
-            showGame(gameState == gameStates.PAUSED);
-        }
-    });
-    dom.showKeys = select('#showKeys');
-    dom.showKeys.checked(showKeys);
-    dom.showKeys.changed(() => {
-        showKeys = dom.showKeys.checked();
-        localStorage.setItem('showKeys', showKeys);
-        if (game) {
-            game.redraw = true;
-            showGame(gameState == gameStates.PAUSED);
-        }
-    });
-    dom.showStats = select('#showStats');
-    dom.showStats.checked(showStats);
-    dom.showStats.changed(() => {
-        showStats = dom.showStats.checked();
-        localStorage.setItem('showStats', showStats);
-        if (game) {
-            game.redraw = true;
-            showGame(gameState == gameStates.PAUSED);
-        }
-    });
+    addCheckbox('oldGraphics');
+    addCheckbox('showGridLines');
+    addCheckbox('showKeys');
+    addCheckbox('showStats');
 
     resizeDOM();
     showGame(true);
@@ -247,7 +155,7 @@ function draw() {
         showGame(false); //Show the game, (and it's not paused)
         if (!game.alive) {
             if (!game.practice)
-                setHighScores(game.score, game.lines);
+                setHighScores(game.score, game.lines, true);
             gameState = gameStates.MENU;
             dom.playDiv.show();
         }
@@ -261,88 +169,12 @@ function draw() {
     }
 }
 
-function setHighScores(score, lines) {
-    if (score > pointsHigh) {
-        pointsHigh = score;
-        localStorage.setItem('TritrisPointsHigh', pointsHigh);
-    }
-    if (lines > linesHigh) {
-        linesHigh = lines;
-        localStorage.setItem('TritrisLinesHigh', linesHigh);
-    }
-    let normal = pointsHigh % 100000;
-    let dig = Math.floor(pointsHigh / 100000);
-    let formattedScore = normal.toString();
-    if (dig > 0) {
-        while (formattedScore.length < 5) formattedScore = '0' + formattedScore; //Make sure the length is correct
-    }
-    for (let i = formattedScore.length-3; i > 0; i -= 3) {
-        formattedScore = formattedScore.slice(0, i) + " " + formattedScore.slice(i);
-    } //Put a space every 3 characters (from the end)
-    if (dig > 0) {
-        let str = dig.toString();
-        if (dig >= 10 && dig <= 35) str = String.fromCharCode('A'.charCodeAt(0) + dig - 10);
-        formattedScore = str + formattedScore;
-    }
-    dom.pointsHigh.elt.innerText = 'Points: ' + formattedScore;
-    dom.linesHigh.elt.innerText = 'Lines: ' + linesHigh;
-}
-
-function showGame(paused) {
-    let gameWidth = min(width / 2, height / 2) - 2 * padding;
-    let gameHeight = gameWidth * (game.h / game.w);
-    if (gameHeight > height) {
-        gameHeight = height - 2 * padding;
-        gameWidth = gameHeight * (game.w / game.h);
-    }
-    const gameX = width / 2 - gameWidth / 2;
-    const gameY = height / 2 - gameHeight / 2;
-
-    if (gameState == gameStates.INGAME && mouseX > gameX && mouseX < gameX + gameWidth
-        && mouseY > gameY && mouseY < gameY + gameHeight) {
-        noCursor();
-    } else {
-        cursor();
-    }
-
-    game.show(gameX, gameY, gameWidth, gameHeight, paused, oldGraphics, showGridLines, showStats);
-    if (volume > 1) //Small buffer to mute sound
-        game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
-
-    if (showKeys) {
-        const keyPosX = gameX + gameWidth + 30;
-        const keyPosY = gameY + gameHeight - 50;
-
-        if (keyIsDown(controls.counterClock)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.z, keyPosX, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.clock)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.x, keyPosX + 60, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.left)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.left, keyPosX + 120, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.down)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.down, keyPosX + 180, keyPosY, 50, 50);
-
-        if (keyIsDown(controls.right)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.right, keyPosX + 240, keyPosY, 50, 50);
-
-        noTint();
-    }
-}
-
 function newGame(practice) {
     if (gameState == gameStates.LOADING) return;
     if (getComputedStyle(dom.settings.elt).visibility == 'visible')
         return; //Make sure to not start a game when the settings box is open
 
-    createGame(dom.level.value(), practice);
+    game = createGame(dom.level.value(), practice);
     gameState = gameStates.INGAME;
     dom.playDiv.hide();
     dom.tutorial.style('visibility: hidden');
@@ -391,21 +223,6 @@ function setControl(keyCode) { //When a user presses the key they want to use fo
     localStorage.setItem('controls', JSON.stringify(controls)); //Save the new controls for a later session
 }
 
-function createGame(level, practice) {
-    level = parseInt(level);
-    if (isNaN(level)) {
-        console.error(level + ' is not a proper level');
-        alert('Please select a proper level number');
-        return;
-    }
-    if (level < 0) {
-        console.error('Negative level selected');
-        alert('Please select a positive level');
-        return;
-    }
-    game = new Game(piecesJSON, pieceImages, level, practice);
-}
-
 function saveGame() {
     if (!game) {
         alert('Something went wrong. The game does not exist.');
@@ -425,35 +242,3 @@ function saveGame() {
     saveJSON(json, fileName);
 }
 
-function resizeDOM() {
-    const gameWidth = min(width / 2, height / 2) - 2 * padding;
-    const gameHeight = gameWidth * 2;
-    const gameX = width / 2 - gameWidth / 2;
-    const gameY = height / 2 - gameHeight / 2;
-    const cellW = gameWidth / game.w;
-
-    dom.titleDiv.position(10, gameY);
-    dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);
-    let titleHeight = dom.titleDiv.elt.offsetHeight;
-    const maxTitleHeight = height - gameY - dom.recordsDiv.elt.offsetHeight - 30;
-    if (titleHeight > maxTitleHeight) {
-        dom.titleDiv.style(`height: ${maxTitleHeight}px; overflow-y: scroll`);
-        titleHeight = maxTitleHeight;
-    } else {
-        dom.titleDiv.style('height: auto; overflow-y: hidden');
-    }
-    titleHeight = dom.titleDiv.elt.offsetHeight; //Recalculate height since it might be auto now
-
-    dom.recordsDiv.position(10, gameY + titleHeight + 10);
-
-    const playW = dom.playDiv.elt.offsetWidth;
-    const playH = dom.playDiv.elt.offsetHeight;
-    dom.playDiv.position((width - playW) / 2, (height - playH) / 2);
-}
-
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-    resizeDOM();
-    game.redraw = true;
-    showGame(gameState == gameStates.PAUSED);
-}
