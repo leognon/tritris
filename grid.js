@@ -73,6 +73,17 @@ class Grid {
         const cellW = w / this.w;
         const cellH = h / this.h;
 
+        if (showGridLines) {
+            //Draws the grid outline
+            stroke(100);
+            strokeWeight(2);
+            //Vertical lines
+            for (let i = 0; i <= this.w; i++)
+                line(x + i * cellW, y, x + i * cellW, y + h);
+            //Horizontal lines
+            for (let j = 0; j <= this.h; j++)
+                line(x, y + j * cellH, x + w, y + j * cellH);
+        }
         if (!paused) {
             //Draws the triangles in the grid
             for (let i = 0; i < this.h; i++) {
@@ -90,17 +101,13 @@ class Grid {
             }
         }
 
-        if (showGridLines) {
-            //Draws the grid outline
-            stroke(100);
-            strokeWeight(2);
-            //Vertical lines
-            for (let i = 0; i <= this.w; i++)
-                line(x + i * cellW, y, x + i * cellW, y + h);
-            //Horizontal lines
-            for (let j = 0; j <= this.h; j++)
-                line(x, y + j * cellH, x + w, y + j * cellH);
-        }
+        //Draws only the outside borders on top of the pieces, so they don't stick out of the board
+        stroke(100);
+        strokeWeight(2);
+        line(x, y, x, y + h);
+        line(x + this.w * cellW, y, x + this.w * cellW, y + h);
+        line(x, y, x + w, y);
+        line(x, y + this.h * cellH, x + w, y + this.h * cellH);
     }
 }
 

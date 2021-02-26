@@ -57,7 +57,7 @@ function preload() {
     keyImg.z = loadImage('assets/zKey.png');
     keyImg.x = loadImage('assets/xKey.png');
 
-    piecesImage = loadImage('assets/piecesImageSmall.png');
+    piecesImage = loadImage('assets/piecesImage.png');
 }
 
 function setup() {
