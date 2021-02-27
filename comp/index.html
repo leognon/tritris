@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <link rel="icon" type="image/png" href="../favicon.png" />
+        <meta charset="utf-8" />
+        <title>Tritris</title>
+    </head>
+    <body>
+        <script src="../utility.js"></script>
+        <script src="sketch.js"></script>
+        <script src="../grid.js"></script>
+        <script src="../piece.js"></script>
+        <script src="../game.js"></script>
+
+        <div id="title" class="box">
+            <h1>TMC</h1>
+            <p style="font-size: 12pt">
+                <p id="welcomeMsg">Welcome to the Tritris Monthly Championship!</p>
+                <br />
+                <label>Volume</label>
+                <input type="range" id="volume" min="0" max="100" value="75" step="1" />
+            </p>
+        </div>
+
+        <div id="records" class="box">
+        </div>
+
+        <div id="play" class="box" style="position: absolute">
+            <h1>Tritris</h1>
+            <label id="seedLabel">Seed: </label>
+            <input id="seed" type="number" value="0" min="0" max="9999" />
+            <br />
+            <button id="newGame">New Game</button>
+        </div>
+
+        </div>
+    </body>
+</html>

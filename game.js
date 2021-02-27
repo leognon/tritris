@@ -320,7 +320,7 @@ class Game {
             this.nextPieceIndex = 0; //This will make it spawn 3 single triangles in a row
             this.nextSingles--;
         } else {
-            const bagIndex = Math.floor(Math.random() * this.bag.length);
+            const bagIndex = Math.floor(random() * this.bag.length);
             this.nextPieceIndex = this.bag.splice(bagIndex, 1)[0]; //Pick 1 item and remove it from bag
             if (this.nextPieceIndex == 0) {
                 //If it randomly chose to spawn 1 triangle, spawn 2 more

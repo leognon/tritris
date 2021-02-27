@@ -1,0 +1,63 @@
+@font-face {
+    font-family: 'fff-forward';
+    src: url('../assets/fff-forward.ttf');
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(100, 100, 100);
+    overflow-y: hidden;
+}
+
+canvas {
+    display: block;
+}
+
+h1, h3, h4 {
+    font-family: fff-forward;
+}
+
+h3 {
+    margin: 5px;
+}
+
+.box {
+    visibility: hidden;
+    padding: 5px;
+    line-height: 30px;
+    border: 3px solid black;
+}
+
+#play {
+    position: absolute;
+    text-align: center;
+    width: 200px;
+    height: 175px;
+    background-color: rgb(150, 150, 150);
+    font-family: fff-forward;
+}
+
+input, button {
+    padding: 3px;
+    margin: 3px;
+    font-size: 15pt;
+    cursor: pointer;
+}
+
+#level {
+    width: 40px;
+}
+
+#newGame {
+    border: none;
+}
+
+#level {
+    width: 40px;
+}
+
+.currentGame {
+    color: red;
+}
