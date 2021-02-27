@@ -1,4 +1,7 @@
 //These are various function that don't fit elsewhere
+const totalAssets = 8;
+let loadedAssets = 0;
+const countLoaded = () => { loadedAssets++; };
 
 function loadPieces(piecesImage) {
     let pieceImages = []; //A 2d array of each piece color and their rotations
@@ -67,7 +70,7 @@ function showGame(paused) {
     if (volume > 1) //Small buffer to mute sound
         game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
 
-    if (settings.showKeys) {
+    if (settings.showKeys && gameState != gameStates.LOADING) {
         const keyPosX = gameX + gameWidth + 30;
         const keyPosY = gameY + gameHeight - 50;
 
@@ -107,7 +110,7 @@ function createGame(level, practice) {
         alert('Please select a positive level');
         return;
     }
-    return new Game(piecesJSON, pieceImages, level, practice);
+    return new Game(piecesJSON, pieceImages, level, practice, false);
 }
 
 function setHighScores(score, lines, updateDisplay) {

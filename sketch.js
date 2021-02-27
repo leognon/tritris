@@ -43,33 +43,27 @@ let settingControl = null;
 
 let keyImg = {};
 
-function preload() {
-    piecesJSON = loadJSON('assets/pieces.json');
-    fffForwardFont = loadFont('assets/fff-forward.ttf');
+function setup() {
+    piecesJSON = loadJSON('assets/pieces.json', countLoaded);
+    fffForwardFont = loadFont('assets/fff-forward.ttf', countLoaded);
+
+    keyImg.left = loadImage('assets/leftKey.png', countLoaded);
+    keyImg.right = loadImage('assets/rightKey.png', countLoaded);
+    keyImg.down = loadImage('assets/downKey.png', countLoaded);
+    keyImg.z = loadImage('assets/zKey.png', countLoaded);
+    keyImg.x = loadImage('assets/xKey.png', countLoaded);
+
+    piecesImage = loadImage('assets/piecesImage.png', () => {
+        pieceImages = loadPieces(piecesImage);
+        countLoaded();
+    });
+
     moveSound = new Sound('assets/move.wav');
     fallSound = new Sound('assets/fall.wav');
     clearSound = new Sound('assets/clear.wav');
     tritrisSound = new Sound('assets/tritris.wav');
 
-    keyImg.left = loadImage('assets/leftKey.png');
-    keyImg.right = loadImage('assets/rightKey.png');
-    keyImg.down = loadImage('assets/downKey.png');
-    keyImg.z = loadImage('assets/zKey.png');
-    keyImg.x = loadImage('assets/xKey.png');
-
-    piecesImage = loadImage('assets/piecesImage.png');
-}
-
-function setup() {
-    pieceImages = loadPieces(piecesImage); //This will take some time, so it run before setting gameState to MENU
-
-    gameState = gameStates.MENU;
     createCanvas(windowWidth, windowHeight);
-    textFont(fffForwardFont);
-
-    game = createGame(0);
-    game.currentPiece = null; //The initial load doesn't have any pieces show up
-    game.nextPiece = null;
 
     dom.recordsDiv = select('#records');
     dom.recordsDiv.style('visibility: visible');
@@ -87,34 +81,14 @@ function setup() {
         localStorage.setItem('startLevel', dom.level.value());
     });
 
-    dom.newGame = select('#newGame');
-    dom.newGame.mousePressed(() => { newGame(false); });
-    dom.practiceGame = select('#practiceGame');
-    dom.practiceGame.mousePressed(() => { newGame(true); });
-
     createMenuBox('tutorial', 'openTutorial', 'closeTutorial');
     createMenuBox('changelog', 'openChangelog', 'closeChangelog');
     createMenuBox('settings', 'openSettings', 'closeSettings');
 
-    dom.controls = {};
-    for (const control in controls) {
-        dom.controls[control] = select('#' + control);
-        //Make sure control buttons match up with current controls
-        dom.controls[control].elt.innerText = keyboardMap[controls[control]];
-        dom.controls[control].mousePressed(() => {
-            beginSetControl(control); //Create a separate click event for each button
-        });
-    }
-    dom.controls.default = select('#defaultControls');
-    dom.controls.default.mousePressed(() => { //Reset all controls to default
-        settingControl = 'counterClock'; setControl(90);
-        settingControl = 'clock'; setControl(88);
-        settingControl = 'left'; setControl(37);
-        settingControl = 'right'; setControl(39);
-        settingControl = 'down'; setControl(40);
-        settingControl = 'start'; setControl(13);
-        settingControl = 'restart'; setControl(27);
-    });
+    addCheckbox('oldGraphics');
+    addCheckbox('showGridLines');
+    addCheckbox('showKeys');
+    addCheckbox('showStats');
 
     dom.volume = select('#volume');
     dom.volume.value(volume);
@@ -135,16 +109,58 @@ function setup() {
     };
     updateVolume();
 
-    addCheckbox('oldGraphics');
-    addCheckbox('showGridLines');
-    addCheckbox('showKeys');
-    addCheckbox('showStats');
+
+    //An empty piece so the game can render before loading pieces and the images
+    let emptyPieceJSON = { pieces: [ { color: 0, pieces: [[[0,0],[0,0]]]  } ] };
+    let singleImg = createImage(0,0);
+    let emptyImages = [ [singleImg, singleImg, singleImg, singleImg ] ];
+    game = new Game(emptyPieceJSON, emptyImages, 0, false, true); //Load a "fake" game to just display the grid
+    game.redraw = true;
+    showGame(false);
 
     resizeDOM();
-    showGame(true);
+}
+
+function finishedLoading() {
+    textFont(fffForwardFont);
+
+    dom.newGame = select('#newGame');
+    dom.newGame.mousePressed(() => { newGame(false); });
+    dom.practiceGame = select('#practiceGame');
+    dom.practiceGame.mousePressed(() => { newGame(true); });
+
+    dom.controls = {};
+    for (const control in controls) {
+        dom.controls[control] = select('#' + control);
+        //Make sure control buttons match up with current controls
+        dom.controls[control].elt.innerText = keyboardMap[controls[control]];
+        dom.controls[control].mousePressed(() => {
+            beginSetControl(control); //Create a separate click event for each button
+        });
+    }
+    dom.controls.default = select('#defaultControls');
+    dom.controls.default.mousePressed(() => { //Reset all controls to default
+        settingControl = 'counterClock'; setControl(90);
+        settingControl = 'clock'; setControl(88);
+        settingControl = 'left'; setControl(37);
+        settingControl = 'right'; setControl(39);
+        settingControl = 'down'; setControl(40);
+        settingControl = 'start'; setControl(13);
+        settingControl = 'restart'; setControl(27);
+    });
+    
+
+    gameState = gameStates.MENU;
+
+    game.redraw = true; //Redraw now that keyPresses are loaded
+    showGame(false);
 }
 
 function draw() {
+    if (gameState == gameStates.LOADING) {
+        if (loadedAssets < totalAssets) return;
+        finishedLoading();
+    }
     if (gameState == gameStates.MENU) {
         cursor();
         return;

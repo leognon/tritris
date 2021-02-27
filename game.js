@@ -1,5 +1,5 @@
 class Game {
-    constructor(piecesJSON, pieceImages, level, practice) {
+    constructor(piecesJSON, pieceImages, level, practice, fakeGame) {
         this.w = 8;
         this.h = 16;
         this.grid = new Grid(this.w, this.h);
@@ -22,6 +22,7 @@ class Game {
         this.score = 0;
         this.scoreWeights = { 1: 100, 2: 400, 3: 1200 };
 
+        this.fakeGame = fakeGame;
         this.practice = practice;
         if (this.practice) {
             for (const lineAmt in this.scoreWeights) {
@@ -490,7 +491,7 @@ class Game {
         const cellH = h / this.h;
 
         this.grid.show(x, y, w, h, this.colors, this.pieceImages, paused, showGridLines, oldGraphics);
-        if (this.currentPiece && !paused) {
+        if (this.currentPiece && !paused && !this.fakeGame) {
             this.currentPiece.show(x, y, cellW, cellH, this.colors, this.pieceImages, oldGraphics);
         }
 
@@ -539,17 +540,19 @@ class Game {
             rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
             noStroke();
             fill(0);
-            text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
-            text(
-                linesTxt,
-                scorePos.x + padding,
-                scorePos.y + padding + 1.75 * txtSize
-            );
-            text(
-                levelTxt,
-                scorePos.x + padding,
-                scorePos.y + padding + 3.5 * txtSize
-            );
+            if (!this.fakeGame) {
+                text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
+                text(
+                    linesTxt,
+                    scorePos.x + padding,
+                    scorePos.y + padding + 1.75 * txtSize
+                );
+                text(
+                    levelTxt,
+                    scorePos.x + padding,
+                    scorePos.y + padding + 3.5 * txtSize
+                );
+            }
         } else {
             //Practice mode text
             const line1 = 'PRACTICE';
@@ -643,12 +646,14 @@ class Game {
             rect(statPos.x, statPos.y, statDim.x, statDim.y);
             noStroke();
             fill(0);
-            text(tritrisPercentText, statPos.x + padding, statPos.y + padding);
-            text(
-                startLevelText,
-                statPos.x + padding,
-                statPos.y + padding + 1.75 * txtSize
-            );
+            if (!this.fakeGame) {
+                text(tritrisPercentText, statPos.x + padding, statPos.y + padding);
+                text(
+                    startLevelText,
+                    statPos.x + padding,
+                    statPos.y + padding + 1.75 * txtSize
+                );
+            }
         }
 
         if (this.practice) {
