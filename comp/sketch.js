@@ -148,7 +148,12 @@ function draw() {
 function newGame(practice) {
     if (gameState == gameStates.LOADING) return;
 
-    randomSeed(parseInt(dom.seed.value())); //Set the randomSeed for same piece sets
+    let seed = parseInt(dom.seed.value(), 16); //Set the randomSeed for same piece sets using base 16
+    if (isNaN(seed)) {
+        alert('Invalid seed!');
+        return;
+    }
+    randomSeed(seed);
     game = createGame(9, practice); //Always 9 start in comp
     gameState = gameStates.INGAME;
     dom.playDiv.hide();
