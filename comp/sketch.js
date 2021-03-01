@@ -1,3 +1,5 @@
+window.location.href = window.location.href.split('comp')[0]; //Instantly redirects to not have the "/comp"
+
 const gameStates = {
     LOADING: 0,
     MENU: 1,
