@@ -9,12 +9,16 @@ function loadSounds(prefix) { //Depending on the location of the index, it may n
     sounds.fall = new Sound(prefix + 'assets/fall.wav');
     sounds.clear = new Sound(prefix + 'assets/clear.wav');
     sounds.tritris = new Sound(prefix + 'assets/tritris.wav');
+    sounds.levelup = new Sound(prefix + 'assets/levelup.wav');
+    sounds.topout = new Sound(prefix + 'assets/topout.wav');
 }
 function updateVolume() {
     if (game) {
         game.playClearSound = false;
         game.playFallSound = false;
         game.playMoveSound = false;
+        game.playLevelupSound = false;
+        game.playTopoutSound = false;
     }
     if (dom.volume) {
         volume = dom.volume.value();

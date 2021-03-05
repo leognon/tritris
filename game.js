@@ -120,6 +120,8 @@ class Game {
         this.playFallSound = false;
         this.playMoveSound = false;
         this.playTritrisSound = false;
+        this.playLevelupSound = false;
+        this.playTopoutSound = false;
     }
 
     update() {
@@ -131,8 +133,7 @@ class Game {
 
         //Play a line clear animation
         if (now <= this.animationTime) {
-            const percentDone =
-                (this.animationTime - now) / this.maxAnimationTime;
+            const percentDone = (this.animationTime - now) / this.maxAnimationTime;
             const clearingCol = Math.floor(percentDone * 10);
             for (const row of this.animatingLines) {
                 //Clear as many cols as necessary
@@ -174,6 +175,7 @@ class Game {
 
                 if (incLevel) {
                     this.level++;
+                    this.playLevelupSound = true;
                     this.setSpeed();
                 }
                 this.score += this.scoreWeights[this.animatingLines.length] * (this.level + 1);
@@ -201,6 +203,7 @@ class Game {
             if (!this.isValid(this.currentPiece)) {
                 this.updateHistory();
                 this.alive = false; //If the new piece is already blocked, game over
+                this.playTopoutSound = true;
             }
         }
 
@@ -461,6 +464,16 @@ class Game {
         if (this.playTritrisSound) {
             sounds.tritris.play();
             this.playTritrisSound = false;
+        }
+        if (this.playLevelupSound) {
+            setTimeout(() => { //Play it after the line clear or tritris sounds are done
+                sounds.levelup.play();
+            }, 100);
+            this.playLevelupSound = false;
+        }
+        if (this.playTopoutSound) {
+            sounds.topout.play();
+            this.playTopoutSound = false;
         }
     }
 
