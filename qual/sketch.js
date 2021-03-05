@@ -8,10 +8,6 @@ const padding = 25;
 
 let dom = {};
 let fffForwardFont;
-let moveSound;
-let fallSound;
-let clearSound;
-let tritrisSound;
 
 let volume = getSavedValue('volume', 75);
 let settings = {
@@ -79,12 +75,9 @@ let controls = getSavedValue('controls', {
 let keyImg = {};
 
 function preload() {
+    loadSounds('../'); //Load from parent dir
     piecesJSON = loadJSON('../assets/pieces.json');
     fffForwardFont = loadFont('../assets/fff-forward.ttf');
-    moveSound = new Sound('../assets/move.wav');
-    fallSound = new Sound('../assets/fall.wav');
-    clearSound = new Sound('../assets/clear.wav');
-    tritrisSound = new Sound('../assets/tritris.wav');
 
     keyImg.left = loadImage('../assets/leftKey.png');
     keyImg.right = loadImage('../assets/rightKey.png');
@@ -129,20 +122,6 @@ function setup() {
     dom.volume = select('#volume');
     dom.volume.value(volume);
     dom.volume.changed(updateVolume);
-    function updateVolume() {
-        if (game) {
-            game.playClearSound = false;
-            game.playFallSound = false;
-            game.playMoveSound = false;
-        }
-        volume = dom.volume.value();
-        localStorage.setItem('volume', volume);
-
-        moveSound.setVolume(volume / 100);
-        fallSound.setVolume(volume / 100);
-        clearSound.setVolume(volume / 100);
-        tritrisSound.setVolume(volume / 100);
-    };
     updateVolume();
 
     dom.games = [];

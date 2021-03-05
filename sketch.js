@@ -8,10 +8,6 @@ const padding = 25;
 
 let dom = {};
 let fffForwardFont;
-let moveSound;
-let fallSound;
-let clearSound;
-let tritrisSound;
 
 let volume = getSavedValue('volume', 75);
 let settings = {
@@ -44,6 +40,7 @@ let settingControl = null;
 let keyImg = {};
 
 function setup() {
+    loadSounds(''); //Load from top level dir
     piecesJSON = loadJSON('assets/pieces.json', countLoaded);
     fffForwardFont = loadFont('assets/fff-forward.ttf', countLoaded);
 
@@ -57,11 +54,6 @@ function setup() {
         pieceImages = loadPieces(piecesImage);
         countLoaded();
     });
-
-    moveSound = new Sound('assets/move.wav');
-    fallSound = new Sound('assets/fall.wav');
-    clearSound = new Sound('assets/clear.wav');
-    tritrisSound = new Sound('assets/tritris.wav');
 
     createCanvas(windowWidth, windowHeight);
 
@@ -93,22 +85,7 @@ function setup() {
     dom.volume = select('#volume');
     dom.volume.value(volume);
     dom.volume.changed(updateVolume);
-    function updateVolume() {
-        if (game) {
-            game.playClearSound = false;
-            game.playFallSound = false;
-            game.playMoveSound = false;
-        }
-        volume = dom.volume.value();
-        localStorage.setItem('volume', volume);
-
-        moveSound.setVolume(volume / 100);
-        fallSound.setVolume(volume / 100);
-        clearSound.setVolume(volume / 100);
-        tritrisSound.setVolume(volume / 100);
-    };
-    updateVolume();
-
+    updateVolume(); //Set it to be synced with the localStorage saved volume
 
     //An empty piece so the game can render before loading pieces and the images
     let emptyPieceJSON = { pieces: [ { color: 0, pieces: [[[0,0],[0,0]]]  } ] };
@@ -148,7 +125,7 @@ function finishedLoading() {
         settingControl = 'start'; setControl(13);
         settingControl = 'restart'; setControl(27);
     });
-    
+
 
     gameState = gameStates.MENU;
 

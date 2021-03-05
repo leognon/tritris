@@ -445,21 +445,21 @@ class Game {
         return this.grid.isValid(piece);
     }
 
-    playSounds(clearSound, fallSound, moveSound, tritrisSound) {
+    playSounds(sounds) {
         if (this.playClearSound) {
-            clearSound.play();
+            sounds.clear.play();
             this.playClearSound = false;
         }
         if (this.playFallSound) {
-            fallSound.play();
+            sounds.fall.play();
             this.playFallSound = false;
         }
         if (this.playMoveSound) {
-            moveSound.play();
+            sounds.move.play();
             this.playMoveSound = false;
         }
         if (this.playTritrisSound) {
-            tritrisSound.play();
+            sounds.tritris.play();
             this.playTritrisSound = false;
         }
     }

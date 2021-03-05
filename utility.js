@@ -3,6 +3,29 @@ const totalAssets = 8;
 let loadedAssets = 0;
 const countLoaded = () => { loadedAssets++; };
 
+let sounds = {};
+function loadSounds(prefix) { //Depending on the location of the index, it may need to load from the parent dir
+    sounds.move = new Sound(prefix + 'assets/move.wav');
+    sounds.fall = new Sound(prefix + 'assets/fall.wav');
+    sounds.clear = new Sound(prefix + 'assets/clear.wav');
+    sounds.tritris = new Sound(prefix + 'assets/tritris.wav');
+}
+function updateVolume() {
+    if (game) {
+        game.playClearSound = false;
+        game.playFallSound = false;
+        game.playMoveSound = false;
+    }
+    if (dom.volume) {
+        volume = dom.volume.value();
+        localStorage.setItem('volume', volume);
+
+        for (const sound in sounds) {
+            sounds[sound].setVolume(volume / 100);
+        }
+    }
+};
+
 function loadPieces(piecesImage) {
     let pieceImages = []; //A 2d array of each piece color and their rotations
     for (let i = 0; i < 2; i++) { //All of the colors (except white)
@@ -68,7 +91,7 @@ function showGame(paused) {
 
     game.show(gameX, gameY, gameWidth, gameHeight, paused, settings.oldGraphics, settings.showGridLines, settings.showStats);
     if (volume > 1) //Small buffer to mute sound
-        game.playSounds(clearSound, fallSound, moveSound, tritrisSound);
+        game.playSounds(sounds);
 
     if (settings.showKeys && gameState != gameStates.LOADING) {
         const keyPosX = gameX + gameWidth + 30;
