@@ -625,7 +625,7 @@ class Game {
             if (this.lines == 0) tritrisPercent = '--';
             const tritrisPercentText = `Tri ${tritrisPercent}%`;
 
-            const totalSec = Math.round(this.totalTime / 1000) % 60;
+            const totalSec = Math.floor(this.totalTime / 1000) % 60;
             const totalM = Math.floor(this.totalTime / (1000*60));
             const startLevelText = `Time ${nf(totalM,2)}:${nf(totalSec,2)}`;
 
