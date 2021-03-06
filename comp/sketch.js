@@ -1,17 +1,4 @@
 window.location.href = window.location.href.split('comp')[0]; //Instantly redirects to not have the "/comp"
-
-const gameStates = {
-    LOADING: 0,
-    MENU: 1,
-    INGAME: 2,
-    PAUSED: 3
-};
-const padding = 25;
-
-let dom = {};
-let fffForwardFont;
-
-let volume = getSavedValue('volume', 75);
 let settings = {
     oldGraphics: getSavedValue('oldGraphics', false),
     showGridLines: getSavedValue('showGridLines', true),
@@ -19,40 +6,8 @@ let settings = {
     showStats: true
 }
 
-let piecesJSON;
-let piecesImage; //The entire spritesheet
-let pieceImages = []; //A 2d array of all the individual triangles
-let game;
-let gameState = gameStates.LOADING;
-
-let controls = getSavedValue('controls', {
-    counterClock: 90, //Z
-    clock: 88, //X
-    left: 37, //Left arrow
-    right: 39, //Right arrow
-    down: 40, //Down arrow
-    start: 13, //Enter
-    restart: 27 //Escape
-});
-
-let keyImg = {};
-
 function setup() {
-    loadSounds('../'); //Load sounds from parent dir
-    piecesJSON = loadJSON('../assets/pieces.json', countLoaded);
-    fffForwardFont = loadFont('../assets/fff-forward.ttf', countLoaded);
-
-    keyImg.left = loadImage('../assets/leftKey.png', countLoaded);
-    keyImg.right = loadImage('../assets/rightKey.png', countLoaded);
-    keyImg.down = loadImage('../assets/downKey.png', countLoaded);
-    keyImg.z = loadImage('../assets/zKey.png', countLoaded);
-    keyImg.x = loadImage('../assets/xKey.png', countLoaded);
-
-    piecesImage = loadImage('../assets/piecesImage.png', () => {
-        pieceImages = loadPieces(piecesImage);
-        countLoaded();
-    });
-
+    loadData('../'); //Load sounds from parent dir
 
     createCanvas(windowWidth, windowHeight);
 

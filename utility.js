@@ -1,16 +1,57 @@
 //These are various function that don't fit elsewhere
+const gameStates = {
+    LOADING: 0,
+    MENU: 1,
+    INGAME: 2,
+    PAUSED: 3
+};
+const padding = 25;
+
+let piecesJSON;
+let piecesImage; //The entire spritesheet
+let pieceImages = []; //A 2d array of all the individual triangles
+let game;
+let gameState = gameStates.LOADING;
+
+let dom = {};
+let keyImg = {};
+let fffForwardFont;
+let volume = getSavedValue('volume', 75);
+let controls = getSavedValue('controls', {
+    counterClock: 90, //Z
+    clock: 88, //X
+    left: 37, //Left arrow
+    right: 39, //Right arrow
+    down: 40, //Down arrow
+    start: 13, //Enter
+    restart: 27 //Escape
+});
+
 const totalAssets = 8;
 let loadedAssets = 0;
 const countLoaded = () => { loadedAssets++; };
-
 let sounds = {};
-function loadSounds(prefix) { //Depending on the location of the index, it may need to load from the parent dir
+function loadData(prefix) { //Depending on the location of the index, it may need to load from the parent dir
     sounds.move = new Sound(prefix + 'assets/move.wav');
     sounds.fall = new Sound(prefix + 'assets/fall.wav');
     sounds.clear = new Sound(prefix + 'assets/clear.wav');
     sounds.tritris = new Sound(prefix + 'assets/tritris.wav');
     sounds.levelup = new Sound(prefix + 'assets/levelup.wav');
     sounds.topout = new Sound(prefix + 'assets/topout.wav');
+
+    piecesJSON = loadJSON(prefix + 'assets/pieces.json', countLoaded);
+    fffForwardFont = loadFont(prefix + 'assets/fff-forward.ttf', countLoaded);
+
+    keyImg.left = loadImage(prefix + 'assets/leftKey.png', countLoaded);
+    keyImg.right = loadImage(prefix + 'assets/rightKey.png', countLoaded);
+    keyImg.down = loadImage(prefix + 'assets/downKey.png', countLoaded);
+    keyImg.z = loadImage(prefix + 'assets/zKey.png', countLoaded);
+    keyImg.x = loadImage(prefix + 'assets/xKey.png', countLoaded);
+
+    piecesImage = loadImage(prefix + 'assets/piecesImage.png', () => {
+        pieceImages = loadPieces(piecesImage);
+        countLoaded();
+    });
 }
 function updateVolume() {
     if (game) {
@@ -251,3 +292,21 @@ function addCheckbox(name) {
     });
 }
 
+function saveGame() {
+    if (!game) {
+        alert('Something went wrong. The game does not exist.');
+        return;
+    }
+    const str = game.toString();
+    const fileName = `tritris ${game.score}`;
+    const triPercent = (3*game.tritrisAmt/game.lines) || 0;
+    const json = {
+        'score': game.score,
+        'lines': game.lines,
+        'time': game.totalTime,
+        'triPercent': triPercent,
+        'gameData': str
+    }
+
+    saveJSON(json, fileName);
+}

@@ -1,27 +1,9 @@
-const gameStates = {
-    LOADING: 0,
-    MENU: 1,
-    INGAME: 2,
-    PAUSED: 3
-};
-const padding = 25;
-
-let dom = {};
-let fffForwardFont;
-
-let volume = getSavedValue('volume', 75);
 let settings = {
     oldGraphics: getSavedValue('oldGraphics', false),
     showGridLines: getSavedValue('showGridLines', true),
     showKeys: getSavedValue('showKeys', false),
     showStats: true //Stats are always shown for competitive
 }
-
-let piecesJSON;
-let piecesImage; //The entire spritesheet
-let pieceImages = []; //A 2d array of all the individual triangles
-let game;
-let gameState = gameStates.LOADING;
 
 const month = new Date().getMonth();
 const year = new Date().getYear(); //It will be a new set of scores each month
@@ -59,36 +41,12 @@ if (localStorage.hasOwnProperty(gameSaveName)) {
     localStorage.setItem(gameSaveName, JSON.stringify(games));
 }
 
-const keyboardMap = [ //From https://stackoverflow.com/questions/1772179/get-character-value-from-keycode-in-javascript-then-trim
-  '','','','CANCEL','','','HELP','','BACK_SPACE','TAB','','','CLEAR','ENTER','ENTER_SPECIAL','','SHIFT','CONTROL','ALT','PAUSE','CAPS_LOCK','KANA','EISU','JUNJA','FINAL','HANJA','','ESCAPE','CONVERT','NONCONVERT','ACCEPT','MODECHANGE','SPACE','PAGE_UP','PAGE_DOWN','END','HOME','LEFT ARROW','UP ARROW','RIGHT ARROW','DOWN ARROW','SELECT','PRINT','EXECUTE','PRINTSCREEN','INSERT','DELETE','','0','1','2','3','4','5','6','7','8','9','COLON','SEMICOLON','LESS_THAN','EQUALS','GREATER_THAN','QUESTION_MARK','AT','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','OS_KEY','','CONTEXT_MENU','','SLEEP','NUMPAD0','NUMPAD1','NUMPAD2','NUMPAD3','NUMPAD4','NUMPAD5','NUMPAD6','NUMPAD7','NUMPAD8','NUMPAD9','MULTIPLY','ADD','SEPARATOR','SUBTRACT','DECIMAL','DIVIDE','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12','F13','F14','F15','F16','F17','F18','F19','F20','F21','F22','F23','F24','','','','','','','','','NUM_LOCK','SCROLL_LOCK','WIN_OEM_FJ_JISHO','WIN_OEM_FJ_MASSHOU','WIN_OEM_FJ_TOUROKU','WIN_OEM_FJ_LOYA','WIN_OEM_FJ_ROYA','','','','','','','','','','CIRCUMFLEX','EXCLAMATION','DOUBLE_QUOTE','HASH','DOLLAR','PERCENT','AMPERSAND','UNDERSCORE','OPEN_PAREN','CLOSE_PAREN','ASTERISK','PLUS','PIPE','HYPHEN_MINUS','OPEN_CURLY_BRACKET','CLOSE_CURLY_BRACKET','TILDE','','','','','VOLUME_MUTE','VOLUME_DOWN','VOLUME_UP','','','SEMICOLON','EQUALS','COMMA','MINUS','PERIOD','SLASH','BACK_QUOTE','','','','','','','','','','','','','','','','','','','','','','','','','','','OPEN_BRACKET','BACK_SLASH','CLOSE_BRACKET','QUOTE','','META','ALTGR','','WIN_ICO_HELP','WIN_ICO_00','','WIN_ICO_CLEAR','','','WIN_OEM_RESET','WIN_OEM_JUMP','WIN_OEM_PA1','WIN_OEM_PA2','WIN_OEM_PA3','WIN_OEM_WSCTRL','WIN_OEM_CUSEL','WIN_OEM_ATTN','WIN_OEM_FINISH','WIN_OEM_COPY','WIN_OEM_AUTO','WIN_OEM_ENLW','WIN_OEM_BACKTAB','ATTN','CRSEL','EXSEL','EREOF','PLAY','ZOOM','','PA1','WIN_OEM_CLEAR',''
-];
-let controls = getSavedValue('controls', {
-    counterClock: 90, //Z
-    clock: 88, //X
-    left: 37, //Left arrow
-    right: 39, //Right arrow
-    down: 40, //Down arrow
-    start: 13, //Enter
-    restart: 27 //Escape
-});
-
-let keyImg = {};
-
-function preload() {
-    loadSounds('../'); //Load from parent dir
-    piecesJSON = loadJSON('../assets/pieces.json');
-    fffForwardFont = loadFont('../assets/fff-forward.ttf');
-
-    keyImg.left = loadImage('../assets/leftKey.png');
-    keyImg.right = loadImage('../assets/rightKey.png');
-    keyImg.down = loadImage('../assets/downKey.png');
-    keyImg.z = loadImage('../assets/zKey.png');
-    keyImg.x = loadImage('../assets/xKey.png');
-
-    piecesImage = loadImage('../assets/piecesImage.png');
+function preload() { //TODO Move to setup and load async
+    loadData('../'); //Load from parent dir
 }
 
 function setup() {
+    //TODO Remove this??
     pieceImages = loadPieces(piecesImage); //This will take some time, so it run before setting gameState to MENU
 
     gameState = gameStates.MENU;
