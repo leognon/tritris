@@ -41,26 +41,18 @@ if (localStorage.hasOwnProperty(gameSaveName)) {
     localStorage.setItem(gameSaveName, JSON.stringify(games));
 }
 
-function preload() { //TODO Move to setup and load async
-    loadData('../'); //Load from parent dir
-}
-
 function setup() {
-    //TODO Remove this??
-    pieceImages = loadPieces(piecesImage); //This will take some time, so it run before setting gameState to MENU
+    loadData('../'); //Load from parent dir
 
-    gameState = gameStates.MENU;
     createCanvas(windowWidth, windowHeight);
-    textFont(fffForwardFont);
-    game = createGame(0);
-    game.currentPiece = null;
-    game.nextPiece = null;
 
     dom.recordsDiv = select('#records');
     dom.recordsDiv.style('visibility: visible');
 
     dom.titleDiv = select('#title');
     dom.titleDiv.style('visibility: visible');
+
+    dom.newGame = select('#newGame');
 
     dom.playDiv = select('#play');
     dom.playDiv.style('visibility: visible');
@@ -71,10 +63,6 @@ function setup() {
     }
     dom.level.changed(() => {
         localStorage.setItem('startLevel', dom.level.value());
-    });
-    dom.newGame = select('#newGame');
-    dom.newGame.mousePressed(() => {
-        newGame();
     });
 
     dom.volume = select('#volume');
@@ -91,7 +79,7 @@ function setup() {
 
     dom.resetScores = select('#resetScores');
     dom.resetScores.mousePressed(() => {
-        if (gameState == gameStates.INGAME) {
+        if (gameState == gameStates.INGAME || gameState == gameStates.PAUSED) {
             alert('You cannot reset during a game!');
             return;
         }
@@ -113,11 +101,33 @@ function setup() {
     });
     updateDisplay();
 
+    //An empty piece so the game can render before loading pieces and the images
+    let emptyPieceJSON = { pieces: [ { color: 0, pieces: [[[0,0],[0,0]]]  } ] };
+    let singleImg = createImage(0,0);
+    let emptyImages = [ [singleImg, singleImg, singleImg, singleImg ] ];
+    game = new Game(emptyPieceJSON, emptyImages, 0, false, true); //Load a "fake" game to just display the grid
+    game.redraw = true;
+    showGame(false);
+
     resizeDOM();
-    showGame(true);
+}
+
+function finishedLoading() {
+    textFont(fffForwardFont);
+
+    dom.newGame.mousePressed(() => { newGame(false); });
+
+    gameState = gameStates.MENU;
+
+    game.redraw = true; //Redraw now that key images are loaded
+    showGame(false);
 }
 
 function draw() {
+    if (gameState == gameStates.LOADING) {
+        if (loadedAssets < totalAssets) return;
+        finishedLoading();
+    }
     if (gameState == gameStates.MENU) {
         cursor();
         return;
