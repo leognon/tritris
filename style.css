@@ -59,10 +59,6 @@ input, button {
     border: none;
 }
 
-#level {
-    width: 40px;
-}
-
 hr {
     border: 2px solid black;
 }
@@ -150,4 +146,8 @@ hr {
     50% {
         color: red;
     }
+}
+
+.currentGame {
+    color: red;
 }
