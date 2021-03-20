@@ -171,12 +171,12 @@ function createGame(level, practice) {
     if (isNaN(level)) {
         console.error(level + ' is not a proper level');
         alert('Please select a proper level number');
-        return;
+        level = 0; //Default to 0
     }
     if (level < 0) {
         console.error('Negative level selected');
         alert('Please select a positive level');
-        return;
+        level = 0; //Default to 0
     }
     return new Game(piecesJSON, pieceImages, level, practice, false);
 }
@@ -274,8 +274,14 @@ function createMenuBox(name, openName, closeName) {
 }
 
 function getSavedValue(key, defaultVal) {
-    if (localStorage.hasOwnProperty(key))
-        return JSON.parse(localStorage.getItem(key));
+    if (localStorage.hasOwnProperty(key)) {
+        const str = localStorage.getItem(key);
+        try { //In case it is an empty string or not JSON
+            return JSON.parse(str);
+        } catch (e) {
+            return str;
+        }
+    }
     return defaultVal;
 }
 
