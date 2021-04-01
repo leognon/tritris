@@ -39,7 +39,7 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
     sounds.levelup = new Sound(prefix + 'assets/levelup.wav');
     sounds.topout = new Sound(prefix + 'assets/topout.wav');
 
-    piecesJSON = loadJSON(prefix + 'assets/pieces.json', countLoaded);
+    piecesJSON = loadJSON(prefix + 'assets/4pieces.json', countLoaded);
     fffForwardFont = loadFont(prefix + 'assets/fff-forward.ttf', countLoaded);
 
     keyImg.left = loadImage(prefix + 'assets/leftKey.png', countLoaded);
@@ -52,6 +52,7 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
         pieceImages = loadPieces(piecesImage);
         countLoaded();
     });
+    alert('Welcome to the new Tritris! People have started to get a bit too good, so I\'ve made a few changes...');
 }
 function updateVolume() {
     if (game) {
