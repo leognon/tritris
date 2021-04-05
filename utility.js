@@ -233,12 +233,48 @@ function windowResized() {
     }
 }
 
+function showBlankGame() { //Display an empty game board while everything is loading
+    const gameWidth = min(width / 2, height / 2) - 2 * padding;
+    const gameHeight = gameWidth * 2;
+    const gameX = width / 2 - gameWidth / 2;
+    const gameY = height / 2 - gameHeight / 2;
+    const cellW = gameWidth / (game ? game.w : 8);
+
+    //Display the game board
+    fill(0);
+    noStroke();
+    rect(gameX, gameY, gameWidth, gameHeight);
+
+    //Display the score box
+    const scorePos = createVector(gameX + gameWidth + cellW, gameY + cellW);
+    const textW = 4 * cellW;
+    scoreDim = createVector(
+        textW + padding + 10,
+        20 * 4.5 + padding * 2
+    );
+    noFill();
+    stroke(0);
+    strokeWeight(3);
+    rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
+
+    //Display the next piece
+    const nextPiecePos = createVector(
+        scorePos.x,
+        scorePos.y + scoreDim.y + cellW
+    );
+    const nextPieceDim = createVector(cellW * 3, cellW * 3);
+    noFill();
+    stroke(0);
+    strokeWeight(3);
+    rect(nextPiecePos.x, nextPiecePos.y, nextPieceDim.x, nextPieceDim.y);
+}
+
 function resizeDOM() {
     const gameWidth = min(width / 2, height / 2) - 2 * padding;
     const gameHeight = gameWidth * 2;
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
-    const cellW = gameWidth / game.w;
+    const cellW = gameWidth / (game ? game.w : 8);
 
     dom.titleDiv.position(10, gameY);
     dom.titleDiv.style(`width: ${gameX - 16 - 10 - cellW}px;`);

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.dom.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../style.css" />
+        <link rel="icon" type="image/png" href="../favicon.png" />
+        <meta charset="utf-8" />
+        <title>Tritris</title>
+    </head>
+    <body>
+        <script src="../utility.js"></script>
+        <script src="sketch.js"></script>
+        <script src="../grid.js"></script>
+        <script src="../piece.js"></script>
+        <script src="replayer.js"></script>
+        <script src="../game.js"></script>
+
+        <div id="title" class="box">
+            <h1>Tritris Replay</h1>
+            <p style="font-size: 12pt">
+                <p id="welcomeMsg">Replay saved games!</p>
+                <br />
+
+                <label>Time</label>
+                <input id="timeInput" style="width: 55px;" value="00:00"/>
+
+                <label>Speed</label>
+                <input id="speedInput" type="number" style="width: 45px;" value="1"/>
+
+                <br />
+                <input type="range" id="timeSlider" min="0" max="100" value="0" step="1" style="width: 95%"/>
+
+                <br />
+                <br />
+
+                <label>Volume</label>
+                <input type="range" id="volume" min="0" max="100" value="75" step="1" />
+            </p>
+        </div>
+
+        <!--So an error isn't thrown-->
+        <div id="records" class="box">
+        </div>
+
+        <div id="play" class="box" style="position: absolute; width: 300px;">
+            <h1>Tritris</h1>
+            <!--<label id="fileInputLabel">File: </label>-->
+            <input id="fileInput" type="file" accept=".json,application/json"  />
+            <br />
+            <br />
+            <button id="watchGame">Watch game</button>
+        </div>
+
+        </div>
+    </body>
+</html>

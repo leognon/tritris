@@ -723,6 +723,7 @@ class Game {
         for (let i = 0; i < this.history.length; i++) {
             str += this.history[i].toString();
         }
+        if (this.alive) str += this.currentSnapshot.toString();
         return str;
     }
 }
