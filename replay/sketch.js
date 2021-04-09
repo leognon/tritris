@@ -2,7 +2,8 @@ let settings = {
     oldGraphics: getSavedValue('oldGraphics', false),
     showGridLines: getSavedValue('showGridLines', true),
     showKeys: false, //Inputs are not saved, so there is no point in displaying keyPresses
-    showStats: true
+    showStats: true,
+    showFlash: getSavedValue('showFlash', true)
 }
 
 const CHANGE_TIME = {
@@ -152,7 +153,7 @@ function showReplay() {
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
 
-    game.show(gameX, gameY, gameWidth, gameHeight, settings.oldGraphics, settings.showGridLines, settings.showStats);
+    game.show(gameX, gameY, gameWidth, gameHeight, settings.oldGraphics, settings.showGridLines, settings.showStats, settings.showFlash);
     if (volume > 1 ) //Small buffer to mute sound
         game.playSounds(sounds);
 }

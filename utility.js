@@ -134,7 +134,7 @@ function showGame(paused) {
         cursor();
     }
 
-    game.show(gameX, gameY, gameWidth, gameHeight, paused, settings.oldGraphics, settings.showGridLines, settings.showStats);
+    game.show(gameX, gameY, gameWidth, gameHeight, paused, settings.oldGraphics, settings.showGridLines, settings.showStats, settings.showFlash);
     if (volume > 1) //Small buffer to mute sound
         game.playSounds(sounds);
 

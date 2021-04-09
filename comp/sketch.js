@@ -3,7 +3,8 @@ let settings = {
     oldGraphics: getSavedValue('oldGraphics', false),
     showGridLines: getSavedValue('showGridLines', true),
     showKeys: getSavedValue('showKeys', false),
-    showStats: true
+    showStats: true,
+    showFlash: getSavedValue('showFlash', true)
 }
 
 function setup() {

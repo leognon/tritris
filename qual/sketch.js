@@ -2,7 +2,8 @@ let settings = {
     oldGraphics: getSavedValue('oldGraphics', false),
     showGridLines: getSavedValue('showGridLines', true),
     showKeys: getSavedValue('showKeys', false),
-    showStats: true //Stats are always shown for competitive
+    showStats: true, //Stats are always shown for competitive
+    showFlash: getSavedValue('showFlash', true)
 }
 
 const month = new Date().getMonth();

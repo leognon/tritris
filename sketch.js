@@ -2,7 +2,8 @@ let settings = {
     oldGraphics: getSavedValue('oldGraphics', false),
     showGridLines: getSavedValue('showGridLines', true),
     showKeys: getSavedValue('showKeys', false),
-    showStats: getSavedValue('showStats', false)
+    showStats: getSavedValue('showStats', false),
+    showFlash: getSavedValue('showFlash', true)
 }
 
 const keyboardMap = [ //From https://stackoverflow.com/questions/1772179/get-character-value-from-keycode-in-javascript-then-trim
@@ -39,6 +40,7 @@ function setup() {
     addCheckbox('showGridLines');
     addCheckbox('showKeys');
     addCheckbox('showStats');
+    addCheckbox('showFlash');
 
     dom.volume = select('#volume');
     dom.volume.value(volume);

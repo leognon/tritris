@@ -477,12 +477,12 @@ class Game {
         }
     }
 
-    show(x, y, w, h, paused, oldGraphics, showGridLines, showStats) {
+    show(x, y, w, h, paused, oldGraphics, showGridLines, showStats, showFlash) {
         //Play flashing animation
         const flashing = this.flashTime >= Date.now();
         if (!this.redraw && !flashing) return; //If not flashing, only draw when necessary
 
-        if (flashing) {
+        if (flashing && showFlash) {
             const timePassed = this.flashTime - Date.now();
             const interval = Math.floor(this.flashAmount * timePassed / this.maxFlashTime);
             if (interval % 2 == 0) {
