@@ -701,11 +701,11 @@ class Game {
          *         if numLines == 0:
          *              nothing
          *         if numLines == 1:
-         *              Prefix with an '@', then which number line was cleared (encoded as bigInt)
+         *              Prefix with an '!', then which number line was cleared (encoded as bigInt)
          *          if numLines == 2:
-         *              Prefix with an '#', then the numbers of the 2 lines that were cleared (encoded as bigInt)
+         *              Prefix with an '@', then the numbers of the 2 lines that were cleared (encoded as bigInt)
          *          if numLines == 3:
-         *              Prefix with '$', then the numbers of the 3 lines that were cleared (encoded as bigInt)
+         *              Prefix with '#', then the numbers of the 3 lines that were cleared (encoded as bigInt)
          *
          *
          * Big int encoding:
