@@ -24,6 +24,9 @@ function setup() {
     dom.seed = select('#seed'); //Select
     dom.seed.value(0);
 
+    dom.level = select('#level'); //Select
+    dom.level.value(9);
+
     dom.volume = select('#volume');
     dom.volume.value(volume);
     dom.volume.changed(updateVolume);
@@ -91,7 +94,8 @@ function newGame(practice) {
         return;
     }
     randomSeed(seed);
-    game = createGame(12, practice); //Always 12 start in comp
+    let lvl = parseInt(dom.level.value());
+    game = createGame(lvl, practice);
     gameState = gameStates.INGAME;
     dom.playDiv.hide();
 }
