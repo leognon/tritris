@@ -1,4 +1,4 @@
-window.location.href = window.location.href.split('comp')[0]; //Instantly redirects to not have the "/comp"
+//window.location.href = window.location.href.split('comp')[0]; //Instantly redirects to not have the "/comp"
 let settings = {
     oldGraphics: getSavedValue('oldGraphics', false),
     showGridLines: getSavedValue('showGridLines', true),
