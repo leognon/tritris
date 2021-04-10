@@ -91,7 +91,7 @@ function newGame(practice) {
         return;
     }
     randomSeed(seed);
-    game = createGame(9, practice); //Always 9 start in comp
+    game = createGame(12, practice); //Always 12 start in comp
     gameState = gameStates.INGAME;
     dom.playDiv.hide();
 }
