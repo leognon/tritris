@@ -3,7 +3,8 @@ let settings = {
     showGridLines: getSavedValue('showGridLines', true),
     showKeys: getSavedValue('showKeys', false),
     showStats: true, //Stats are always shown for competitive
-    showFlash: getSavedValue('showFlash', true)
+    showFlash: getSavedValue('showFlash', true),
+    use4Piece: false
 }
 
 const month = new Date().getMonth();
@@ -116,7 +117,7 @@ function setup() {
 function finishedLoading() {
     textFont(fffForwardFont);
 
-    dom.newGame.mousePressed(() => { newGame(false); });
+    dom.newGame.mousePressed(() => { newGame(); });
 
     gameState = gameStates.MENU;
 

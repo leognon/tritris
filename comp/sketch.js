@@ -4,7 +4,8 @@ let settings = {
     showGridLines: getSavedValue('showGridLines', true),
     showKeys: getSavedValue('showKeys', false),
     showStats: true,
-    showFlash: getSavedValue('showFlash', true)
+    showFlash: getSavedValue('showFlash', true),
+    use4Piece: false
 }
 
 function setup() {

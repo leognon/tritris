@@ -27,7 +27,7 @@ let controls = getSavedValue('controls', {
     restart: 27 //Escape
 });
 
-const totalAssets = 8;
+const totalAssets = 9;
 let loadedAssets = 0;
 const countLoaded = () => { loadedAssets++; };
 let sounds = {};
@@ -40,6 +40,7 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
     sounds.topout = new Sound(prefix + 'assets/topout.wav');
 
     piecesJSON = loadJSON(prefix + 'assets/pieces.json', countLoaded);
+    pieces4JSON = loadJSON(prefix + 'assets/4pieces.json', countLoaded); //Quadtris
     fffForwardFont = loadFont(prefix + 'assets/fff-forward.ttf', countLoaded);
 
     keyImg.left = loadImage(prefix + 'assets/leftKey.png', countLoaded);
@@ -178,7 +179,9 @@ function createGame(level, practice) {
         alert('Please select a positive level');
         level = 0; //Default to 0
     }
-    return new Game(piecesJSON, pieceImages, level, practice, false);
+    let pieceSet = piecesJSON;
+    if (settings.use4Piece) pieceSet = pieces4JSON;
+    return new Game(pieceSet, pieceImages, level, practice, false);
 }
 
 function setHighScores(score, lines, updateDisplay) {
