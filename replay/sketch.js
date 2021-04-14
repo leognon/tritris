@@ -132,7 +132,7 @@ function replayGame() {
         return;
     }
 
-    game = new Replayer(piecesJSON, pieceImages, loadedGameJSON);
+    game = new Replayer(piecesJSON, pieces4JSON, pieceImages, loadedGameJSON);
 
     dom.timeSlider.value(0); //Reset the time
     dom.timeSlider.elt.max = Math.floor(game.maxTime/1000); //The slider can be adjusted by seconds

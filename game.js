@@ -22,6 +22,9 @@ class Game {
         this.score = 0;
         this.scoreWeights = { 1: 100, 2: 400, 3: 1200 };
 
+        this.piecesType = 3; //How many triangles are in each piece
+        if (piecesJSON.pieces.length > 7) this.piecesType = 4; //Quadtris
+
         this.fakeGame = fakeGame;
         this.practice = practice;
         if (this.practice) {
@@ -686,11 +689,12 @@ class Game {
 
     toString() {
         /* Encoding Scheme:
-         * First char - version (currently 0)
-         * Second char - Start level (encoded as big int)
-         * Third char - First piece index (encoded as big int)
+         * First char - version (currently 1)
+         * Second char - Piece type. 3 for normal pieces, 4 for quadtris. Encoded as bigInt
+         * Third char - Start level (encoded as big int)
+         * Fourth char - First piece index (encoded as big int)
          * Snapshot: (Repeat for all pieces in the game)
-         *     First char - nextPieceIndex
+         *     First char - nextPieceIndex (encoded as bigInt)
          *     For all moves:
          *         Next char - Binary encoded movement
          *         Next char - deltaTime (encoded as big int)
@@ -718,8 +722,12 @@ class Game {
          *          It is prefixed with *, then base64 of how many chars are used, then the number
          */
 
-        //The first 0 is to indicate version 0, to allow for better compatibility
-        let str = '0' + bigIntToBase64(this.startLevel) + bigIntToBase64(this.firstPieceIndex);
+        //The first 1 is to indicate version 1, to allow for better compatibility
+        const version = '1'; //1st char
+        const piecesType = bigIntToBase64(this.piecesType); //2nd char
+        const startLevel = bigIntToBase64(this.startLevel); //3rd char
+        const firstPiece = bigIntToBase64(this.firstPieceIndex); //4th char
+        let str = version + piecesType + startLevel + firstPiece;
         for (let i = 0; i < this.history.length; i++) {
             str += this.history[i].toString();
         }
@@ -758,7 +766,7 @@ class Snapshot { //All the data for the movements of 1 piece
     }
 
     toString() {
-        let str = this.nextPiece.toString();
+        let str = bigIntToBase64(this.nextPiece);
         for (let move of this.moves) {
             str += move.toString();
         }

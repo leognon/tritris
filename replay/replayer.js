@@ -1,11 +1,12 @@
 class Replayer {
-    constructor(piecesJSON, pieceImages, gameData) {
+    constructor(piecesJSON, pieces4JSON, pieceImages, gameData) {
         this.w = 8;
         this.h = 16;
         this.grid = new Grid(this.w, this.h);
 
         this.data = decode(gameData.gameData);
         this.snapshots = this.data.snapshots;
+        this.piecesType = this.data.piecesType;
         this.currentSnapshot = 0; //this.snapshots[this.currentSnapshot]
         this.currentMove = 0; //this.snapshots[this.currentSnapshot].moves[this.currentMove]
 
@@ -41,6 +42,7 @@ class Replayer {
             color(255), //White Ninja
         ];
         this.piecesJSON = piecesJSON.pieces;
+        if (this.piecesType == 4) this.piecesJSON = pieces4JSON.pieces;
 
         const frameRate = 60.0988; //frames per second
         const msPerFrame = 1000 / frameRate;
@@ -596,11 +598,18 @@ class ReplayMoveAction {
 
 function decode(gameData) {
     const version = gameData[0];
-    if (version != 0) {
+    if (version < 0 || version > 1) {
         alert('Unknown save version detected!');
         return;
     }
     let cur = 1;
+
+    let piecesType = 3;
+    if (version == 1) {
+        const piecesTypeData = decodeBigInt(gameData, cur);
+        piecesType = piecesTypeData.number;
+        cur = piecesTypeData.cur;
+    }
     const startLevelData = decodeBigInt(gameData, cur);
     const startLevel = startLevelData.number;
     cur = startLevelData.cur;
@@ -619,6 +628,7 @@ function decode(gameData) {
 
     return {
         startLevel,
+        piecesType,
         firstPieceIndex,
         snapshots
     }
