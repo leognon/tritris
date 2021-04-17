@@ -1,5 +1,5 @@
 class Game {
-    constructor(piecesJSON, pieceImages, level, practice, fakeGame) {
+    constructor(piecesJSON, pieceImages, level, practice) {
         this.w = 8;
         this.h = 16;
         this.grid = new Grid(this.w, this.h);
@@ -25,7 +25,6 @@ class Game {
         this.piecesType = 3; //How many triangles are in each piece
         if (piecesJSON.pieces.length > 7) this.piecesType = 4; //Quadtris
 
-        this.fakeGame = fakeGame;
         this.practice = practice;
         if (this.practice) {
             for (const lineAmt in this.scoreWeights) {
@@ -507,7 +506,7 @@ class Game {
         const cellH = h / this.h;
 
         this.grid.show(x, y, w, h, this.colors, this.pieceImages, paused, showGridLines, oldGraphics);
-        if (this.currentPiece && !paused && !this.fakeGame) {
+        if (this.currentPiece && !paused) {
             this.currentPiece.show(x, y, cellW, cellH, this.colors, this.pieceImages, oldGraphics);
         }
 
@@ -556,19 +555,17 @@ class Game {
             rect(scorePos.x, scorePos.y, scoreDim.x, scoreDim.y);
             noStroke();
             fill(0);
-            if (!this.fakeGame) {
-                text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
-                text(
-                    linesTxt,
-                    scorePos.x + padding,
-                    scorePos.y + padding + 1.75 * txtSize
-                );
-                text(
-                    levelTxt,
-                    scorePos.x + padding,
-                    scorePos.y + padding + 3.5 * txtSize
-                );
-            }
+            text(scoreTxt, scorePos.x + padding, scorePos.y + padding);
+            text(
+                linesTxt,
+                scorePos.x + padding,
+                scorePos.y + padding + 1.75 * txtSize
+            );
+            text(
+                levelTxt,
+                scorePos.x + padding,
+                scorePos.y + padding + 3.5 * txtSize
+            );
         } else {
             //Practice mode text
             const line1 = 'PRACTICE';
@@ -662,14 +659,12 @@ class Game {
             rect(statPos.x, statPos.y, statDim.x, statDim.y);
             noStroke();
             fill(0);
-            if (!this.fakeGame) {
-                text(tritrisPercentText, statPos.x + padding, statPos.y + padding);
-                text(
-                    startLevelText,
-                    statPos.x + padding,
-                    statPos.y + padding + 1.75 * txtSize
-                );
-            }
+            text(tritrisPercentText, statPos.x + padding, statPos.y + padding);
+            text(
+                startLevelText,
+                statPos.x + padding,
+                statPos.y + padding + 1.75 * txtSize
+            );
         }
 
         if (this.practice) {

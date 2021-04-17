@@ -395,7 +395,7 @@ class Replayer {
         const cellH = h / this.h;
 
         this.grid.show(x, y, w, h, this.colors, this.pieceImages, false, showGridLines, oldGraphics);
-        if (this.currentPiece && !this.fakeGame) {
+        if (this.currentPiece) {
             this.currentPiece.show(x, y, cellW, cellH, this.colors, this.pieceImages, oldGraphics);
         }
 

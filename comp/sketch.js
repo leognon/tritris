@@ -33,14 +33,7 @@ function setup() {
     dom.volume.changed(updateVolume);
     updateVolume();
 
-
-    //An empty piece so the game can render before loading pieces and the images
-    let emptyPieceJSON = { pieces: [ { color: 0, pieces: [[[0,0],[0,0]]]  } ] };
-    let singleImg = createImage(0,0);
-    let emptyImages = [ [singleImg, singleImg, singleImg, singleImg ] ];
-    game = new Game(emptyPieceJSON, emptyImages, 0, false, true); //Load a "fake" game to just display the grid
-    game.redraw = true;
-    showGame(false);
+    showBlankGame();
 
     resizeDOM();
 }
@@ -49,12 +42,9 @@ function finishedLoading() {
     textFont(fffForwardFont);
 
     dom.newGame = select('#newGame');
-    dom.newGame.mousePressed(() => { newGame(false); });
+    dom.newGame.mousePressed(() => { newGame(); });
 
     gameState = gameStates.MENU;
-
-    game.redraw = true; //Redraw now that keyPresses are loaded
-    showGame(false);
 }
 
 function draw() {
@@ -86,7 +76,7 @@ function draw() {
     }
 }
 
-function newGame(practice) {
+function newGame() {
     if (gameState == gameStates.LOADING) return;
 
     let seed = parseInt(dom.seed.value(), 16); //Set the randomSeed for same piece sets using base 16
@@ -96,7 +86,7 @@ function newGame(practice) {
     }
     randomSeed(seed);
     let lvl = parseInt(dom.level.value());
-    game = createGame(lvl, practice);
+    game = createGame(lvl, false);
     gameState = gameStates.INGAME;
     dom.playDiv.hide();
 }
@@ -112,7 +102,7 @@ function keyPressed() {
             game.lastFrame = Date.now(); //So the timer doesn't go crazy when pausing
             game.redraw = true;
         } else if (gameState == gameStates.MENU) {
-            newGame(false);
+            newGame();
         }
     }
 }

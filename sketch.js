@@ -49,13 +49,7 @@ function setup() {
     dom.volume.changed(updateVolume);
     updateVolume(); //Set it to be synced with the localStorage saved volume
 
-    //An empty piece so the game can render before loading pieces and the images
-    let emptyPieceJSON = { pieces: [ { color: 0, pieces: [[[0,0],[0,0]]]  } ] };
-    let singleImg = createImage(0,0);
-    let emptyImages = [ [singleImg, singleImg, singleImg, singleImg ] ];
-    game = new Game(emptyPieceJSON, emptyImages, 0, false, true); //Load a "fake" game to just display the grid
-    game.redraw = true;
-    showGame(false);
+    showBlankGame();
 
     resizeDOM();
 }
@@ -89,9 +83,6 @@ function finishedLoading() {
     });
 
     gameState = gameStates.MENU;
-
-    game.redraw = true; //Redraw now that keyPresses are loaded
-    showGame(false);
 }
 
 function draw() {
