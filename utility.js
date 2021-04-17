@@ -43,17 +43,29 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
     pieces4JSON = loadJSON(prefix + 'assets/4pieces.json', countLoaded); //Quadtris
     fffForwardFont = loadFont(prefix + 'assets/fff-forward.ttf', countLoaded);
 
-    keyImg.left = loadImage(prefix + 'assets/leftKey.png', countLoaded);
-    keyImg.right = loadImage(prefix + 'assets/rightKey.png', countLoaded);
-    keyImg.down = loadImage(prefix + 'assets/downKey.png', countLoaded);
-    keyImg.z = loadImage(prefix + 'assets/zKey.png', countLoaded);
-    keyImg.x = loadImage(prefix + 'assets/xKey.png', countLoaded);
+    keyImg.left = loadImage(prefix + 'assets/leftKey.png', img => loadedKeyImg(img, 'left'));
+    keyImg.right = loadImage(prefix + 'assets/rightKey.png', img => loadedKeyImg(img, 'right'));
+    keyImg.down = loadImage(prefix + 'assets/downKey.png', img => loadedKeyImg(img, 'down'));
+    keyImg.z = loadImage(prefix + 'assets/zKey.png', img => loadedKeyImg(img, 'z'));
+    keyImg.x = loadImage(prefix + 'assets/xKey.png', img => loadedKeyImg(img, 'x'));
 
     piecesImage = loadImage(prefix + 'assets/piecesImage.png', () => {
         pieceImages = loadPieces(piecesImage);
         countLoaded();
     });
 }
+function loadedKeyImg(img, dir) { //Create a tinted version of the graphic
+    countLoaded();
+
+    let g = createGraphics(img.width, img.height);
+    g.tint(255, 0, 0); //Apply the red tint (slow operation) once on load
+    g.image(img, 0, 0);
+
+    const tintedImg = g.get(); //Get the p5.Image that is now tinted. Drawing this will be fast
+    keyImg[dir + 'Pressed'] = tintedImg; //Save it (E.X - keyImg.leftPressed)
+}
+
+
 function updateVolume() {
     if (game) {
         game.playClearSound = false;
@@ -143,27 +155,20 @@ function showGame(paused) {
         const keyPosX = gameX + gameWidth + 30;
         const keyPosY = gameY + gameHeight - 50;
 
-        if (keyIsDown(controls.counterClock)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.z, keyPosX, keyPosY, 50, 50);
+        if (keyIsDown(controls.counterClock)) image(keyImg.zPressed, keyPosX, keyPosY, 50, 50);
+        else image(keyImg.z, keyPosX, keyPosY, 50, 50);
 
-        if (keyIsDown(controls.clock)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.x, keyPosX + 60, keyPosY, 50, 50);
+        if (keyIsDown(controls.clock)) image(keyImg.xPressed, keyPosX + 60, keyPosY, 50, 50);
+        else image(keyImg.x, keyPosX + 60, keyPosY, 50, 50);
 
-        if (keyIsDown(controls.left)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.left, keyPosX + 120, keyPosY, 50, 50);
+        if (keyIsDown(controls.left)) image(keyImg.leftPressed, keyPosX + 120, keyPosY, 50, 50);
+        else image(keyImg.left, keyPosX + 120, keyPosY, 50, 50);
 
-        if (keyIsDown(controls.down)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.down, keyPosX + 180, keyPosY, 50, 50);
+        if (keyIsDown(controls.down)) image(keyImg.downPressed, keyPosX + 180, keyPosY, 50, 50);
+        else image(keyImg.down, keyPosX + 180, keyPosY, 50, 50);
 
-        if (keyIsDown(controls.right)) tint(255, 0, 0);
-        else noTint();
-        image(keyImg.right, keyPosX + 240, keyPosY, 50, 50);
-
-        noTint();
+        if (keyIsDown(controls.right)) image(keyImg.rightPressed, keyPosX + 240, keyPosY, 50, 50);
+        else image(keyImg.right, keyPosX + 240, keyPosY, 50, 50);
     }
 }
 
