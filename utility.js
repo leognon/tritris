@@ -244,23 +244,36 @@ function windowResized() {
 }
 
 function showBlankGame() { //Display an empty game board while everything is loading
+    background(100);
     const gameWidth = min(width / 2, height / 2) - 2 * padding;
     const gameHeight = gameWidth * 2;
     const gameX = width / 2 - gameWidth / 2;
     const gameY = height / 2 - gameHeight / 2;
     const cellW = gameWidth / (game ? game.w : 8);
+    const cellH = cellW; //Assume cells are a square
 
     //Display the game board
     fill(0);
     noStroke();
     rect(gameX, gameY, gameWidth, gameHeight);
 
+    if (settings.showGridLines) {
+        //Draws the grid outline
+        stroke(100);
+        strokeWeight(2);
+        //Vertical lines
+        for (let i = 0; i <= (game ? game.w : 8); i++)
+            line(gameX + i * cellW, gameY, gameX + i * cellW, gameY + gameHeight);
+        //Horizontal lines
+        for (let j = 0; j <= (game ? game.h : 16); j++)
+            line(gameX, gameY + j * cellH, gameX + gameWidth, gameY + j * cellH);
+    }
+
     //Display the score box
     const scorePos = createVector(gameX + gameWidth + cellW, gameY + cellW);
-    const textW = 4 * cellW;
     scoreDim = createVector(
-        textW + padding + 10,
-        20 * 4.5 + padding * 2
+        4*cellW + 20,
+        110 //These are based on the font size, but its not loaded yet
     );
     noFill();
     stroke(0);
@@ -277,6 +290,19 @@ function showBlankGame() { //Display an empty game board while everything is loa
     stroke(0);
     strokeWeight(3);
     rect(nextPiecePos.x, nextPiecePos.y, nextPieceDim.x, nextPieceDim.y);
+
+    if (settings.showStats) {
+        const statPos = createVector(
+            scorePos.x,
+            nextPiecePos.y + nextPieceDim.y + cellH
+        );
+        const statDim = createVector(
+            4*cellW + 20,
+            20 * 2.75 + 20
+        );
+        //The box outline
+        rect(statPos.x, statPos.y, statDim.x, statDim.y);
+    }
 }
 
 function resizeDOM() {
@@ -340,6 +366,8 @@ function addCheckbox(name) {
         if (game) { //Rerender the game to update with the new setting
             game.redraw = true;
             showGame(gameState == gameStates.PAUSED);
+        } else {
+            showBlankGame();
         }
     });
 }
