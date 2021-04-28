@@ -305,7 +305,7 @@ class Game {
 
         //Only clear lines if the current piece is not a triangle, or the next piece is a triangle, but it is a new triplet
         if ((this.currentPiece != 0 || this.nextSingles == 2)) {
-            this.clearLines(row); //Clear any complete lines
+            this.clearLines(); //Clear any complete lines
         }
 
         const entryDelay = this.calcEntryDelay(row);
@@ -338,8 +338,8 @@ class Game {
         this.playFallSound = true;
     }
 
-    clearLines(linePosition) {
-        let linesCleared = this.grid.clearLines(linePosition);
+    clearLines() {
+        let linesCleared = this.grid.clearLines();
         if (linesCleared.length > 0) {
             this.currentSnapshot.setLines(linesCleared);
             //Set the time for when to stop animating
