@@ -303,9 +303,9 @@ class Game {
         this.grid.addPiece(this.currentPiece);
         const row = this.currentPiece.getBottomRow();
 
-        //Only clear lines if the next piece is not a triangle, or the next piece is a triangle, but it is a new triplet
-        if (this.nextPieceIndex != 0 || this.nextSingles == 2) {
-            this.clearLines(); //Clear any complete lines
+        //Only clear lines if the current piece is not a triangle, or the next piece is a triangle, but it is a new triplet
+        if ((this.currentPiece != 0 || this.nextSingles == 2)) {
+            this.clearLines(row); //Clear any complete lines
         }
 
         const entryDelay = this.calcEntryDelay(row);
@@ -338,8 +338,8 @@ class Game {
         this.playFallSound = true;
     }
 
-    clearLines() {
-        let linesCleared = this.grid.clearLines();
+    clearLines(linePosition) {
+        let linesCleared = this.grid.clearLines(linePosition);
         if (linesCleared.length > 0) {
             this.currentSnapshot.setLines(linesCleared);
             //Set the time for when to stop animating
@@ -525,7 +525,7 @@ class Game {
             if (dig > 0) {
                 while (formattedScore.length < 5) formattedScore = '0' + formattedScore; //Make sure the length is correct
             }
-            for (let i = formattedScore.length-3; i > 0; i -= 3) {
+            for (let i = formattedScore.length - 3; i > 0; i -= 3) {
                 formattedScore = formattedScore.slice(0, i) + " " + formattedScore.slice(i);
             } //Put a space every 3 characters (from the end)
 
@@ -623,8 +623,8 @@ class Game {
             } else if (this.nextSingles == 1) { //Show 2 ninjas coming up
                 const spacingX = nextPieceDim.x / 7;
                 const spacingY = nextPieceDim.y / 7;
-                this.nextPiece.showAt(nextPiecePos.x - spacingX/2, nextPiecePos.y - spacingY/2, nextPieceDim.x, nextPieceDim.y, this.colors, this.pieceImages, oldGraphics);
-                this.nextPiece.showAt(nextPiecePos.x + spacingX/2, nextPiecePos.y + spacingY/2, nextPieceDim.x, nextPieceDim.y, this.colors, this.pieceImages, oldGraphics);
+                this.nextPiece.showAt(nextPiecePos.x - spacingX / 2, nextPiecePos.y - spacingY / 2, nextPieceDim.x, nextPieceDim.y, this.colors, this.pieceImages, oldGraphics);
+                this.nextPiece.showAt(nextPiecePos.x + spacingX / 2, nextPiecePos.y + spacingY / 2, nextPieceDim.x, nextPieceDim.y, this.colors, this.pieceImages, oldGraphics);
             }
         }
 
@@ -634,13 +634,13 @@ class Game {
                 nextPiecePos.y + nextPieceDim.y + cellH
             );
 
-            let tritrisPercent = Math.round(100 * 3*this.tritrisAmt / this.lines);
+            let tritrisPercent = Math.round(100 * 3 * this.tritrisAmt / this.lines);
             if (this.lines == 0) tritrisPercent = '--';
             const tritrisPercentText = `Tri ${tritrisPercent}%`;
 
             const totalSec = Math.floor(this.totalTime / 1000) % 60;
-            const totalM = Math.floor(this.totalTime / (1000*60));
-            const startLevelText = `Time ${nf(totalM,2)}:${nf(totalSec,2)}`;
+            const totalM = Math.floor(this.totalTime / (1000 * 60));
+            const startLevelText = `Time ${nf(totalM, 2)}:${nf(totalSec, 2)}`;
 
             const textW = max(
                 textWidth(tritrisPercentText),
@@ -668,7 +668,7 @@ class Game {
         }
 
         if (this.practice) {
-            stroke(255,0,0);
+            stroke(255, 0, 0);
             strokeWeight(4);
             noFill();
             rect(x, y, w, h);
@@ -792,7 +792,7 @@ class MoveAction {
         //     10 - Counterclock rotate
         //     01 - Clockwise rotate
         //     11 - 180 rotate
-        if (this.rot == -1)     bin += 0b10000;
+        if (this.rot == -1) bin += 0b10000;
         else if (this.rot == 1) bin += 0b01000;
         else if (this.rot == 2) bin += 0b11000;
 
@@ -813,7 +813,7 @@ class LinesCleared {
         for (let line of this.lines) encoded += bigIntToBase64(line);
         const lens = ['!', '@', '#', '$', '%', '^', '&'];
         if (this.lines.length > 0) {
-            this.str = lens[this.lines.length-1] + encoded;
+            this.str = lens[this.lines.length - 1] + encoded;
         }
     }
 
@@ -827,13 +827,13 @@ function bigIntToBase64(x) {
     if (base64.length > 1) { //Extra characters used for big numbers
         //The prefix indicating the num of chars in the num
         const lens = ['!', '@', '#', '$', '%', '^', '&'];
-        if (base64.length-2 > lens.length) {
+        if (base64.length - 2 > lens.length) {
             //Number is too big (this is totally overkill, I don't think JS even stores numbers this big)
             //Prefix with *, then another char indicating the len
             base64 = '*' + intToBase64(base64.length) + base64;
         } else {
             //Num only needs a symbolic prefix
-            base64 = lens[base64.length-2] + base64;
+            base64 = lens[base64.length - 2] + base64;
         }
     }
 
@@ -857,7 +857,7 @@ function intToBase64(x) {
             nextChar = '+'; //Out of letters and numbers...
         } if (nextDigit == 63) {
             nextChar = '=';
-       }
+        }
 
         ans = nextChar + ans;
         x = Math.floor(x / 64);

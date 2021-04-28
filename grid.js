@@ -11,9 +11,14 @@ class Grid {
         }
     }
 
-    clearLines() {
+    clearLines(linePosition) {
         let linesCleared = [];
-        for (let row = 0; row < this.h; row++) {
+        //Only checks three lines above and below for performance
+        if (linePosition < 3)
+            linePosition = 3;
+        else if (this.h - linePosition < 3)
+            linePosition = this.h - 3;
+        for (let row = linePosition - 3; row < linePosition + 3; row++) {
             let full = true;
             for (let col = 0; col < this.w; col++) {
                 if (!this.grid[row][col].isFull()) {
