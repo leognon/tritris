@@ -159,6 +159,10 @@ function beginSetControl(control) { //When a user clicks a button to choose the 
     dom.closeSettings.elt.disabled = true; //They can't close the box while waiting for them to press a key
 }
 function setControl(keyCode) { //When a user presses the key they want to use for that control
+    if (keyCode == 20) { //Caps lock allows for auto-das, so it is not allowed
+        alert('You cannot use the caps lock key.');
+        return;
+    }
     dom.controls[settingControl].removeClass('settingControl');
     dom.controls[settingControl].elt.innerText = keyboardMap[keyCode];
     controls[settingControl] = keyCode; //Set the control
