@@ -63,6 +63,8 @@ function loadedKeyImg(img, dir) { //Create a tinted version of the graphic
 
     const tintedImg = g.get(); //Get the p5.Image that is now tinted. Drawing this will be fast
     keyImg[dir + 'Pressed'] = tintedImg; //Save it (E.X - keyImg.leftPressed)
+
+    g.remove();
 }
 
 
@@ -325,6 +327,7 @@ function resizeDOM() {
     titleHeight = dom.titleDiv.elt.offsetHeight; //Recalculate height since it might be auto now
 
     dom.recordsDiv.position(10, gameY + titleHeight + 10);
+    dom.recordsDiv.style(`max-width: ${gameX - 16 - 10 - cellW}px;`);
 
     const playW = dom.playDiv.elt.offsetWidth;
     const playH = dom.playDiv.elt.offsetHeight;

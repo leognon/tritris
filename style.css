@@ -39,6 +39,10 @@ h3 {
     font-family: fff-forward;
 }
 
+#records {
+    overflow: hidden;
+}
+
 input, button {
     padding: 3px;
     margin: 3px;
