@@ -26,6 +26,9 @@ let controls = getSavedValue('controls', {
     start: 13, //Enter
     restart: 27 //Escape
 });
+function isPressed(keyCode) {
+    return keyIsDown(keyCode);
+}
 
 const totalAssets = 9;
 let loadedAssets = 0;
