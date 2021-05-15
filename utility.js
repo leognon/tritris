@@ -341,7 +341,7 @@ function createMenuBox(name, openName, closeName) {
     dom[name] = select(`#${name}`);
     dom[openName] = select(`#${openName}`);
     dom[openName].mousePressed(() => {
-        if (gameState == gameStates.MENU) {
+        if (gameState == gameStates.MENU || gameState == gameStates.PAUSED) {
             dom[name].style('visibility: visible');
         }
     });
