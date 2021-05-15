@@ -4,7 +4,8 @@ let settings = {
     showKeys: getSavedValue('showKeys', false),
     showStats: getSavedValue('showStats', false),
     showFlash: getSavedValue('showFlash', true),
-    use4Piece: getSavedValue('use4Piece', false)
+    use4Piece: getSavedValue('use4Piece', false),
+    pauseOnBlur: getSavedValue('pauseOnBlur', true)
 }
 
 const keyboardMap = [ //From https://stackoverflow.com/questions/1772179/get-character-value-from-keycode-in-javascript-then-trim
@@ -43,6 +44,7 @@ function setup() {
     addCheckbox('showStats');
     addCheckbox('showFlash');
     addCheckbox('use4Piece');
+    addCheckbox('pauseOnBlur');
 
     dom.volume = select('#volume');
     dom.volume.value(volume);

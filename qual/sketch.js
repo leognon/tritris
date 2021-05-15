@@ -4,7 +4,8 @@ let settings = {
     showKeys: getSavedValue('showKeys', false),
     showStats: true, //Stats are always shown for competitive
     showFlash: getSavedValue('showFlash', true),
-    use4Piece: false
+    use4Piece: false,
+    pauseOnBlur: getSavedValue('pauseOnBlur', true)
 }
 
 const month = new Date().getMonth();

@@ -5,7 +5,8 @@ let settings = {
     showKeys: getSavedValue('showKeys', false),
     showStats: true,
     showFlash: getSavedValue('showFlash', true),
-    use4Piece: false
+    use4Piece: false,
+    pauseOnBlur: getSavedValue('pauseOnBlur', true)
 }
 
 function setup() {

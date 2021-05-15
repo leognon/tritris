@@ -396,3 +396,12 @@ function saveGame() {
 
     saveJSON(json, fileName);
 }
+
+window.onblur = () => {
+    //Only pause if they have started the game. The > 10 is to prevent it from instantly pausing after getting the alert() when starting a qual game
+    if (settings.pauseOnBlur && gameState == gameStates.INGAME && game && game.totalTime > 10) {
+        gameState = gameStates.PAUSED;
+        game.redraw = true;
+        showGame(true);
+    }
+};

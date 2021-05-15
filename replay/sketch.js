@@ -4,7 +4,8 @@ let settings = {
     showKeys: false, //Inputs are not saved, so there is no point in displaying keyPresses
     showStats: true,
     showFlash: getSavedValue('showFlash', true),
-    use4Piece: false //It's not possible to replay 4 piece games :(
+    use4Piece: false,
+    pauseOnBlur: false
 }
 
 const CHANGE_TIME = {
