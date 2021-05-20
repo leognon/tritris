@@ -12,6 +12,7 @@ class Replayer {
 
         this.snapshotTime = 0; //The total time since the last recorded move was made
         this.totalTime = 0; //This actual total time. When this time advances, it will advance snapshotTime accordingly
+        this.maximumTime = gameData.time;
         this.timeSpeed = 1;
 
         this.maxTime = 0; //How long the replay takes
@@ -499,8 +500,9 @@ class Replayer {
             if (this.lines == 0) tritrisPercent = '--';
             const tritrisPercentText = `Tri ${tritrisPercent}%`;
 
-            const totalSec = Math.floor(this.totalTime / 1000) % 60;
-            const totalM = Math.floor(this.totalTime / (1000*60));
+            const cappedTime = Math.min(this.totalTime, this.maximumTime);
+            const totalSec = Math.floor(cappedTime / 1000) % 60;
+            const totalM = Math.floor(cappedTime / (1000*60));
             const startLevelText = `Time ${nf(totalM,2)}:${nf(totalSec,2)}`;
 
             const textW = max(
