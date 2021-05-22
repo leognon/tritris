@@ -20,7 +20,7 @@
             <p style="font-size: 12pt">
                 <p id="welcomeMsg">Welcome to the Tritris Monthly Championship!</p>
                 <br />
-                <label>Volume</label>
+                <label for="volume">Volume</label>
                 <input type="range" id="volume" min="0" max="100" value="75" step="1" />
             </p>
         </div>
@@ -30,11 +30,11 @@
 
         <div id="play" class="box" style="position: absolute">
             <h1>Tritris</h1>
-            <label id="seedLabel">Seed: </label>
+            <label for="seed" id="seedLabel">Seed: </label>
             <input id="seed" value="0" style="width: 50%; height: 20px;" />
             <br />
 
-            <label>Level: </label>
+            <label for="level">Level: </label>
             <input id="level" type="number" value="0" min="0" max="29" />
             <br />
             <button id="newGame">New Game</button>
