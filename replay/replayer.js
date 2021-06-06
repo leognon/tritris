@@ -12,13 +12,21 @@ class Replayer {
 
         this.snapshotTime = 0; //The total time since the last recorded move was made
         this.totalTime = 0; //This actual total time. When this time advances, it will advance snapshotTime accordingly
-        this.maximumTime = gameData.time;
+        this.maxTime = gameData.time;
         this.timeSpeed = 1;
 
-        this.maxTime = 0; //How long the replay takes
+        let savedTime = 0; //How many ms are saved in the moves
+        let numMoves = 0;
         for (const snap of this.snapshots) {
+            numMoves += snap.moves.length;
             for (const move of snap.moves) {
-                this.maxTime += move.correctedDeltaTime;
+                savedTime += move.correctedDeltaTime;
+            }
+        }
+        const timeDiffPerMove = (this.maxTime - savedTime) / numMoves; //How much time was lost when saved the replay per peice (bc the floor(deltaTime) is stored)
+        for (let i = 0; i < this.snapshots.length; i++) {
+            for (let j = 0; j < this.snapshots[i].moves.length; j++) {
+                this.snapshots[i].moves[j].correctedDeltaTime += timeDiffPerMove;
             }
         }
 
@@ -500,7 +508,7 @@ class Replayer {
             if (this.lines == 0) tritrisPercent = '--';
             const tritrisPercentText = `Tri ${tritrisPercent}%`;
 
-            const cappedTime = Math.min(this.totalTime, this.maximumTime);
+            const cappedTime = Math.min(this.totalTime, this.maxTime);
             const totalSec = Math.floor(cappedTime / 1000) % 60;
             const totalM = Math.floor(cappedTime / (1000*60));
             const startLevelText = `Time ${nf(totalM,2)}:${nf(totalSec,2)}`;
