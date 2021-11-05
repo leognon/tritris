@@ -126,7 +126,8 @@ class Replayer {
             }
 
             //Spawn the next piece after entry delay
-            if (this.currentPiece == null && this.totalTime > this.spawnNextPiece && this.totalTime > this.animationTime) {
+            if (this.currentPiece == null && 
+                (hasMove || (this.totalTime > this.spawnNextPiece && this.totalTime > this.animationTime))) {
                 this.spawnPiece();
                 this.redraw = true;
                 if (!this.isValid(this.currentPiece)) {
