@@ -64,6 +64,9 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
 }
 
 function playBackgroundMusic(play) {
+    // 'play' is always false if muteBackgroundMusic is true
+    play = play && !settings.muteBackgroundMusic;
+    console.log(play);
     sounds.background.play(play);
     sounds.background.loop(play);
 }
@@ -203,8 +206,7 @@ function showGame(paused) {
 function createGame(level, practice) {
     
     // Play the background music and set it to loop
-    sounds.background.play();
-    sounds.background.loop(true);
+    playBackgroundMusic(true);
 
     level = parseInt(level);
     if (isNaN(level)) {
