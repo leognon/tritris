@@ -42,6 +42,11 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
     sounds.levelup = new Sound(prefix + 'assets/levelup.wav');
     sounds.topout = new Sound(prefix + 'assets/topout.wav');
 
+    // Credit to the background music goes to Kevin MacLeod
+    // Artist : Kevin MacLeod
+    // Title  : EDM Detection Mode 
+    sounds.background = new Sound(prefix + 'assets/background.wav');
+
     piecesJSON = loadJSON(prefix + 'assets/pieces.json', countLoaded);
     pieces4JSON = loadJSON(prefix + 'assets/4pieces.json', countLoaded); //Quadtris
     fffForwardFont = loadFont(prefix + 'assets/fff-forward.ttf', countLoaded);
@@ -130,8 +135,20 @@ class Sound {
         this.sound.volume = vol;
     }
 
-    play() {
-        this.sound.play();
+    play(played = true) {   
+        played ? this.sound.play() : this.sound.pause();
+    }
+
+    mute(muted) {
+        this.sound.muted = muted;
+    }
+
+    loop(looped) {
+        this.sound.loop = looped;
+    }
+
+    paused() {
+        return this.sound.paused;
     }
 }
 
@@ -178,6 +195,11 @@ function showGame(paused) {
 }
 
 function createGame(level, practice) {
+    
+    // Play the background music and set it to loop
+    sounds.background.play();
+    sounds.background.loop(true);
+
     level = parseInt(level);
     if (isNaN(level)) {
         console.error(level + ' is not a proper level');

@@ -210,11 +210,9 @@ class Game {
         }
 
         if (this.currentPiece !== null) {
-            //If either left is pressed or right is pressed and down isn't
-            let oneKeyPressed = isPressed(controls.left) != isPressed(controls.right);
-            if (!this.practice && isPressed(controls.down)) {
-                oneKeyPressed = false; //Allows down and left/right to be pressed in practice, but not in a real game
-            }
+            //If either left is pressed or right is pressed and down isn't pressed, unless in practice mode
+            let oneKeyPressed = (isPressed(controls.left) != isPressed(controls.right)) && (!isPressed(controls.down) || this.practice);
+            
             let move = false;
             if (oneKeyPressed) {
                 this.das += deltaTime;
@@ -379,8 +377,8 @@ class Game {
         const vertDirection = moveDown ? 1 : 0;
         this.currentPiece.move(horzDirection, vertDirection);
         if (rotation == -1) this.currentPiece.rotateLeft();
-        if (rotation == 1) this.currentPiece.rotateRight();
-        if (rotation == 2) this.currentPiece.rotate180();
+        else if (rotation == 1) this.currentPiece.rotateRight();
+        else if (rotation == 2) this.currentPiece.rotate180();
 
         //Try with all transformations
         let valid = this.isValid(this.currentPiece);
@@ -497,6 +495,9 @@ class Game {
             background(100);
         }
 
+        // Appropriately pause and unpause the background music
+        if(paused) sounds.background.play(false);
+        else if(sounds.background.paused()) sounds.background.play(true);
 
         noStroke();
         fill(0);
@@ -678,6 +679,7 @@ class Game {
     }
 
     updateHistory() {
+        sounds.background.play(false);
         this.history.push(this.currentSnapshot);
         this.currentSnapshot = new Snapshot(this.totalTime);
     }
