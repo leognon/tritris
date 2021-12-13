@@ -66,7 +66,6 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
 function playBackgroundMusic(play) {
     // 'play' is always false if muteBackgroundMusic is true
     play = play && !settings.muteBackgroundMusic;
-    console.log(play);
     sounds.background.play(play);
     sounds.background.loop(play);
 }
