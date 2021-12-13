@@ -12,7 +12,8 @@ class Game {
         this.firstPieceIndex = 0;
 
         this.alive = true;
-
+        this.paused = true;
+        
         if (level < 0) level = 0;
         if (level > 29) level = 29;
         if (level >= 20 && level <= 28) level = 19; //Can only start on 0-19 or 29
@@ -276,6 +277,7 @@ class Game {
                     this.placePiece();
 
                     this.currentSnapshot.setPushDown(pushDownPoints);
+
                     this.updateHistory();
 
                     this.zCharged = false; //After a piece is placed, don't rotate the next piece
@@ -449,6 +451,7 @@ class Game {
     }
 
     playSounds(sounds) {
+        
         if (this.playClearSound) {
             sounds.clear.play();
             this.playClearSound = false;
@@ -475,9 +478,14 @@ class Game {
             sounds.topout.play();
             this.playTopoutSound = false;
         }
+
+        if((this.paused || !this.alive) && !sounds.background.paused()) playBackgroundMusic(false); // Disable the background music when it's paused
+        else if(!this.paused && sounds.background.paused()) playBackgroundMusic(true); // Reenable the background music when it's unpaused
     }
 
     show(x, y, w, h, paused, oldGraphics, showGridLines, showStats, showFlash) {
+        this.paused = paused;
+
         //Play flashing animation
         const flashing = this.flashTime >= Date.now();
         if (!this.redraw && !flashing) return; //If not flashing, only draw when necessary
@@ -494,10 +502,6 @@ class Game {
         } else {
             background(100);
         }
-
-        // Appropriately pause and unpause the background music
-        if(paused) sounds.background.play(false);
-        else if(sounds.background.paused()) sounds.background.play(true);
 
         noStroke();
         fill(0);
@@ -679,7 +683,6 @@ class Game {
     }
 
     updateHistory() {
-        sounds.background.play(false);
         this.history.push(this.currentSnapshot);
         this.currentSnapshot = new Snapshot(this.totalTime);
     }

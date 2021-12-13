@@ -62,6 +62,12 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
         countLoaded();
     });
 }
+
+function playBackgroundMusic(play) {
+    sounds.background.play(play);
+    sounds.background.loop(play);
+}
+
 function loadedKeyImg(img, dir) { //Create a tinted version of the graphic
     countLoaded();
 
