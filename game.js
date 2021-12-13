@@ -479,8 +479,10 @@ class Game {
             this.playTopoutSound = false;
         }
 
-        if((this.paused || !this.alive) && !sounds.background.paused()) playBackgroundMusic(false); // Disable the background music when it's paused
-        else if(!this.paused && sounds.background.paused()) playBackgroundMusic(true); // Reenable the background music when it's unpaused
+        // Disable the background music when it's paused
+        if((this.paused || !this.alive) && !sounds.background.paused()) playBackgroundMusic(false); 
+        // Reenable the background music when it's unpaused
+        else if(!this.paused && sounds.background.paused() && !settings.muteBackgroundMusic) playBackgroundMusic(true); 
     }
 
     show(x, y, w, h, paused, oldGraphics, showGridLines, showStats, showFlash) {
