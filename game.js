@@ -12,8 +12,7 @@ class Game {
         this.firstPieceIndex = 0;
 
         this.alive = true;
-        this.paused = true;
-        
+
         if (level < 0) level = 0;
         if (level > 29) level = 29;
         if (level >= 20 && level <= 28) level = 19; //Can only start on 0-19 or 29
@@ -211,9 +210,11 @@ class Game {
         }
 
         if (this.currentPiece !== null) {
-            //If either left is pressed or right is pressed and down isn't pressed, unless in practice mode
-            let oneKeyPressed = (isPressed(controls.left) != isPressed(controls.right)) && (!isPressed(controls.down) || this.practice);
-            
+            //If either left is pressed or right is pressed and down isn't
+            let oneKeyPressed = isPressed(controls.left) != isPressed(controls.right);
+            if (!this.practice && isPressed(controls.down)) {
+                oneKeyPressed = false; //Allows down and left/right to be pressed in practice, but not in a real game
+            }
             let move = false;
             if (oneKeyPressed) {
                 this.das += deltaTime;
@@ -277,7 +278,6 @@ class Game {
                     this.placePiece();
 
                     this.currentSnapshot.setPushDown(pushDownPoints);
-
                     this.updateHistory();
 
                     this.zCharged = false; //After a piece is placed, don't rotate the next piece
@@ -379,8 +379,8 @@ class Game {
         const vertDirection = moveDown ? 1 : 0;
         this.currentPiece.move(horzDirection, vertDirection);
         if (rotation == -1) this.currentPiece.rotateLeft();
-        else if (rotation == 1) this.currentPiece.rotateRight();
-        else if (rotation == 2) this.currentPiece.rotate180();
+        if (rotation == 1) this.currentPiece.rotateRight();
+        if (rotation == 2) this.currentPiece.rotate180();
 
         //Try with all transformations
         let valid = this.isValid(this.currentPiece);
@@ -451,7 +451,6 @@ class Game {
     }
 
     playSounds(sounds) {
-        
         if (this.playClearSound) {
             sounds.clear.play();
             this.playClearSound = false;
@@ -478,16 +477,9 @@ class Game {
             sounds.topout.play();
             this.playTopoutSound = false;
         }
-
-        // Disable the background music when it's paused
-        if((this.paused || !this.alive) && !sounds.background.paused()) playBackgroundMusic(false); 
-        // Reenable the background music when it's unpaused
-        else if(!this.paused && sounds.background.paused() && !settings.muteBackgroundMusic) playBackgroundMusic(true); 
     }
 
     show(x, y, w, h, paused, oldGraphics, showGridLines, showStats, showFlash) {
-        this.paused = paused;
-
         //Play flashing animation
         const flashing = this.flashTime >= Date.now();
         if (!this.redraw && !flashing) return; //If not flashing, only draw when necessary

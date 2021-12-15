@@ -32,6 +32,10 @@ function setup() {
     dom.volume = select('#volume');
     dom.volume.value(volume);
     dom.volume.changed(updateVolume);
+
+    dom.musicVolume = select('#musicVolume');
+    dom.musicVolume.value(musicVolume);
+    dom.musicVolume.changed(updateVolume);
     updateVolume();
 
     showBlankGame();

@@ -71,7 +71,11 @@ function setup() {
     dom.volume = select('#volume');
     dom.volume.value(volume);
     dom.volume.changed(updateVolume);
-    updateVolume();
+
+    dom.musicVolume = select('#musicVolume');
+    dom.musicVolume.value(musicVolume);
+    dom.musicVolume.changed(updateVolume);
+    updateVolume(); //Set it to be synced with the localStorage saved volume
 
     dom.games = [];
     for (let i = 0; i < 5; i++) {

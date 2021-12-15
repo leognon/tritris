@@ -17,6 +17,7 @@ let dom = {};
 let keyImg = {};
 let fffForwardFont;
 let volume = getSavedValue('volume', 75);
+let musicVolume = getSavedValue('musicVolume', 0);
 let controls = getSavedValue('controls', {
     counterClock: 90, //Z
     clock: 88, //X
@@ -34,6 +35,11 @@ const totalAssets = 9;
 let loadedAssets = 0;
 const countLoaded = () => { loadedAssets++; };
 let sounds = {};
+
+let musicTracks = [];
+let musicIsPlaying = false;
+let currentTrackIndex = -1; //Starts at -1 so when it is incremented it plays track 0
+
 function loadData(prefix) { //Depending on the location of the index, it may need to load from the parent dir
     sounds.move = new Sound(prefix + 'assets/move.wav');
     sounds.fall = new Sound(prefix + 'assets/fall.wav');
@@ -42,10 +48,14 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
     sounds.levelup = new Sound(prefix + 'assets/levelup.wav');
     sounds.topout = new Sound(prefix + 'assets/topout.wav');
 
-    // Credit to the background music goes to Kevin MacLeod
-    // Artist : Kevin MacLeod
-    // Title  : EDM Detection Mode 
-    sounds.background = new Sound(prefix + 'assets/background.wav');
+    musicTracks = [
+        new MusicTrack('trackA', prefix + 'assets/music/trackA.wav'),
+        // Credit to the background music goes to Kevin MacLeod
+        // Artist : Kevin MacLeod
+        // Title  : EDM Detection Mode
+        new MusicTrack('EDM Detection Mode', prefix + 'assets/music/edmDetectionMode.wav'),
+        new MusicTrack('Isosceles', prefix + 'assets/music/isosceles.wav')
+    ]
 
     piecesJSON = loadJSON(prefix + 'assets/pieces.json', countLoaded);
     pieces4JSON = loadJSON(prefix + 'assets/4pieces.json', countLoaded); //Quadtris
@@ -63,11 +73,31 @@ function loadData(prefix) { //Depending on the location of the index, it may nee
     });
 }
 
-function playBackgroundMusic(play) {
-    // 'play' is always false if muteBackgroundMusic is true
-    play = play && !settings.muteBackgroundMusic;
-    sounds.background.play(play);
-    sounds.background.loop(play);
+function startBackgroundMusic() {
+    if (!musicIsPlaying) {
+        nextMusicTrack();
+        musicIsPlaying = true;
+    }
+}
+
+function nextMusicTrack() {
+    setTimeout(() => {
+        currentTrackIndex = (currentTrackIndex + 1) % musicTracks.length;
+
+        musicTracks[currentTrackIndex].play();
+        musicTracks[currentTrackIndex].setOnEnd(nextMusicTrack);
+    }, 300);
+}
+
+function pauseCurrentTrack(p) {
+    if (p && musicIsPlaying) { //Should pause and music is current playing
+        musicTracks[currentTrackIndex].pause();
+        musicIsPlaying = false;
+    }
+    if (!p && !musicIsPlaying) { //Should unpause and music is not playing
+        musicTracks[currentTrackIndex].play();
+        musicIsPlaying = true;
+    }
 }
 
 function loadedKeyImg(img, dir) { //Create a tinted version of the graphic
@@ -98,6 +128,15 @@ function updateVolume() {
 
         for (const sound in sounds) {
             sounds[sound].setVolume(volume / 100);
+        }
+    }
+    if (dom.musicVolume) {
+        musicVolume = dom.musicVolume.value();
+        localStorage.setItem('musicVolume', musicVolume);
+
+        let vol = (musicVolume > 1) ? musicVolume / 100 : 0; //Adds a small buffer to mute
+        for (const track of musicTracks) {
+            track.setVolume(vol);
         }
     }
 };
@@ -143,24 +182,30 @@ class Sound {
         this.sound.volume = vol;
     }
 
-    play(played = true) {   
-        played ? this.sound.play() : this.sound.pause();
+    play() {
+        this.sound.play();
+    }
+}
+
+class MusicTrack extends Sound {
+    constructor(name, src) {
+        super(src);
+        this.name = name;
     }
 
-    mute(muted) {
-        this.sound.muted = muted;
+    pause() {
+        this.sound.pause();
     }
 
-    loop(looped) {
-        this.sound.loop = looped;
-    }
-
-    paused() {
-        return this.sound.paused;
+    setOnEnd(fn) {
+        this.sound.onended = fn;
     }
 }
 
 function showGame(paused) {
+    if (paused) pauseCurrentTrack(true);
+    else pauseCurrentTrack(false);
+
     let gameWidth = min(width / 2, height / 2) - 2 * padding;
     let gameHeight = gameWidth * (game.h / game.w);
     if (gameHeight > height) {
@@ -203,9 +248,7 @@ function showGame(paused) {
 }
 
 function createGame(level, practice) {
-    
-    // Play the background music and set it to loop
-    playBackgroundMusic(true);
+    startBackgroundMusic();
 
     level = parseInt(level);
     if (isNaN(level)) {

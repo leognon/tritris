@@ -70,6 +70,10 @@ function setup() {
     dom.volume = select('#volume');
     dom.volume.value(volume);
     dom.volume.changed(updateVolume);
+
+    dom.musicVolume = select('#musicVolume');
+    dom.musicVolume.value(musicVolume);
+    dom.musicVolume.changed(updateVolume);
     updateVolume();
 
     resizeDOM();
@@ -132,6 +136,8 @@ function replayGame() {
         alert('Please select a json file to replay!');
         return;
     }
+
+    startBackgroundMusic();
 
     game = new Replayer(piecesJSON, pieces4JSON, pieceImages, loadedGameJSON);
 
