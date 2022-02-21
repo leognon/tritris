@@ -284,7 +284,7 @@ class Game {
                     this.xCharged = false;
                 } else {
                     //If the piece was able to just move down, reset the timer
-                    if (moveDown) this.lastMoveDown = Date.now();
+                    if (moveDown) this.lastMoveDown = this.lastMoveDown + pieceSpeed; // Date.now();
                 }
             }
         }
