@@ -654,18 +654,15 @@ class Game {
             const totalM = Math.floor(this.totalTime / (1000*60));
             const startLevelText = `Time ${nf(totalM,2)}:${nf(totalSec,2)}`;
 
-            const fpsText = `FPS: ${nf(frameRate(), 0, 2)}`;
-
             const textW = max(
                 textWidth(tritrisPercentText),
                 textWidth(startLevelText),
-                textWidth(fpsText),
                 4 * cellW
             );
 
             const statDim = createVector(
                 textW + padding + 10,
-                txtSize * 4.5 + padding * 2
+                txtSize * 2.75 + padding * 2
             );
             noFill();
             stroke(0);
@@ -679,11 +676,6 @@ class Game {
                 startLevelText,
                 statPos.x + padding,
                 statPos.y + padding + 1.75 * txtSize
-            );
-            text(
-                fpsText,
-                statPos.x + padding,
-                statPos.y + padding + 3.5 * txtSize
             );
         }
 
