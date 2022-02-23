@@ -88,7 +88,7 @@ class Game {
 
         this.softDropSpeed = msPerFrame * 2;
         if (this.practice) this.softDropSpeed *= 4;
-        this.lastMoveDown = Date.now() + 750;
+        this.lastMoveDown = 750;
 
         this.das = 0;
         this.dasMax = msPerFrame * 16; //It takes 16 frames on an NES to fully charge DAS
@@ -134,8 +134,8 @@ class Game {
         this.totalTime += deltaTime;
 
         //Play a line clear animation
-        if (now <= this.animationTime) {
-            const percentDone = (this.animationTime - now) / this.maxAnimationTime;
+        if (this.totalTime <= this.animationTime) {
+            const percentDone = (this.animationTime - this.totalTime) / this.maxAnimationTime;
             const clearingCol = Math.floor(percentDone * 10);
             for (const row of this.animatingLines) {
                 //Clear as many cols as necessary
@@ -196,11 +196,11 @@ class Game {
         //Spawn the next piece after entry delay
         if (
             this.currentPiece == null &&
-            now > this.spawnNextPiece &&
-            now > this.animationTime
+            this.totalTime > this.spawnNextPiece &&
+            this.totalTime > this.animationTime
         ) {
             this.spawnPiece();
-            this.lastMoveDown = now;
+            this.lastMoveDown = this.totalTime;
             this.redraw = true;
             if (!this.isValid(this.currentPiece)) {
                 this.updateHistory();
@@ -246,13 +246,13 @@ class Game {
 
             let pieceSpeed = this.pieceSpeed;
             if (isPressed(controls.down)) {
-                //Pressing down moves twice as fast, or as fast as the min
+                //Pressing down moves at 19 speed, or as fast as the min
                 pieceSpeed = min(pieceSpeed, this.softDropSpeed);
             }
             if (isPressed(controls.down) && !this.downWasPressed) {
                 this.downPressedAt = this.currentPiece.pos.y; //Save when the piece was first pressed down
             }
-            let moveDown = Date.now() >= this.lastMoveDown + pieceSpeed;
+            let moveDown = this.totalTime >= this.lastMoveDown + pieceSpeed;
             if (this.practice && !isPressed(controls.down)) {
                 moveDown = false; //Pieces only move down when down is pressed in practice mode
             }
@@ -284,7 +284,13 @@ class Game {
                     this.xCharged = false;
                 } else {
                     //If the piece was able to just move down, reset the timer
-                    if (moveDown) this.lastMoveDown = this.lastMoveDown + pieceSpeed; // Date.now();
+                    if (moveDown) {
+                        this.lastMoveDown = this.lastMoveDown + pieceSpeed; // Date.now();
+                        if ((this.totalTime - this.lastMoveDown) > pieceSpeed) {
+                            //When the player starts pushing down, more time than the softDropSpeed has accumulated for the first one
+                            this.lastMoveDown = this.totalTime;
+                        }
+                    }
                 }
             }
         }
@@ -309,7 +315,7 @@ class Game {
         }
 
         const entryDelay = this.calcEntryDelay(row);
-        this.spawnNextPiece = Date.now() + entryDelay;
+        this.spawnNextPiece = this.totalTime + entryDelay;
 
         this.currentPiece = null; //There is an entry delay for the next piece
     }
@@ -343,12 +349,12 @@ class Game {
         if (linesCleared.length > 0) {
             this.currentSnapshot.setLines(linesCleared);
             //Set the time for when to stop animating
-            this.animationTime = Date.now() + this.maxAnimationTime;
+            this.animationTime = this.totalTime + this.maxAnimationTime;
             this.lastColCleared = 0; //Used to ensure all triangles are removed. Starts at 0 to only remove 1 on the first frame
             this.animatingLines = linesCleared; //Which lines are being animated (and cleared)
             if (linesCleared.length == 3) {
                 //Tritris!
-                this.flashTime = Date.now() + this.maxFlashTime;
+                this.flashTime = this.totalTime + this.maxFlashTime;
                 this.playTritrisSound = true;
             } else {
                 this.playClearSound = true;
@@ -481,11 +487,11 @@ class Game {
 
     show(x, y, w, h, paused, oldGraphics, showGridLines, showStats, showFlash) {
         //Play flashing animation
-        const flashing = this.flashTime >= Date.now();
+        const flashing = this.flashTime >= this.totalTime;
         if (!this.redraw && !flashing) return; //If not flashing, only draw when necessary
 
         if (flashing && showFlash) {
-            const timePassed = this.flashTime - Date.now();
+            const timePassed = this.flashTime - this.totalTime;
             const interval = Math.floor(this.flashAmount * timePassed / this.maxFlashTime);
             if (interval % 2 == 0) {
                 background(150);
