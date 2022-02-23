@@ -5,7 +5,8 @@ let settings = {
     showStats: true,
     showFlash: getSavedValue('showFlash', true),
     use4Piece: false,
-    pauseOnBlur: false
+    pauseOnBlur: false,
+    useCorrectedSpeeds: getSavedValue('useCorrectedSpeeds', true)
 }
 
 const CHANGE_TIME = {

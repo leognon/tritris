@@ -1,5 +1,5 @@
 class Game {
-    constructor(piecesJSON, pieceImages, level, practice) {
+    constructor(piecesJSON, pieceImages, level, practice, useCorrectedSpeeds) {
         this.w = 8;
         this.h = 16;
         this.grid = new Grid(this.w, this.h);
@@ -84,6 +84,9 @@ class Game {
             this.levelSpeeds[lvl] *= msPerFrame; //Make sure the are in the correct units
         }
         this.pieceSpeed = 0;
+
+        this.useCorrectedSpeeds = useCorrectedSpeeds;
+
         this.setSpeed(); //This will correctly set pieceSpeed depending on which level it's starting on
 
         this.softDropSpeed = msPerFrame * 2;
@@ -285,9 +288,13 @@ class Game {
                 } else {
                     //If the piece was able to just move down, reset the timer
                     if (moveDown) {
-                        this.lastMoveDown = this.lastMoveDown + pieceSpeed; // Date.now();
-                        if ((this.totalTime - this.lastMoveDown) > pieceSpeed) {
-                            //When the player starts pushing down, more time than the softDropSpeed has accumulated for the first one
+                        if (this.useCorrectedSpeeds) {
+                            this.lastMoveDown = this.lastMoveDown + pieceSpeed;
+                            if ((this.totalTime - this.lastMoveDown) > pieceSpeed) {
+                                //When the player starts pushing down, more time than the softDropSpeed has accumulated for the first one
+                                this.lastMoveDown = this.totalTime;
+                            }
+                        } else {
                             this.lastMoveDown = this.totalTime;
                         }
                     }

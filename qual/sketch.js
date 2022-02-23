@@ -5,7 +5,8 @@ let settings = {
     showStats: true, //Stats are always shown for competitive
     showFlash: getSavedValue('showFlash', true),
     use4Piece: false,
-    pauseOnBlur: getSavedValue('pauseOnBlur', true)
+    pauseOnBlur: getSavedValue('pauseOnBlur', true),
+    useCorrectedSpeeds: true //Always uses corrected speeds for qual
 }
 
 const month = new Date().getMonth();

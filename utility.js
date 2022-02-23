@@ -263,7 +263,7 @@ function createGame(level, practice) {
     }
     let pieceSet = piecesJSON;
     if (settings.use4Piece) pieceSet = pieces4JSON;
-    return new Game(pieceSet, pieceImages, level, practice);
+    return new Game(pieceSet, pieceImages, level, practice, settings.useCorrectedSpeeds);
 }
 
 function setHighScores(score, lines, updateDisplay) {

@@ -6,7 +6,8 @@ let settings = {
     showStats: true,
     showFlash: getSavedValue('showFlash', true),
     use4Piece: false,
-    pauseOnBlur: getSavedValue('pauseOnBlur', true)
+    pauseOnBlur: getSavedValue('pauseOnBlur', true),
+    useCorrectedSpeeds: true //Always uses corrected speeds for comp
 }
 
 function setup() {
