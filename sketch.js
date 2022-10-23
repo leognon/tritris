@@ -59,6 +59,17 @@ function setup() {
     showBlankGame();
 
     resizeDOM();
+
+  window.addEventListener("gamepadconnected", e => {
+    if (e.gamepad.buttons.length === 17) {
+      gamepad = e.gamepad;
+    } else {
+      gamepad = null;
+    }
+  });
+  window.addEventListener("gamepaddisconnected", e => {
+    gamepad = navigator.getGamepads().length > 0 ? navigator.getGamepads()[navigator.getGamepads().length-1] : null;
+  })
 }
 
 function finishedLoading() {
@@ -101,7 +112,7 @@ function draw() {
         cursor();
         return;
     }
-
+    controllerKeyPressed();
     if (gameState == gameStates.INGAME) {
         game.update();
         showGame(false); //Show the game, (and it's not paused)
@@ -134,10 +145,40 @@ function newGame(practice) {
     dom.settings.style('visibility: hidden');
 }
 
+// Flag to prevent pause/restart spasming
+let pauseBuffering = false;
+
+// Essentially `keyPressed()`, but needs to be ran manually for Gamepads
+function controllerKeyPressed() {
+  if (gamepad != null) {
+    // XBox Controls
+    if (xboxIsPressed(XBoxControllerMapping.menu) && !pauseBuffering) {
+      if (gameState == gameStates.INGAME) {
+	gameState = gameStates.PAUSED;
+	game.redraw = true;
+      } else if (gameState == gameStates.PAUSED) {
+	gameState = gameStates.INGAME;
+	game.lastFrame = Date.now(); //So the timer doesn't go crazy when pausing
+	game.redraw = true;
+      } else if (gameState == gameStates.MENU) {
+	newGame(false);
+      }
+      pauseBuffering = true;
+      setTimeout(() => { pauseBuffering = false; }, 500);
+    } else if(xboxIsPressed(XBoxControllerMapping.share)) {
+      if (gameState == gameStates.INGAME) {
+	game.updateHistory();
+	game.alive = false;
+      }
+    }
+  // TODO Other Control Schemes
+  }
+}
+
 function keyPressed() {
     if (settingControl != null) {
         setControl(keyCode);
-    } else if (keyCode == controls.start) {
+    } else if (isPressed(controls.start)) {
         //Enter key is pressed
         if (gameState == gameStates.INGAME) {
             gameState = gameStates.PAUSED;
@@ -149,7 +190,7 @@ function keyPressed() {
         } else if (gameState == gameStates.MENU) {
             newGame(false);
         }
-    } else if (keyCode == controls.restart) { //Escape pressed
+    } else if (isPressed(controls.restart)) { //Escape pressed
         if (gameState == gameStates.INGAME) {
             game.updateHistory();
             game.alive = false;
