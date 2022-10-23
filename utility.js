@@ -7,6 +7,23 @@ const gameStates = {
 };
 const padding = 25;
 
+const XBoxControllerMapping = {
+  faceA: 0,
+  faceB: 1,
+  faceX: 2,
+  faceY: 3,
+  bumperL: 4,
+  bumperR: 5,
+  triggerL: 6,
+  triggerR: 7,
+  share: 8,
+  menu: 9,
+  dpadUp: 12,
+  dpadDown: 13,
+  dpadLeft: 14,
+  dpadRight: 15,
+}
+
 let piecesJSON;
 let piecesImage; //The entire spritesheet
 let pieceImages = []; //A 2d array of all the individual triangles
@@ -14,6 +31,7 @@ let game;
 let gameState = gameStates.LOADING;
 
 let dom = {};
+let gamepad = null;
 let keyImg = {};
 let fffForwardFont;
 let volume = getSavedValue('volume', 75);
@@ -27,8 +45,43 @@ let controls = getSavedValue('controls', {
     start: 13, //Enter
     restart: 27 //Escape
 });
+
+// Validation should have already occurred if `gamepad` is non-null
+function xboxIsPressed(button) {
+  // A value of 0.2 will account for "sticky" triggers
+  return gamepad.buttons[button].value > 0.2;
+}
+
 function isPressed(keyCode) {
+  if (gamepad) {
+    switch (keyCode) {
+      case controls.counterClock:
+	return keyIsDown(keyCode) || xboxIsPressed(XBoxControllerMapping.bumperL) || xboxIsPressed(XBoxControllerMapping.triggerL) || xboxIsPressed(XBoxControllerMapping.faceX);
+	break;
+      case controls.clock:
+	return keyIsDown(keyCode) || xboxIsPressed(XBoxControllerMapping.bumperR) || xboxIsPressed(XBoxControllerMapping.triggerR) || xboxIsPressed(XBoxControllerMapping.faceY)
+	break;
+      case controls.left:
+	return keyIsDown(keyCode) || xboxIsPressed(XBoxControllerMapping.dpadLeft);
+	break;
+      case controls.right:
+	return keyIsDown(keyCode) || xboxIsPressed(XBoxControllerMapping.dpadRight);
+	break;
+      case controls.down:
+	return keyIsDown(keyCode) || xboxIsPressed(XBoxControllerMapping.dpadDown) || xboxIsPressed(XBoxControllerMapping.faceA) || xboxIsPressed(XBoxControllerMapping.faceB);
+	break;
+      case controls.start:
+	return keyIsDown(keyCode) || xboxIsPressed(XBoxControllerMapping.menu);
+	break;
+      case controls.restart:
+	return keyIsDown(keyCode) || xboxIsPressed(XBoxControllerMapping.share);
+	break;
+      default:
+	return false;
+    }
+  } else {
     return keyIsDown(keyCode);
+  }
 }
 
 const totalAssets = 9;
